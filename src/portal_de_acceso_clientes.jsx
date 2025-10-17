@@ -83,7 +83,7 @@ export default function PortalClientesAuth() {
             href="#home"
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-4 py-2 font-semibold shadow-sm transition-colors"
           >
-            ← Volver al portal de clientes
+            ← Volver
           </a>
         </div>
       </div>
