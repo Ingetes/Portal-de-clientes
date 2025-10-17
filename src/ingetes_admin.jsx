@@ -1,36 +1,24 @@
 import { useMemo, useState } from "react";
 
-// INGETES – Admin Portal UI (fresh & friendly)
-// - App-like layout, soft cards, rounded corners, subtle gradients
-// - Tabs: Panel, Usuarios, Solicitudes, INGECAP
-// - Mock data + interactions (ready to wire to APIs)
-
-// Types
-export type UserRole = "SUPER_ADMIN" | "ADMIN" | "CLIENTE" | string;
-export type UserRow = {
-  id: string;
-  name: string;
-  email: string;
-  role: UserRole;
-  company: string;
-  active: boolean;
-  logins: number;
-};
+// --- Util (solo comentarios para “tipos”)
+/** @typedef {"SUPER_ADMIN"|"ADMIN"|"CLIENTE"|string} UserRole */
+/** @typedef {{id:string,name:string,email:string,role:UserRole,company:string,active:boolean,logins:number}} UserRow */
 
 export default function AdminPortal() {
-  const TABS = ["panel", "usuarios", "solicitudes", "ingecap"] as const;
-  const [tab, setTab] = useState<(typeof TABS)[number]>("panel");
+  const TABS = ["panel", "usuarios", "solicitudes", "ingecap"];
+  const [tab, setTab] = useState("panel");
   const [q, setQ] = useState("");
 
-  // 🔐 Rol del usuario autenticado (DEMO). En producción, leer de sesión.
-  const currentUserRole: UserRole = "SUPER_ADMIN"; // ← Cambia para probar permisos
+  // Rol del usuario autenticado (DEMO). En producción, leer de sesión.
+  /** @type {UserRole} */
+  const currentUserRole = "SUPER_ADMIN";
 
-  // --- Mock data (sustituir por fetch a /api/users, etc.)
-  const [users, setUsers] = useState<UserRow[]>([
-    { id: "u1", name: "María Pérez", email: "maria@acme.co", role: "ADMIN",      company: "ACME S.A.S.",      active: true,  logins: 14 },
-    { id: "u2", name: "Juan López",  email: "juan@ingetes.com", role: "ADMIN",      company: "INGETES S.A.S.",   active: true,  logins:  8 },
-    { id: "u3", name: "Ana Gómez",   email: "ana@metalco.co",  role: "CLIENTE",    company: "METALCO S.A.",     active: false, logins:  2 },
-    { id: "u4", name: "Carlos Ruiz", email: "carlos@betel.com", role: "CLIENTE",    company: "BETEL LTDA.",      active: true,  logins: 23 },
+  /** @type {[UserRow[],Function]} */
+  const [users, setUsers] = useState([
+    { id: "u1", name: "María Pérez", email: "maria@acme.co", role: "ADMIN",   company: "ACME S.A.S.",    active: true,  logins: 14 },
+    { id: "u2", name: "Juan López",  email: "juan@ingetes.com", role: "ADMIN",   company: "INGETES S.A.S.", active: true,  logins:  8 },
+    { id: "u3", name: "Ana Gómez",   email: "ana@metalco.co",  role: "CLIENTE", company: "METALCO S.A.",  active: false, logins:  2 },
+    { id: "u4", name: "Carlos Ruiz", email: "carlos@betel.com", role: "CLIENTE", company: "BETEL LTDA.",   active: true,  logins: 23 },
   ]);
 
   const filteredUsers = useMemo(() => {
@@ -52,7 +40,6 @@ export default function AdminPortal() {
     companies: 18,
   };
 
-  // Crear usuario (modal)
   const [openCreate, setOpenCreate] = useState(false);
 
   return (
@@ -81,7 +68,6 @@ export default function AdminPortal() {
         <CreateUserModal
           onClose={() => setOpenCreate(false)}
           onCreate={(payload) => {
-            // TODO: POST /api/users
             const id = `u${users.length + 1}`;
             setUsers(prev => [...prev, { id, logins: 0, active: true, company: payload.company || "—", ...payload }]);
             setOpenCreate(false);
@@ -111,7 +97,7 @@ function TopBar() {
   );
 }
 
-function Header({ onSearch, onCreateUser }: { onSearch: (v: string) => void; onCreateUser: () => void }) {
+function Header({ onSearch, onCreateUser }) {
   return (
     <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-4">
       <div>
@@ -126,8 +112,8 @@ function Header({ onSearch, onCreateUser }: { onSearch: (v: string) => void; onC
   );
 }
 
-function Tabs({ value, onChange }: { value: string; onChange: (v: any) => void }) {
-  const items: { key: string; label: string }[] = [
+function Tabs({ value, onChange }) {
+  const items = [
     { key: "panel", label: "Panel" },
     { key: "usuarios", label: "Usuarios" },
     { key: "solicitudes", label: "Solicitudes" },
@@ -154,7 +140,7 @@ function Tabs({ value, onChange }: { value: string; onChange: (v: any) => void }
   );
 }
 
-function Dashboard({ stats }: { stats: Record<string, number> }) {
+function Dashboard({ stats }) {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -175,7 +161,7 @@ function Dashboard({ stats }: { stats: Record<string, number> }) {
   );
 }
 
-function UsersTable({ users, q, onSearch, currentUserRole, onCreateUser }: { users: UserRow[]; q: string; onSearch: (v: string) => void; currentUserRole: UserRole; onCreateUser: () => void }) {
+function UsersTable({ users, q, onSearch, currentUserRole, onCreateUser }) {
   return (
     <section className="space-y-4">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
@@ -227,17 +213,15 @@ function UsersTable({ users, q, onSearch, currentUserRole, onCreateUser }: { use
   );
 }
 
-// ✅ FIX: RowActions con permisos y motivo de cancelación
-function RowActions({ user, currentUserRole }: { user: UserRow; currentUserRole: UserRole }) {
-  const [busy, setBusy] = useState<string | null>(null);
+function RowActions({ user, currentUserRole }) {
+  const [busy, setBusy] = useState(null);
   const [showCancel, setShowCancel] = useState(false);
   const [reason, setReason] = useState("");
 
-  const canImpersonate = currentUserRole === "SUPER_ADMIN"; // 1) Solo SUPER_ADMIN
+  const canImpersonate = currentUserRole === "SUPER_ADMIN";
 
   const toggleActive = async () => {
     setBusy("toggle");
-    // TODO: POST /api/users/{id}/toggle-active
     await new Promise(r => setTimeout(r, 350));
     alert(`Mock: ${user.active ? "Desactivar" : "Activar"} usuario ${user.name}`);
     setBusy(null);
@@ -246,20 +230,17 @@ function RowActions({ user, currentUserRole }: { user: UserRow; currentUserRole:
   const impersonate = async () => {
     if (!canImpersonate) return;
     setBusy("impersonate");
-    // TODO: POST /api/users/{id}/impersonate
     await new Promise(r => setTimeout(r, 350));
     alert(`Mock: Ingresar como ${user.email}`);
     setBusy(null);
   };
 
   const cancelAccount = async () => {
-    // 2) Requerir motivo y enviar a auditoría/aplicación
     if (!reason.trim()) {
       alert("Por favor ingresa el motivo de cancelación.");
       return;
     }
     setBusy("cancel");
-    // TODO: POST /api/users/{id}/cancel-account  body: { reason }
     await new Promise(r => setTimeout(r, 350));
     alert(`Mock: Cuenta cancelada para ${user.name} – Motivo: ${reason}`);
     setBusy(null);
@@ -273,21 +254,18 @@ function RowActions({ user, currentUserRole }: { user: UserRow; currentUserRole:
         onClick={toggleActive}
         disabled={busy === "toggle"}
         className="px-2 py-1 text-xs rounded-lg border hover:bg-neutral-50"
-        aria-label={user.active ? "Desactivar usuario" : "Activar usuario"}
       >{busy === "toggle" ? "…" : (user.active ? "Desactivar" : "Activar")}</button>
 
       <button
         onClick={impersonate}
         disabled={!canImpersonate || busy === "impersonate"}
         className={`px-2 py-1 text-xs rounded-lg border ${canImpersonate ? "hover:bg-neutral-50" : "opacity-40 cursor-not-allowed"}`}
-        aria-label="Ingresar como"
         title={canImpersonate ? "Ingresar como este usuario" : "Solo SUPER_ADMIN"}
       >{busy === "impersonate" ? "…" : "Ingresar"}</button>
 
       <button
         onClick={() => setShowCancel(true)}
         className="px-2 py-1 text-xs rounded-lg border text-red-600 hover:bg-red-50"
-        aria-label="Cancelar cuenta"
       >Cancelar</button>
 
       {showCancel && (
@@ -313,7 +291,6 @@ function RowActions({ user, currentUserRole }: { user: UserRow; currentUserRole:
 }
 
 function RequestsView() {
-  // Mini tests de comportamiento en tiempo de ejecución (solo consola)
   if (typeof window !== "undefined") {
     try {
       console.assert((() => { const interno=true; const role='ADMIN'; const assigned = interno ? role : 'CLIENTE'; return assigned==='ADMIN'; })(), 'Test: Interno respeta rol ADMIN');
@@ -353,14 +330,14 @@ function IngecapView() {
   );
 }
 
-// ————— UI PRIMITIVES —————
+// ——— UI PRIMITIVOS ———
 function Logo() {
   return (
     <div className="h-7 w-7 grid place-items-center rounded-xl bg-neutral-900 text-white text-xs font-bold">IN</div>
   );
 }
 
-function Avatar({ name }: { name: string }) {
+function Avatar({ name }) {
   const initials = name.split(" ").map(p => p[0]).join("").slice(0,2).toUpperCase();
   return (
     <div className="h-8 w-8 grid place-items-center rounded-full bg-neutral-200 text-neutral-700 text-xs font-semibold">
@@ -369,13 +346,13 @@ function Avatar({ name }: { name: string }) {
   );
 }
 
-function Badge({ text }: { text: string }) {
+function Badge({ text }) {
   return (
     <span className="text-[10px] px-2 py-1 rounded-full bg-neutral-100 text-neutral-600 border">{text}</span>
   );
 }
 
-function SearchInput({ value, onChange, placeholder }:{ value?: string; onChange: (v:string)=>void; placeholder?: string }){
+function SearchInput({ value, onChange, placeholder }){
   return (
     <div className="relative w-full md:w-72">
       <input
@@ -389,19 +366,19 @@ function SearchInput({ value, onChange, placeholder }:{ value?: string; onChange
   );
 }
 
-function PrimaryButton({ label, onClick }:{ label: string; onClick: ()=>void }){
+function PrimaryButton({ label, onClick }){
   return (
     <button onClick={onClick} className="rounded-xl bg-neutral-900 text-white text-sm px-3 py-2 hover:opacity-90 active:scale-[.98]">{label}</button>
   );
 }
 
-function SecondaryButton({ label, onClick }:{ label: string; onClick: ()=>void }){
+function SecondaryButton({ label, onClick }){
   return (
     <button onClick={onClick} className="rounded-xl border text-sm px-3 py-2 hover:bg-neutral-50">{label}</button>
   );
 }
 
-function StatCard({ title, value, accent }:{ title:string; value:number; accent?: string }){
+function StatCard({ title, value, accent }){
   return (
     <div className={`rounded-2xl border bg-gradient-to-b ${accent ?? "from-neutral-100 to-white"} p-4`}> 
       <div className="text-sm text-neutral-600">{title}</div>
@@ -436,8 +413,8 @@ function TipsCard(){
   );
 }
 
-function RolePill({ role }: { role: string }){
-  const tone: Record<string, string> = {
+function RolePill({ role }){
+  const tone = {
     SUPER_ADMIN: "bg-black text-white",
     ADMIN: "bg-blue-600/10 text-blue-700",
     CLIENTE: "bg-purple-600/10 text-purple-700",
@@ -447,7 +424,7 @@ function RolePill({ role }: { role: string }){
   );
 }
 
-function ActionCard({ title, description, action }:{ title:string; description:string; action:{ label: string; onClick: ()=>void; tone?: "danger" | "default" }}){
+function ActionCard({ title, description, action }){
   const className = action.tone === "danger" ? "bg-red-600 hover:bg-red-700 text-white" : "bg-neutral-900 hover:bg-neutral-800 text-white";
   return (
     <div className="rounded-2xl border bg-white p-4 flex flex-col gap-3 justify-between">
@@ -462,7 +439,7 @@ function ActionCard({ title, description, action }:{ title:string; description:s
   );
 }
 
-function EmptyState({ title, subtitle, cta }:{ title:string; subtitle:string; cta?:{label:string; onClick:()=>void} }){
+function EmptyState({ title, subtitle, cta }){
   return (
     <div className="rounded-2xl border bg-white p-8 text-center">
       <div className="text-3xl mb-2">🗂️</div>
@@ -473,28 +450,26 @@ function EmptyState({ title, subtitle, cta }:{ title:string; subtitle:string; ct
   );
 }
 
-function Th({ children, className="" }:{ children: React.ReactNode; className?: string }){
+function Th({ children, className="" }){
   return <th className={`text-left font-medium p-3 ${className}`}>{children}</th>;
 }
-
-function Td({ children, className="" }:{ children: React.ReactNode; className?: string }){
+function Td({ children, className="" }){
   return <td className={`p-3 align-middle ${className}`}>{children}</td>;
 }
 
 // ——— Crear Usuario (modal)
-function CreateUserModal({ onClose, onCreate }:{ onClose: ()=>void; onCreate: (payload: { name: string; email: string; role: UserRole; company?: string; interno?: boolean })=>void }){
+function CreateUserModal({ onClose, onCreate }){
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [interno, setInterno] = useState(true); // "los que se crean desde el portal son internos"
-  const [role, setRole] = useState<UserRole>("ADMIN"); // si es interno: ADMIN por defecto; si no, siempre CLIENTE
+  const [interno, setInterno] = useState(true);
+  /** @type {[UserRole,Function]} */
+  const [role, setRole] = useState("ADMIN");
   const [company, setCompany] = useState("");
   const [busy, setBusy] = useState(false);
 
-  // Valida email y nombre
   const valid = name.trim() && /.+@.+\..+/.test(email);
-
-  // Si no es interno, el rol es CLIENTE automáticamente
-  const effectiveRole: UserRole = interno ? role : "CLIENTE";
+  /** @type {UserRole} */
+  const effectiveRole = interno ? role : "CLIENTE";
 
   const submit = async () => {
     if (!valid) return;
@@ -528,7 +503,7 @@ function CreateUserModal({ onClose, onCreate }:{ onClose: ()=>void; onCreate: (p
 
           {interno ? (
             <Field label="Rol interno">
-              <select value={role} onChange={(e)=>setRole(e.target.value as UserRole)} className="w-full border rounded-xl px-3 py-2 text-sm">
+              <select value={role} onChange={(e)=>setRole(e.target.value)} className="w-full border rounded-xl px-3 py-2 text-sm">
                 <option value="ADMIN">ADMIN</option>
                 <option value="SUPER_ADMIN">SUPER_ADMIN</option>
               </select>
@@ -550,7 +525,7 @@ function CreateUserModal({ onClose, onCreate }:{ onClose: ()=>void; onCreate: (p
   );
 }
 
-function Field({ label, children }:{ label: string; children: React.ReactNode }){
+function Field({ label, children }){
   return (
     <label className="text-sm">
       <div className="text-neutral-600 mb-1">{label}</div>
