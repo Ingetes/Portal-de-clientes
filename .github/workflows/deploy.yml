@@ -21,7 +21,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm ci || npm i
+      - run: npm i
       - run: npm run build
 
       # Recomendado por GitHub Pages v4/v5
