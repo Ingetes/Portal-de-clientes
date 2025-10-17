@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState, createContext, useContext } from "react";
 
+const logoIngetes = `${import.meta.env.BASE_URL}ingetes.jpg`;
+
 /** ========== Mock de usuarios (SOLO DEMO) ========== */
 const USERS = [
   { email: "jgarzon@ingetes.com", password: "Ing830#1", role: "SUPER_ADMIN", name: "Juan Sebastián Garzón" },
@@ -102,7 +104,7 @@ function LoginCard() {
     <div className="w-full max-w-md mx-auto shadow-xl border border-emerald-200 rounded-2xl bg-white">
       <div className="p-8">
         <div className="flex flex-col items-center mb-6">
-          <img src="/ingetes.jpg" alt="INGETES" className="h-10 w-auto mb-3 rounded" />
+          <img src={logoIngetes} alt="INGETES" className="h-10 w-auto mb-3 rounded" />
           <div className="flex items-center gap-2">
             <IconShield className="w-6 h-6 text-emerald-600" />
             <h1 className="text-xl font-semibold text-emerald-700 text-center">
