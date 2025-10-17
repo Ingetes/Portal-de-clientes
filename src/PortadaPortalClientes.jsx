@@ -2,6 +2,27 @@ import React, { useEffect, useState } from "react";
 const logoIngetes = `${import.meta.env.BASE_URL}ingetes.jpg`;
 const logoIngecap = `${import.meta.env.BASE_URL}ingecap.jpg`;
 
+// helpers de UI para estilos consistentes
+const ui = {
+  label: "block text-xs text-slate-600 mb-1",
+  input:
+    "w-full rounded-xl border border-slate-300 px-3 py-2 " +
+    "focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600",
+  select:
+    "w-28 rounded-xl border border-slate-300 px-2 py-2 " +
+    "focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600",
+  textarea:
+    "w-full rounded-xl border border-slate-300 px-3 py-2 " +
+    "focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600",
+  card: "rounded-2xl border border-slate-200 p-4",
+  btnPrimary: "rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2",
+  btnGhost:
+    "rounded-xl bg-white text-slate-700 font-semibold ring-1 ring-inset ring-slate-300 hover:bg-slate-50",
+  btnOutlineGreen:
+    "rounded-xl border border-emerald-600 text-emerald-700 hover:bg-emerald-50 font-semibold px-3 py-2",
+  pill: "text-xs px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200",
+};
+
 // ==========================================================
 // Tracking helper (cliente)
 // ==========================================================
@@ -739,9 +760,7 @@ function CotizadorRapidoScreen() {
     const afterDisc = baseCOP ? baseCOP * (1 - Number(discount || 0) / 100) : null;
     const saleAfter = afterDisc != null ? afterDisc * (Number(util || 1) || 1) : null;
     const roundedUnit = saleAfter != null ? roundUpTo(saleAfter, 100) : null;
-    const roundedTotal = roundedUnit != null
-      ? Math.max(0, roundUpTo((roundedUnit * Q) + Number(shipping || 0), 100))
-      : null;
+    const roundedTotal = roundedUnit != null ? Math.max(0, roundUpTo((roundedUnit * Q) + Number(shipping || 0), 100)) : null;
 
     const availability = normalizeAvailability(lead);
     const notesPart = notes.trim() ? `\n\nNOTAS: ${notes.trim()}` : "";
@@ -860,86 +879,78 @@ Disponibilidad: ${availability}${notesPart}`;
         {/* Fila referencia + botones */}
         <div className="mt-8 grid md:grid-cols-8 gap-3 items-end">
           <div className="md:col-span-3">
-            <label className="block text-xs text-slate-600 mb-1">Referencia (MLFB)</label>
+            <label className={ui.label}>Referencia (MLFB)</label>
             <input
               value={ref}
               onChange={e => setRef(e.target.value.toUpperCase())}
-              className="w-full rounded-xl border border-slate-300 px-3 py-2"
+              className={ui.input}
               placeholder="6ES7131-6BH01-0BA0"
             />
+            
             <div className="flex gap-2 mt-2">
-              <a href={mallHref} target="_blank" rel="noopener"
-                 className="rounded-xl bg-white px-3 py-2 text-xs font-semibold ring-1 ring-inset ring-slate-300 hover:bg-slate-50">
+              <a
+                href={mallHref}
+                target="_blank"
+                rel="noopener"
+                className={ui.btnOutlineGreen}
+              >
                 🔎 Industry Mall ↗
               </a>
-              <button onClick={fetchMallDescription}
-                className="rounded-xl bg-slate-900 text-white px-3 py-2 text-xs font-semibold hover:bg-black">
+            
+              <button onClick={fetchMallDescription} className={`${ui.btnPrimary} px-3 py-2 text-xs`}>
                 ✨ Traer descripción
               </button>
             </div>
           </div>
 
           <div className="md:col-span-5">
-            <label className="block text-xs text-slate-600 mb-1">Descripción del producto</label>
-            <textarea value={desc} onChange={e=>setDesc(e.target.value)} rows={4}
-              className="w-full rounded-xl border border-slate-300 px-3 py-2"
-              placeholder="Pega aquí la descripción completa" />
+            <label className={ui.label}>Descripción del producto</label>
+            <textarea
+              value={desc}
+              onChange={e=>setDesc(e.target.value)}
+              rows={4}
+              className={ui.textarea}
+              placeholder="Pega aquí la descripción completa"
+            />
           </div>
         </div>
 
         {/* Parámetros */}
         <div className="mt-6 grid md:grid-cols-6 gap-3 items-end">
           <div className="md:col-span-2">
-            <label className="block text-xs text-slate-600 mb-1">Precio de lista</label>
+            <label className={ui.label}>Precio de lista</label>
             <div className="flex gap-2">
-              <select value={priceMode} onChange={e=>setPriceMode(e.target.value)}
-                className="w-28 rounded-xl border border-slate-300 px-2 py-2">
+              <select value={priceMode} onChange={e=>setPriceMode(e.target.value)} className={ui.select}>
                 <option value="COP">COP</option>
                 <option value="USD">USD</option>
               </select>
-              <input type="number" value={price} onChange={e=>setPrice(e.target.value)}
-                className="w-full rounded-xl border border-slate-300 px-3 py-2" />
+              <input type="number" value={price} onChange={e=>setPrice(e.target.value)} className={ui.input} />
             </div>
-          </div>
-          <div>
-            <label className="block text-xs text-slate-600 mb-1">TRM (si precio en USD)</label>
-            <input type="number" value={trm} onChange={e=>setTrm(e.target.value)}
-              className="w-full rounded-xl border border-slate-300 px-3 py-2" />
-          </div>
-          <div>
-            <label className="block text-xs text-slate-600 mb-1">Descuento (%)</label>
-            <input type="number" value={discount} onChange={e=>setDiscount(e.target.value)}
-              className="w-full rounded-xl border border-slate-300 px-3 py-2" />
-          </div>
-          <div>
-            <label className="block text-xs text-slate-600 mb-1">Factor de utilidad</label>
-            <input type="number" step="0.01" value={util} onChange={e=>setUtil(e.target.value)}
-              className="w-full rounded-xl border border-slate-300 px-3 py-2" />
-          </div>
-          <div>
-            <label className="block text-xs text-slate-600 mb-1">Envío (COP)</label>
-            <input type="number" value={shipping} onChange={e=>setShipping(e.target.value)}
-              className="w-full rounded-xl border border-slate-300 px-3 py-2" />
+            
+            <label className={ui.label}>TRM (si precio en USD)</label>
+            <input type="number" value={trm} onChange={e=>setTrm(e.target.value)} className={ui.input} />
+            
+            <label className={ui.label}>Descuento (%)</label>
+            <input type="number" value={discount} onChange={e=>setDiscount(e.target.value)} className={ui.input} />
+            
+            <label className={ui.label}>Factor de utilidad</label>
+            <input type="number" step="0.01" value={util} onChange={e=>setUtil(e.target.value)} className={ui.input} />
+            
+            <label className={ui.label}>Envío (COP)</label>
+            <input type="number" value={shipping} onChange={e=>setShipping(e.target.value)} className={ui.input} />
           </div>
         </div>
 
         <div className="mt-4 grid md:grid-cols-4 gap-3 items-end">
           <div>
-            <label className="block text-xs text-slate-600 mb-1">Cantidad</label>
-            <input type="number" min="1" value={qty} onChange={e=>setQty(e.target.value)}
-              className="w-full rounded-xl border border-slate-300 px-3 py-2" />
-          </div>
-          <div>
-            <label className="block text-xs text-slate-600 mb-1">Disponibilidad</label>
-            <input value={lead} onChange={e=>setLead(e.target.value)}
-              className="w-full rounded-xl border border-slate-300 px-3 py-2"
-              placeholder="Escriba la cantidad de días" />
-          </div>
-          <div className="md:col-span-2">
-            <label className="block text-xs text-slate-600 mb-1">Notas</label>
-            <input value={notes} onChange={e=>setNotes(e.target.value)}
-              className="w-full rounded-xl border border-slate-300 px-3 py-2"
-              placeholder="Texto adicional para la cotización" />
+            <label className={ui.label}>Cantidad</label>
+            <input type="number" min="1" value={qty} onChange={e=>setQty(e.target.value)} className={ui.input} />
+            
+            <label className={ui.label}>Disponibilidad</label>
+            <input value={lead} onChange={e=>setLead(e.target.value)} className={ui.input} placeholder="Escriba la cantidad de días" />
+            
+            <label className={ui.label}>Notas</label>
+            <input value={notes} onChange={e=>setNotes(e.target.value)} className={ui.input} placeholder="Texto adicional para la cotización" />
           </div>
         </div>
 
@@ -971,9 +982,9 @@ Disponibilidad: ${availability}${notesPart}`;
           </pre>
 
           <div className="flex flex-wrap gap-2 items-center mt-3">
-            <button onClick={addReference} className="rounded-xl bg-white px-4 py-2 text-slate-700 font-semibold ring-1 ring-inset ring-slate-300 hover:bg-slate-50">➕ Agregar referencia</button>
-            <button onClick={copyBlock} className="rounded-xl bg-white px-4 py-2 text-slate-700 font-semibold ring-1 ring-inset ring-slate-300 hover:bg-slate-50">📋 Copiar</button>
-            <button onClick={resetAll} className="rounded-xl bg-white px-4 py-2 text-slate-700 font-semibold ring-1 ring-inset ring-slate-300 hover:bg-slate-50">🔄 Reiniciar</button>
+            <button onClick={addReference} className={ui.btnGhost}>➕ Agregar referencia</button>
+            <button onClick={copyBlock} className={ui.btnGhost}>📋 Copiar</button>
+            <button onClick={resetAll} className={ui.btnGhost}>🔄 Reiniciar</button>
             <span className="text-sm ml-auto">{copyMsg}</span>
           </div>
         </div>
