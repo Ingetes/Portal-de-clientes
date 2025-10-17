@@ -39,7 +39,7 @@ function PasswordMeter({ value }) {
   return (
     <div className="mt-2">
       <div className="h-1.5 w-full bg-gray-200 rounded">
-        <div className={cn("h-1.5 rounded bg-green-600 transition-all", width)} />
+        <div className={cn("h-1.5 rounded bg-emerald-600 transition-all", width)} />
       </div>
       <p className="text-xs text-gray-500 mt-1">Seguridad: {labels[score]}</p>
     </div>
@@ -52,7 +52,7 @@ export default function PortalClientesAuth() {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center p-4">
       <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Branding / Lado izquierdo */}
-        <div className="hidden md:flex flex-col justify-between rounded-2xl bg-[linear-gradient(135deg,#1E8E3E,rgba(30,142,62,0.8))] text-white p-8 shadow-xl">
+        <div className="hidden md:flex flex-col justify-between rounded-2xl bg-[linear-gradient(135deg,#059669,rgba(5,150,105,0.8))] text-white p-8 shadow-xl">
           <div>
             <div className="flex items-center gap-3">
               <div className="bg-white/15 rounded-xl p-2">
@@ -76,6 +76,15 @@ export default function PortalClientesAuth() {
           {mode === "login" && <LoginView onChangeMode={setMode} />}
           {mode === "signup" && <SignupView onChangeMode={setMode} />}
           {mode === "forgot" && <ForgotView onChangeMode={setMode} />}
+        </div>
+        {/* Botón de volver al portal principal */}
+        <div className="mt-6 text-center md:col-span-2">
+          <a
+            href="#home"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-4 py-2 font-semibold shadow-sm transition-colors"
+          >
+            ← Volver al portal de clientes
+          </a>
         </div>
       </div>
     </div>
@@ -120,7 +129,7 @@ function LoginView({ onChangeMode }) {
       <Field label="Correo electrónico" required>
         <input
           type="email"
-          className="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-4 focus:ring-green-100"
+          className="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-4 focus:ring-emerald-100"
           placeholder="tucorreo@empresa.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -133,7 +142,7 @@ function LoginView({ onChangeMode }) {
       <Field label="Contraseña" required>
         <input
           type="password"
-          className="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-4 focus:ring-green-100"
+          className="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-4 focus:ring-emerald-100"
           placeholder="••••••••"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -148,7 +157,7 @@ function LoginView({ onChangeMode }) {
         <button
           type="button"
           onClick={() => onChangeMode("forgot")}
-          className="text-green-700 hover:underline"
+          className="text-emerald-700 hover:underline"
         >
           ¿Olvidaste tu contraseña?
         </button>
@@ -165,8 +174,8 @@ function LoginView({ onChangeMode }) {
         type="submit"
         disabled={loading}
         className={cn(
-          "w-full rounded-xl bg-green-600 text-white py-2.5 font-medium shadow-md",
-          "hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-100",
+          "w-full rounded-xl bg-emerald-600 text-white py-2.5 font-medium shadow-md",
+          "hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-100",
           loading && "opacity-70 cursor-not-allowed"
         )}
       >
@@ -235,7 +244,7 @@ function SignupView({ onChangeMode }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Field label="Nombre de la empresa" required>
           <input
-            type="text" className="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-4 focus:ring-green-100"
+            type="text" className="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-4 focus:ring-emerald-100"
             value={form.empresa} onChange={(e) => set("empresa", e.target.value)} required
           />
           <ErrorMsg msg={errors.empresa} />
@@ -244,7 +253,7 @@ function SignupView({ onChangeMode }) {
         <Field label="NIT de la empresa" required>
           <input
             type="text" inputMode="numeric" placeholder="Ej: 900123456-7"
-            className="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-4 focus:ring-green-100"
+            className="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-4 focus:ring-emerald-100"
             value={form.nit} onChange={(e) => set("nit", e.target.value)} required
           />
           <ErrorMsg msg={errors.nit} />
@@ -252,7 +261,7 @@ function SignupView({ onChangeMode }) {
 
         <Field label="Nombre y apellido" required>
           <input
-            type="text" className="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-4 focus:ring-green-100"
+            type="text" className="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-4 focus:ring-emerald-100"
             value={form.nombres} onChange={(e) => set("nombres", e.target.value)} required
           />
           <ErrorMsg msg={errors.nombres} />
@@ -261,7 +270,7 @@ function SignupView({ onChangeMode }) {
         <Field label="Teléfono" required>
           <input
             type="tel" placeholder="Ej: +57 310 123 4567"
-            className="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-4 focus:ring-green-100"
+            className="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-4 focus:ring-emerald-100"
             value={form.telefono} onChange={(e) => set("telefono", e.target.value)} required
           />
           <ErrorMsg msg={errors.telefono} />
@@ -269,7 +278,7 @@ function SignupView({ onChangeMode }) {
 
         <Field label="Cargo" required>
           <input
-            type="text" className="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-4 focus:ring-green-100"
+            type="text" className="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-4 focus:ring-emerald-100"
             value={form.cargo} onChange={(e) => set("cargo", e.target.value)} required
           />
           <ErrorMsg msg={errors.cargo} />
@@ -278,7 +287,7 @@ function SignupView({ onChangeMode }) {
         <Field label="Correo electrónico" required>
           <input
             type="email" placeholder="tucorreo@empresa.com"
-            className="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-4 focus:ring-green-100"
+            className="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-4 focus:ring-emerald-100"
             value={form.email} onChange={(e) => set("email", e.target.value)} required
           />
           <ErrorMsg msg={errors.email} />
@@ -286,7 +295,7 @@ function SignupView({ onChangeMode }) {
 
         <Field label="Crear contraseña" required>
           <input
-            type="password" className="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-4 focus:ring-green-100"
+            type="password" className="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-4 focus:ring-emerald-100"
             value={form.pass} onChange={(e) => set("pass", e.target.value)} required minLength={8}
           />
           <PasswordMeter value={form.pass} />
@@ -295,7 +304,7 @@ function SignupView({ onChangeMode }) {
 
         <Field label="Repetir contraseña" required>
           <input
-            type="password" className="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-4 focus:ring-green-100"
+            type="password" className="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-4 focus:ring-emerald-100"
             value={form.pass2} onChange={(e) => set("pass2", e.target.value)} required minLength={8}
           />
           <ErrorMsg msg={errors.pass2} />
@@ -312,7 +321,7 @@ function SignupView({ onChangeMode }) {
         <button
           type="submit"
           disabled={loading}
-          className={cn("rounded-xl bg-green-600 text-white px-5 py-2.5 font-medium shadow-md hover:bg-green-700 focus:ring-4 focus:ring-green-100", loading && "opacity-70 cursor-not-allowed")}
+          className={cn("rounded-xl bg-emerald-600 text-white px-5 py-2.5 font-medium shadow-md hover:bg-emerald-700 focus:ring-4 focus:ring-emerald-100", loading && "opacity-70 cursor-not-allowed")}
         >
           {loading ? "Enviando…" : "Solicitar creación de cuenta"}
         </button>
@@ -360,7 +369,7 @@ function ForgotView({ onChangeMode }) {
       <Field label="Correo electrónico" required>
         <input
           type="email"
-          className="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-4 focus:ring-green-100"
+          className="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-4 focus:ring-emerald-100"
           placeholder="tucorreo@empresa.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -374,7 +383,7 @@ function ForgotView({ onChangeMode }) {
         <button
           type="submit"
           disabled={loading}
-          className={cn("rounded-xl bg-green-600 text-white px-5 py-2.5 font-medium shadow-md hover:bg-green-700 focus:ring-4 focus:ring-green-100", loading && "opacity-70 cursor-not-allowed")}
+          className={cn("rounded-xl bg-emerald-600 text-white px-5 py-2.5 font-medium shadow-md hover:bg-emerald-700 focus:ring-4 focus:ring-emerald-100", loading && "opacity-70 cursor-not-allowed")}
         >
           {loading ? "Enviando…" : "Enviar enlace de recuperación"}
         </button>
