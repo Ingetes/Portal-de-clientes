@@ -682,7 +682,8 @@ function CotizadorRapidoScreen() {
 
   const copySummary = async () => {
     // Construye el texto de la cotización sin template literals complejos
-    const lines = []; string[];
+    const lines = [];
+    let arr = [];
     lines.push('Cotizacion rapida INGETES');
     lines.push('--------------------------------');
     items.forEach((it, i) => {
