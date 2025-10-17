@@ -93,6 +93,7 @@ function LoginCard() {
     setLoading(true);
     try {
       await login(email.trim(), password);
+      window.location.hash = "#ingetes_admin";
     } catch (err) {
       setError(err?.message || "No se pudo iniciar sesión");
     } finally {
