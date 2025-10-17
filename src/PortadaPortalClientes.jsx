@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 const logoIngetes = `${import.meta.env.BASE_URL}ingetes.jpg`;
 const logoIngecap = `${import.meta.env.BASE_URL}ingecap.jpg`;
 
+import PortalClientesAuth from "./portal_de_acceso_clientes.jsx";
+
 // helpers de UI para estilos consistentes
 const ui = {
   label: "block text-xs text-slate-600 mb-1",
@@ -221,7 +223,8 @@ export default function PortalDistribuidoresLanding() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50">
       <Header />
-
+      {route === '#ingresar' ? (
+        <PortalClientesAuth />
       {route === '#documentos' ? (
         <DocumentosScreen />
       ) : route === '#herramientas' ? (
@@ -357,7 +360,12 @@ function Header() {
           <a className="text-slate-600 hover:text-emerald-700" href="#stats">Estadisticas</a>
         </nav>
         <div className="flex items-center gap-3">
-          <a href="#ingresar" className="inline-flex items-center rounded-xl border border-emerald-600 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50">Ingresar</a>
+          <a
+            href="#ingresar"
+            className="inline-flex items-center rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 text-sm font-semibold shadow-md transition-colors"
+          >
+            Ingresar
+          </a>
         </div>
       </div>
     </header>
