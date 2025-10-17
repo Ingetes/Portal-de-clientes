@@ -862,135 +862,212 @@ Disponibilidad: ${availability}${notesPart}`;
   };
 
   // ----- UI (misma estética del portal) -----
-  return (
-    <section id="cotizador" className="min-h-[70vh] border-t border-slate-100 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">Cotizador Rápido</h1>
-            <p className="mt-2 text-slate-700 max-w-2xl">
-              Calcula precio de venta con descuento, factor de utilidad, envío y redondeo a centena.
-              Puedes <strong>agregar</strong> varias referencias a un bloque acumulado y copiarlo.
-            </p>
-          </div>
-          <a href="#home" className="hidden md:inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">← Volver</a>
+return (
+  <section id="cotizador" className="min-h-[70vh] border-t border-slate-100 bg-white">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      {/* Header */}
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">Cotizador Rápido</h1>
+          <p className="mt-2 text-slate-700 max-w-2xl">
+            Calcula precio de venta con descuento, factor de utilidad, envío y redondeo a centena.
+            Puedes <strong>agregar</strong> varias referencias a un bloque acumulado y copiarlo.
+          </p>
         </div>
+        <a
+          href="#home"
+          className="hidden md:inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+        >
+          ← Volver
+        </a>
+      </div>
 
-        {/* Fila referencia + botones */}
-        <div className="mt-8 grid md:grid-cols-8 gap-3 items-end">
-          <div className="md:col-span-3">
-            <label className={ui.label}>Referencia (MLFB)</label>
-            <input
-              value={ref}
-              onChange={e => setRef(e.target.value.toUpperCase())}
-              className={ui.input}
-              placeholder="6ES7131-6BH01-0BA0"
-            />
-            <div className="flex gap-2 mt-2">
-              <a
-                onClick={()=>openIndustryMall(draft.ref)}
-                className="inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-slate-300 hover:bg-emerald-50 hover:ring-emerald-300"
-              >
-                🔎 Industry Mall ↗
-              </a>
-            
-              <button
-                onClick={traerDescripcion}
-                className="inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-slate-300 hover:bg-emerald-50 hover:ring-emerald-300"
-              >
-                ✨ Traer descripción
-              </button>
-            </div>
-          </div>
-
-          <div className="md:col-span-5">
-            <label className={ui.label}>Descripción del producto</label>
-            <textarea
-              value={desc}
-              onChange={e=>setDesc(e.target.value)}
-              rows={4}
-              className={ui.textarea}
-              placeholder="Pega aquí la descripción completa"
-            />
+      {/* Fila referencia + descripción */}
+      <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6 items-end">
+        {/* Referencia */}
+        <div>
+          <label className={ui.label}>Referencia (MLFB)</label>
+          <input
+            value={ref}
+            onChange={(e) => setRef(e.target.value.toUpperCase())}
+            className={ui.input}
+            placeholder="6ES7131-6BH01-0BA0"
+          />
+          <div className="flex gap-2 mt-2">
+            <a
+              href={mallHref}
+              target="_blank"
+              rel="noopener"
+              className="inline-flex items-center gap-2 rounded-xl border border-emerald-600 text-emerald-700 hover:bg-emerald-50 font-semibold px-3 py-2 text-sm"
+            >
+              🔎 Industry Mall ↗
+            </a>
+            <button
+              onClick={fetchMallDescription}
+              className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-2 text-sm"
+            >
+              ✨ Traer descripción
+            </button>
           </div>
         </div>
 
-        {/* Parámetros */}
-        <div className="mt-6 grid md:grid-cols-6 gap-3 items-end">
-          <div className="md:col-span-2">
-            <label className={ui.label}>Precio de lista</label>
-            <div className="flex gap-2">
-              <select value={priceMode} onChange={e=>setPriceMode(e.target.value)} className={ui.select}>
-                <option value="COP">COP</option>
-                <option value="USD">USD</option>
-              </select>
-              <input type="number" value={price} onChange={e=>setPrice(e.target.value)} className={ui.input} />
-            </div>
-            
-            <label className={ui.label}>TRM (si precio en USD)</label>
-            <input type="number" value={trm} onChange={e=>setTrm(e.target.value)} className={ui.input} />
-            
-            <label className={ui.label}>Descuento (%)</label>
-            <input type="number" value={discount} onChange={e=>setDiscount(e.target.value)} className={ui.input} />
-            
-            <label className={ui.label}>Factor de utilidad</label>
-            <input type="number" step="0.01" value={util} onChange={e=>setUtil(e.target.value)} className={ui.input} />
-            
-            <label className={ui.label}>Envío (COP)</label>
-            <input type="number" value={shipping} onChange={e=>setShipping(e.target.value)} className={ui.input} />
-          </div>
-        </div>
-
-        <div className="mt-4 grid md:grid-cols-4 gap-3 items-end">
-          <div>
-            <label className={ui.label}>Cantidad</label>
-            <input type="number" min="1" value={qty} onChange={e=>setQty(e.target.value)} className={ui.input} />
-            
-            <label className={ui.label}>Disponibilidad</label>
-            <input value={lead} onChange={e=>setLead(e.target.value)} className={ui.input} placeholder="Escriba la cantidad de días" />
-            
-            <label className={ui.label}>Notas</label>
-            <input value={notes} onChange={e=>setNotes(e.target.value)} className={ui.input} placeholder="Texto adicional para la cotización" />
-          </div>
-        </div>
-
-        {/* Tarjetas (resumen numérico) */}
-        <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-          <div className="rounded-2xl border border-slate-200 p-4">
-            <div className="text-[11px] uppercase tracking-wide text-slate-500">Precio base COP</div>
-            <div className="text-base mt-1 font-medium">{moneyCOP(baseCOP)}</div>
-          </div>
-          <div className="rounded-2xl border border-slate-200 p-4">
-            <div className="text-[11px] uppercase tracking-wide text-slate-500">Precio unitario (redondeado)</div>
-            <div className="text-base mt-1 font-medium">{moneyCOP(roundedUnit)}</div>
-          </div>
-          <div className="rounded-2xl border border-slate-200 p-4">
-            <div className="text-[11px] uppercase tracking-wide text-slate-500">+ Envío</div>
-            <div className="text-base mt-1 font-medium">{moneyCOP(Number(shipping || 0))}</div>
-          </div>
-          <div className="rounded-2xl border border-slate-200 p-4">
-            <div className="text-[11px] uppercase tracking-wide text-slate-500">Total antes de IVA</div>
-            <div className="text-base mt-1 font-medium">{moneyCOP(roundedTotal)}</div>
-          </div>
-        </div>
-
-        {/* Previsualización + acciones */}
-        <div className="mt-6">
-          <div className="text-sm font-medium mb-2">Previsualización (formato final)</div>
-          <pre className="text-sm whitespace-pre-wrap leading-6 border rounded-2xl p-3 bg-white">
-            {lockPreview ? (preview || block) : block}
-          </pre>
-
-          <div className="flex flex-wrap gap-2 items-center mt-3">
-            <button onClick={addReference} className={ui.btnGhost}>➕ Agregar referencia</button>
-            <button onClick={copyBlock} className={ui.btnGhost}>📋 Copiar</button>
-            <button onClick={resetAll} className={ui.btnGhost}>🔄 Reiniciar</button>
-            <span className="text-sm ml-auto">{copyMsg}</span>
-          </div>
+        {/* Descripción */}
+        <div className="sm:col-span-2 lg:col-span-2">
+          <label className={ui.label}>Descripción del producto</label>
+          <textarea
+            value={desc}
+            onChange={(e) => setDesc(e.target.value)}
+            rows={4}
+            className={ui.textarea}
+            placeholder="Pega aquí la descripción completa"
+          />
         </div>
       </div>
-    </section>
-  );
+
+      {/* Parámetros principales */}
+      <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6 items-end">
+        <div>
+          <label className={ui.label}>Precio de lista</label>
+          <div className="flex gap-2">
+            <select
+              value={priceMode}
+              onChange={(e) => setPriceMode(e.target.value)}
+              className={ui.select}
+            >
+              <option value="COP">COP</option>
+              <option value="USD">USD</option>
+            </select>
+            <input
+              type="number"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              className={ui.input}
+            />
+          </div>
+        </div>
+        <div>
+          <label className={ui.label}>TRM (si precio en USD)</label>
+          <input
+            type="number"
+            value={trm}
+            onChange={(e) => setTrm(e.target.value)}
+            className={ui.input}
+          />
+        </div>
+        <div>
+          <label className={ui.label}>Descuento (%)</label>
+          <input
+            type="number"
+            value={discount}
+            onChange={(e) => setDiscount(e.target.value)}
+            className={ui.input}
+          />
+        </div>
+        <div>
+          <label className={ui.label}>Factor de utilidad</label>
+          <input
+            type="number"
+            step="0.01"
+            value={util}
+            onChange={(e) => setUtil(e.target.value)}
+            className={ui.input}
+          />
+        </div>
+        <div>
+          <label className={ui.label}>Envío (COP)</label>
+          <input
+            type="number"
+            value={shipping}
+            onChange={(e) => setShipping(e.target.value)}
+            className={ui.input}
+          />
+        </div>
+        <div>
+          <label className={ui.label}>Cantidad</label>
+          <input
+            type="number"
+            min="1"
+            value={qty}
+            onChange={(e) => setQty(e.target.value)}
+            className={ui.input}
+          />
+        </div>
+      </div>
+
+      {/* Disponibilidad y notas */}
+      <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-6 items-end">
+        <div>
+          <label className={ui.label}>Disponibilidad</label>
+          <input
+            value={lead}
+            onChange={(e) => setLead(e.target.value)}
+            className={ui.input}
+            placeholder="Ej. 30-45 días"
+          />
+        </div>
+        <div className="lg:col-span-2">
+          <label className={ui.label}>Notas</label>
+          <input
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            className={ui.input}
+            placeholder="Texto adicional para la cotización"
+          />
+        </div>
+      </div>
+
+      {/* Tarjetas resumen */}
+      <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+        <div className="rounded-2xl border border-emerald-100 p-4">
+          <div className="text-[11px] uppercase tracking-wide text-slate-500">Precio base COP</div>
+          <div className="text-base mt-1 font-semibold text-slate-800">{moneyCOP(baseCOP)}</div>
+        </div>
+        <div className="rounded-2xl border border-emerald-100 p-4">
+          <div className="text-[11px] uppercase tracking-wide text-slate-500">Precio unitario (redondeado)</div>
+          <div className="text-base mt-1 font-semibold text-slate-800">{moneyCOP(roundedUnit)}</div>
+        </div>
+        <div className="rounded-2xl border border-emerald-100 p-4">
+          <div className="text-[11px] uppercase tracking-wide text-slate-500">+ Envío</div>
+          <div className="text-base mt-1 font-semibold text-slate-800">{moneyCOP(Number(shipping || 0))}</div>
+        </div>
+        <div className="rounded-2xl border border-emerald-100 p-4">
+          <div className="text-[11px] uppercase tracking-wide text-slate-500">Total antes de IVA</div>
+          <div className="text-base mt-1 font-semibold text-slate-800">{moneyCOP(roundedTotal)}</div>
+        </div>
+      </div>
+
+      {/* Previsualización y acciones */}
+      <div className="mt-10">
+        <div className="text-sm font-medium mb-2">Previsualización (formato final)</div>
+        <pre className="text-sm whitespace-pre-wrap leading-6 border border-emerald-100 rounded-2xl p-4 bg-emerald-50/30">
+          {lockPreview ? preview || block : block}
+        </pre>
+
+        <div className="flex flex-wrap gap-3 items-center mt-4">
+          <button
+            onClick={addReference}
+            className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 font-semibold"
+          >
+            ➕ Agregar referencia
+          </button>
+          <button
+            onClick={copyBlock}
+            className="rounded-xl border border-emerald-600 text-emerald-700 hover:bg-emerald-50 px-4 py-2 font-semibold"
+          >
+            📋 Copiar
+          </button>
+          <button
+            onClick={resetAll}
+            className="rounded-xl bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-4 py-2 font-semibold"
+          >
+            🔄 Reiniciar
+          </button>
+          <span className="text-sm ml-auto">{copyMsg}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+);
 }
 
 // ==========================================================
