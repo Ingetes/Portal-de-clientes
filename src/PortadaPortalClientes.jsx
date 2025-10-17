@@ -667,147 +667,314 @@ function DocumentosScreen() {
 // Cotizador Rapido (independiente del portal de cotizaciones)
 // ==========================================================
 function CotizadorRapidoScreen() {
-  const [items, setItems] = useState([]); // [{ref, desc, qty, price, discount, tax}]
-  const [draft, setDraft] = useState({ ref: '', desc: '', qty: 1, price: 0, discount: 0, tax: 19 });
-  const [autoCalc, setAutoCalc] = useState(true);
-  const [listPrice, setListPrice] = useState(0);
-  const [canalDiscount, setCanalDiscount] = useState(30);
-  const [margin, setMargin] = useState(0);
-  const [roundTo, setRoundTo] = useState(100);
+  // ----- Estado (equivalentes al HTML) -----
+  const [ref, setRef] = useState("");
+  const [desc, setDesc] = useState("");
+  const [priceMode, setPriceMode] = useState("COP"); // COP | USD
+  const [price, setPrice] = useState("");            // num
+  const [trm, setTrm] = useState("4250");            // num (si USD)
+  const [discount, setDiscount] = useState("0");     // %
+  const [util, setUtil] = useState("1.00");          // factor
+  const [shipping, setShipping] = useState("0");     // COP
+  const [qty, setQty] = useState("1");               // unidades
+  const [lead, setLead] = useState("");              // disponibilidad (libre)
+  const [notes, setNotes] = useState("");            // texto libre
+  const [preview, setPreview] = useState("");        // acumulado
+  const [lockPreview, setLockPreview] = useState(false);
+  const [copyMsg, setCopyMsg] = useState("");
 
-  useEffect(() => { console.assert(typeof track === 'function', 'track() debe existir'); localStorage.setItem('ts:cot_open', String(Date.now())); }, []);
+  useEffect(() => {
+    localStorage.setItem('ts:cot_open', String(Date.now()));
+  }, []);
 
-  const guessDescription = (ref) => {
-    const r = (ref || '').toUpperCase();
-    const rules = [ [/^3RT2/, 'Contactor trifasico SIRIUS'], [/^3RV2/, 'Guardamotor SIRIUS'], [/^3RA2/, 'Arrancador SIRIUS'], [/^3RH2/, 'Rele auxiliar SIRIUS'], [/^6ES7/, 'Modulo SIMATIC S7'], [/^6EP/, 'Fuente SITOP'], [/^6GK/, 'Comunicaciones SCALANCE'], [/^6AV/, 'HMI SIMATIC'], [/^1FK7/, 'Servo motor SINAMICS'], [/^6SL/, 'Accesorio SINAMICS'] ];
-    for (const [re, text] of rules) if (re.test(r)) return text; return 'Descripcion no disponible';
+  // Backend para “Traer descripción”
+  const API_BASE = 'https://portal-api-nine.vercel.app';
+
+  // ----- Helpers (idénticos al HTML) -----
+  const moneyCOP = (v) =>
+    v == null || isNaN(v) ? "—"
+      : Number(v).toLocaleString("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 });
+
+  const cleanDesc = (text) => {
+    if (!text) return "";
+    let s = String(text);
+    s = s.replace(/\r\n|\r|\n/g, "\n");
+    s = s.replace(/\\+n/gi, "\n");
+    s = s.replace(/&#10;|&#x0a;|%0a/gi, "\n");
+    s = s.replace(/\\+t/gi, " ");
+    s = s.split("\n").map(line => line.trim()).join("\n").replace(/ {2,}/g, " ").trim();
+    return s;
   };
 
-  const openIndustryMall = (ref) => { const q = (ref || '').trim(); if (!q) return; track('cot_mall_search', { ref: q }); const url = `https://mall.industry.siemens.com/mall/en/WW/Search?searchTerm=${encodeURIComponent(q)}`; window.open(url, '_blank', 'noopener'); };
-  const traerDescripcion = async () => { const q = draft.ref.trim(); if (!q) return; track('cot_fetch_desc', { ref: q }); const guessed = guessDescription(q); setDraft(d => ({ ...d, desc: d.desc?.trim() ? d.desc : guessed })); };
+  const roundUpTo = (v, step = 100) => {
+    if (v == null || isNaN(v)) return null;
+    const s = Math.max(1, Number(step) || 100);
+    return Math.ceil(Number(v) / s) * s;
+  };
 
-  const roundToNearest = (value, step = 1) => { if (!step || step <= 1) return Math.round(value); return Math.round(value / step) * step; };
-  const computeUnitPrice = (list, disc, mrg, rounding) => { const L = Math.max(0, Number(list) || 0); const D = Math.min(100, Math.max(0, Number(disc) || 0)); const M = Math.min(100, Math.max(0, Number(mrg) || 0)); let p = L * (1 - D / 100); p = p * (1 + M / 100); const step = Math.max(1, Number(rounding) || 1); p = roundToNearest(p, step); return p; };
+  const normalizeAvailability = (input) => {
+    const raw = (input || "").trim();
+    if (!raw) return "(sin confirmar)";
+    const n = (raw.match(/\d+/)?.[0]) ? parseInt(raw.match(/\d+/)[0], 10) : NaN;
+    if (!Number.isFinite(n)) return raw;
+    if (n >= 1 && n <= 5) return "3-5 días. (Salvo venta previa)";
+    if (n >= 30 && n <= 45) return "30-45 días. (Salvo venta previa)";
+    if (n >= 46 && n <= 60) return "6 - 8 semanas";
+    if (n >= 61 && n <= 80) return "8 - 10 semanas";
+    if (n >= 81 && n <= 90) return "10 - 12 semanas";
+    return raw;
+  };
 
-  useEffect(() => { if (!autoCalc) return; const p = computeUnitPrice(listPrice, canalDiscount, margin, roundTo); setDraft(d => ({ ...d, price: p })); }, [listPrice, canalDiscount, margin, roundTo, autoCalc]);
+  const mallHref = ref.trim()
+    ? `https://mall.industry.siemens.com/mall/es/ww/Catalog/Product/?mlfb=${encodeURIComponent(ref.trim().toUpperCase())}`
+    : "#";
 
-  const addItem = () => { if (!draft.ref.trim()) return; const qty = Math.max(1, Number(draft.qty) || 1); const price = Math.max(0, Number(draft.price) || 0); const discount = Math.min(100, Math.max(0, Number(draft.discount) || 0)); const tax = Math.min(100, Math.max(0, Number(draft.tax) || 0)); const next = { ...draft, qty, price, discount, tax }; setItems(prev => [...prev, next]); setDraft({ ref: '', desc: '', qty: 1, price: autoCalc ? computeUnitPrice(listPrice, canalDiscount, margin, roundTo) : 0, discount: 0, tax: draft.tax }); track('cot_add_item', { ref: next.ref }); };
-  const removeItem = (idx) => { setItems(prev => prev.filter((_, i) => i !== idx)); };
+  // ----- Cálculo principal (calc tarjetas + bloque de texto) -----
+  const compute = () => {
+    const Q = Math.max(1, parseInt(qty || 1, 10));
+    const baseCOP = priceMode === "USD"
+      ? (Number(price || 0) * Number(trm || 0))
+      : Number(price || 0);
 
-  const subtotal = items.reduce((s, it) => s + it.qty * it.price * (1 - it.discount / 100), 0);
-  const taxes = items.reduce((s, it) => s + (it.qty * it.price * (1 - it.discount / 100)) * (it.tax / 100), 0);
-  const total = subtotal + taxes;
+    const afterDisc = baseCOP ? baseCOP * (1 - Number(discount || 0) / 100) : null;
+    const saleAfter = afterDisc != null ? afterDisc * (Number(util || 1) || 1) : null;
+    const roundedUnit = saleAfter != null ? roundUpTo(saleAfter, 100) : null;
+    const roundedTotal = roundedUnit != null
+      ? Math.max(0, roundUpTo((roundedUnit * Q) + Number(shipping || 0), 100))
+      : null;
 
-  const copySummary = async () => {
-    // Construye el texto de la cotización sin template literals complejos
-    const lines = [];
-    let arr = [];
-    lines.push('Cotizacion rapida INGETES');
-    lines.push('--------------------------------');
-    items.forEach((it, i) => {
-      const idx = (i + 1).toString();
-      const ref = String(it.ref || '');
-      const desc = String(it.desc || '');
-      const qty = String(it.qty || 0);
-      const pu = (Number(it.price) || 0).toFixed(2);
-      const dsc = String(it.discount || 0);
-      const iva = String(it.tax || 0);
-      lines.push(idx + '. ' + ref + ' - ' + desc + ' x' + qty + ' @ ' + pu + ' (-' + dsc + '%) IVA ' + iva + '%');
-    });
-    lines.push('Subtotal: ' + subtotal.toFixed(2));
-    lines.push('Impuestos: ' + taxes.toFixed(2));
-    lines.push('Total: ' + total.toFixed(2));
+    const availability = normalizeAvailability(lead);
+    const notesPart = notes.trim() ? `\n\nNOTAS: ${notes.trim()}` : "";
 
-    try { await navigator.clipboard.writeText(lines.join('\n')); } catch {}
-    track('cot_copy_summary', { items: items.length, total });
-    // KPI: duración desde apertura del cotizador hasta copia
+    let block = "(Completa referencia, descripción y valores para ver el bloque final)";
+    const REF = ref.trim().toUpperCase();
+    const DESC = cleanDesc(desc);
+
+    if (REF && DESC && roundedTotal != null) {
+      if (Q === 1) {
+        block = `${REF}
+${DESC}
+Costo total: ${moneyCOP(roundedTotal)} + IVA
+Disponibilidad: ${availability}${notesPart}`;
+      } else {
+        block = `${REF}
+${DESC}
+Cantidad: ${Q}
+Precio unitario: ${moneyCOP(roundedUnit)}
+Costo total: ${moneyCOP(roundedTotal)} + IVA
+Disponibilidad: ${availability}${notesPart}`;
+      }
+    }
+    return {
+      baseCOP,
+      roundedUnit,
+      roundedTotal,
+      block,
+    };
+  };
+
+  const { baseCOP, roundedUnit, roundedTotal, block } = compute();
+
+  // ----- Acciones -----
+  const addReference = () => {
+    if (!block || block.includes("Completa referencia")) return;
+    setPreview(prev => prev ? `${prev}\n\n${block}` : block);
+    setLockPreview(true);
+    // limpia campos (como el HTML)
+    setRef("");
+    setDesc("");
+    setPrice("");
+    // conservamos modo precio y TRM
+    setDiscount("0");
+    setUtil("1.00");
+    setShipping("0");
+    setLead("");
+    setNotes("");
+    setQty("1");
+    // tarjetas a “—” se derivan del estado vacío
+  };
+
+  const copyBlock = async () => {
+    const txt = (preview || block || "").trim();
+    if (!txt || txt.includes("Completa referencia")) return;
+    try {
+      await navigator.clipboard.writeText(txt);
+      setCopyMsg("✅ Copiado");
+      setTimeout(() => setCopyMsg(""), 1500);
+    } catch {
+      setCopyMsg("⚠️ Copia manual (Ctrl/Cmd+C)");
+      setTimeout(() => setCopyMsg(""), 2000);
+    }
+    // KPI tiempo 1ª respuesta
     try {
       const tsKey = 'ts:cot_open';
       const arrKey = 'kpi:cot_durations';
       const start = parseInt(localStorage.getItem(tsKey) || '0', 10);
       if (start) {
         const mins = (Date.now() - start) / 60000;
-        const arrRaw = localStorage.getItem(arrKey) || '[]';
-        let arr = [];
-        try { arr = JSON.parse(arrRaw); if (!Array.isArray(arr)) arr = []; } catch { arr = []; }
-        arr.push(Number(mins));
-        if (arr.length > 100) arr = arr.slice(-100);
-        localStorage.setItem(arrKey, JSON.stringify(arr));
+        const arr = JSON.parse(localStorage.getItem(arrKey) || '[]');
+        const next = Array.isArray(arr) ? arr.concat([Number(mins)]) : [Number(mins)];
+        localStorage.setItem(arrKey, JSON.stringify(next.slice(-100)));
       }
     } catch {}
   };
 
-  // Tests basicos
-  useEffect(() => { console.assert(draft.tax === 19, 'IVA por defecto debe ser 19'); const t1 = computeUnitPrice(1000, 10, 0, 100); console.assert(t1 === 900, 'Calculo base con redondeo a 100'); const t2 = computeUnitPrice(999, 0, 0, 100); console.assert(t2 === 1000, 'Redondeo a la centena'); }, []);
+  const resetAll = () => {
+    setRef(""); setDesc(""); setPriceMode("COP"); setPrice("");
+    setTrm("4250"); setDiscount("0"); setUtil("1.00"); setShipping("0");
+    setQty("1"); setLead(""); setNotes(""); setCopyMsg("");
+    setPreview(""); setLockPreview(false);
+  };
 
+  const fetchMallDescription = async () => {
+    const q = ref.trim().toUpperCase();
+    if (!q) { alert("Escribe una referencia (MLFB) primero."); return; }
+    try {
+      const url = `${API_BASE}/api/industry-mall?mlfb=${encodeURIComponent(q)}`;
+      const r = await fetch(url, { method: 'GET' });
+      const j = await r.json().catch(()=>({}));
+      if (!r.ok) { alert(`No se pudo consultar (${r.status}). Abre el Industry Mall y copia manualmente.`); return; }
+      const d = (j && j.description || '').trim();
+      setDesc(d ? cleanDesc(d) : `Referencia: ${q}. Ver ficha: ${j.source || 'N/A'}`);
+    } catch (e) {
+      alert("Error consultando la API. Revisa el backend.");
+      // opcional: console.error(e);
+    }
+  };
+
+  // ----- UI (misma estética del portal) -----
   return (
     <section id="cotizador" className="min-h-[70vh] border-t border-slate-100 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">Cotizador Rapido</h1>
-            <p className="mt-2 text-slate-700 max-w-2xl">Genera una cotizacion simple e independiente del portal de cotizaciones. Puedes agregar items, aplicar descuentos e IVA, y copiar el resumen.</p>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">Cotizador Rápido</h1>
+            <p className="mt-2 text-slate-700 max-w-2xl">
+              Calcula precio de venta con descuento, factor de utilidad, envío y redondeo a centena.
+              Puedes <strong>agregar</strong> varias referencias a un bloque acumulado y copiarlo.
+            </p>
           </div>
           <a href="#home" className="hidden md:inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">← Volver</a>
         </div>
 
-        {/* Controles de calculo */}
-        <div className="mt-6 grid md:grid-cols-6 gap-3 items-end">
-          <div className="md:col-span-1"><label className="block text-xs text-slate-600 mb-1">Precio lista (COP)</label><input type="number" min="0" step="0.01" value={listPrice} onChange={e=>setListPrice(e.target.value)} className="w-full rounded-xl border border-slate-300 px-3 py-2" /></div>
-          <div><label className="block text-xs text-slate-600 mb-1">Desc. canal (%)</label><input type="number" min="0" max="100" value={canalDiscount} onChange={e=>setCanalDiscount(e.target.value)} className="w-full rounded-xl border border-slate-300 px-3 py-2" /></div>
-          <div><label className="block text-xs text-slate-600 mb-1">Margen (%)</label><input type="number" min="0" max="100" value={margin} onChange={e=>setMargin(e.target.value)} className="w-full rounded-xl border border-slate-300 px-3 py-2" /></div>
-          <div><label className="block text-xs text-slate-600 mb-1">Redondeo (COP)</label><input type="number" min="1" step="1" value={roundTo} onChange={e=>setRoundTo(e.target.value)} className="w-full rounded-xl border border-slate-300 px-3 py-2" /></div>
-          <div className="md:col-span-2 flex items-center gap-3 mt-6"><label className="text-sm text-slate-700 flex items-center gap-2"><input type="checkbox" checked={autoCalc} onChange={e=>setAutoCalc(e.target.checked)} /> Calcular precio automatico</label><span className="text-xs text-slate-500">(Precio unitario se actualiza con los parametros)</span></div>
-        </div>
-
-        {/* Formulario de item */}
+        {/* Fila referencia + botones */}
         <div className="mt-8 grid md:grid-cols-8 gap-3 items-end">
+          <div className="md:col-span-3">
+            <label className="block text-xs text-slate-600 mb-1">Referencia (MLFB)</label>
+            <input
+              value={ref}
+              onChange={e => setRef(e.target.value.toUpperCase())}
+              className="w-full rounded-xl border border-slate-300 px-3 py-2"
+              placeholder="6ES7131-6BH01-0BA0"
+            />
+            <div className="flex gap-2 mt-2">
+              <a href={mallHref} target="_blank" rel="noopener"
+                 className="rounded-xl bg-white px-3 py-2 text-xs font-semibold ring-1 ring-inset ring-slate-300 hover:bg-slate-50">
+                🔎 Industry Mall ↗
+              </a>
+              <button onClick={fetchMallDescription}
+                className="rounded-xl bg-slate-900 text-white px-3 py-2 text-xs font-semibold hover:bg-black">
+                ✨ Traer descripción
+              </button>
+            </div>
+          </div>
+
+          <div className="md:col-span-5">
+            <label className="block text-xs text-slate-600 mb-1">Descripción del producto</label>
+            <textarea value={desc} onChange={e=>setDesc(e.target.value)} rows={4}
+              className="w-full rounded-xl border border-slate-300 px-3 py-2"
+              placeholder="Pega aquí la descripción completa" />
+          </div>
+        </div>
+
+        {/* Parámetros */}
+        <div className="mt-6 grid md:grid-cols-6 gap-3 items-end">
           <div className="md:col-span-2">
-            <label className="block text-xs text-slate-600 mb-1">Referencia</label>
-            <div className="flex gap-2"><input value={draft.ref} onChange={e=>setDraft({...draft, ref:e.target.value})} className="w-full rounded-xl border border-slate-300 px-3 py-2" placeholder="3RT2016-1AN21" /></div>
-            <div className="flex gap-2 mt-2"><button onClick={()=>openIndustryMall(draft.ref)} className="rounded-xl bg-white px-3 py-2 text-xs font-semibold ring-1 ring-inset ring-slate-300 hover:bg-slate-50">Buscar en Industry Mall</button><button onClick={traerDescripcion} className="rounded-xl bg-white px-3 py-2 text-xs font-semibold ring-1 ring-inset ring-slate-300 hover:bg-slate-50">Traer descripcion</button></div>
+            <label className="block text-xs text-slate-600 mb-1">Precio de lista</label>
+            <div className="flex gap-2">
+              <select value={priceMode} onChange={e=>setPriceMode(e.target.value)}
+                className="w-28 rounded-xl border border-slate-300 px-2 py-2">
+                <option value="COP">COP</option>
+                <option value="USD">USD</option>
+              </select>
+              <input type="number" value={price} onChange={e=>setPrice(e.target.value)}
+                className="w-full rounded-xl border border-slate-300 px-3 py-2" />
+            </div>
           </div>
-          <div className="md:col-span-3"><label className="block text-xs text-slate-600 mb-1">Descripcion</label><input value={draft.desc} onChange={e=>setDraft({...draft, desc:e.target.value})} className="w-full rounded-xl border border-slate-300 px-3 py-2" placeholder="Contacto auxiliar..." /></div>
-          <div><label className="block text-xs text-slate-600 mb-1">Cantidad</label><input type="number" min="1" value={draft.qty} onChange={e=>setDraft({...draft, qty:e.target.value})} className="w-full rounded-xl border border-slate-300 px-3 py-2" /></div>
-          <div><label className="block text-xs text-slate-600 mb-1">Precio unitario</label><input type="number" min="0" step="0.01" value={draft.price} onChange={e=>setDraft({...draft, price:e.target.value})} className="w-full rounded-xl border border-slate-300 px-3 py-2" /></div>
-          <div><label className="block text-xs text-slate-600 mb-1">Descuento (%)</label><input type="number" min="0" max="100" value={draft.discount} onChange={e=>setDraft({...draft, discount:e.target.value})} className="w-full rounded-xl border border-slate-300 px-3 py-2" /></div>
-          <div><label className="block text-xs text-slate-600 mb-1">IVA (%)</label><input type="number" min="0" max="100" value={draft.tax} onChange={e=>setDraft({...draft, tax:e.target.value})} className="w-full rounded-xl border border-slate-300 px-3 py-2" /></div>
-        </div>
-        <div className="mt-3"><button onClick={addItem} className="rounded-xl bg-emerald-600 px-4 py-2 text-white font-semibold hover:bg-emerald-700">Agregar item</button></div>
-
-        {/* Tabla */}
-        <div className="mt-6 overflow-x-auto">
-          <table className="min-w-full text-sm">
-            <thead><tr className="text-left text-slate-600"><th className="py-2 pr-4">Ref</th><th className="py-2 pr-4">Descripcion</th><th className="py-2 pr-4">Cant.</th><th className="py-2 pr-4">PU</th><th className="py-2 pr-4">Desc. %</th><th className="py-2 pr-4">IVA %</th><th className="py-2 pr-4">Importe</th><th className="py-2 pr-4"></th></tr></thead>
-            <tbody>
-              {items.length === 0 && (<tr><td colSpan={8} className="py-6 text-center text-slate-500">Sin items. Agrega el primero arriba.</td></tr>)}
-              {items.map((it, i) => { const net = it.qty * it.price * (1 - it.discount / 100); const imp = net * (1 + it.tax / 100); return (
-                <tr key={i} className="border-t border-slate-100">
-                  <td className="py-2 pr-4 font-mono text-xs">{it.ref}</td>
-                  <td className="py-2 pr-4">{it.desc}</td>
-                  <td className="py-2 pr-4">{it.qty}</td>
-                  <td className="py-2 pr-4">{it.price.toFixed(2)}</td>
-                  <td className="py-2 pr-4">{it.discount}</td>
-                  <td className="py-2 pr-4">{it.tax}</td>
-                  <td className="py-2 pr-4 font-semibold">{imp.toFixed(2)}</td>
-                  <td className="py-2 pr-4"><button onClick={() => removeItem(i)} className="text-red-600 hover:underline">Quitar</button></td>
-                </tr>
-              );})}
-            </tbody>
-          </table>
+          <div>
+            <label className="block text-xs text-slate-600 mb-1">TRM (si precio en USD)</label>
+            <input type="number" value={trm} onChange={e=>setTrm(e.target.value)}
+              className="w-full rounded-xl border border-slate-300 px-3 py-2" />
+          </div>
+          <div>
+            <label className="block text-xs text-slate-600 mb-1">Descuento (%)</label>
+            <input type="number" value={discount} onChange={e=>setDiscount(e.target.value)}
+              className="w-full rounded-xl border border-slate-300 px-3 py-2" />
+          </div>
+          <div>
+            <label className="block text-xs text-slate-600 mb-1">Factor de utilidad</label>
+            <input type="number" step="0.01" value={util} onChange={e=>setUtil(e.target.value)}
+              className="w-full rounded-xl border border-slate-300 px-3 py-2" />
+          </div>
+          <div>
+            <label className="block text-xs text-slate-600 mb-1">Envío (COP)</label>
+            <input type="number" value={shipping} onChange={e=>setShipping(e.target.value)}
+              className="w-full rounded-xl border border-slate-300 px-3 py-2" />
+          </div>
         </div>
 
-        {/* Totales y acciones */}
-        <div className="mt-6 grid md:grid-cols-2 gap-6 items-start">
+        <div className="mt-4 grid md:grid-cols-4 gap-3 items-end">
+          <div>
+            <label className="block text-xs text-slate-600 mb-1">Cantidad</label>
+            <input type="number" min="1" value={qty} onChange={e=>setQty(e.target.value)}
+              className="w-full rounded-xl border border-slate-300 px-3 py-2" />
+          </div>
+          <div>
+            <label className="block text-xs text-slate-600 mb-1">Disponibilidad</label>
+            <input value={lead} onChange={e=>setLead(e.target.value)}
+              className="w-full rounded-xl border border-slate-300 px-3 py-2"
+              placeholder="Escriba la cantidad de días" />
+          </div>
+          <div className="md:col-span-2">
+            <label className="block text-xs text-slate-600 mb-1">Notas</label>
+            <input value={notes} onChange={e=>setNotes(e.target.value)}
+              className="w-full rounded-xl border border-slate-300 px-3 py-2"
+              placeholder="Texto adicional para la cotización" />
+          </div>
+        </div>
+
+        {/* Tarjetas (resumen numérico) */}
+        <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
           <div className="rounded-2xl border border-slate-200 p-4">
-            <p className="text-sm text-slate-600">Resumen</p>
-            <p className="mt-2 text-slate-700 text-sm">Subtotal: <span className="font-semibold">{subtotal.toFixed(2)}</span></p>
-            <p className="text-slate-700 text-sm">Impuestos: <span className="font-semibold">{taxes.toFixed(2)}</span></p>
-            <p className="text-lg font-extrabold text-slate-900 mt-1">Total: {total.toFixed(2)}</p>
+            <div className="text-[11px] uppercase tracking-wide text-slate-500">Precio base COP</div>
+            <div className="text-base mt-1 font-medium">{moneyCOP(baseCOP)}</div>
           </div>
-          <div className="flex flex-wrap gap-3 md:justify-end">
-            <button onClick={copySummary} className="rounded-xl bg-white px-4 py-2 text-slate-700 font-semibold ring-1 ring-inset ring-slate-300 hover:bg-slate-50">Copiar resumen</button>
-            <a href="#documentos" className="rounded-xl bg-emerald-600 px-4 py-2 text-white font-semibold hover:bg-emerald-700">Ir a Documentos</a>
+          <div className="rounded-2xl border border-slate-200 p-4">
+            <div className="text-[11px] uppercase tracking-wide text-slate-500">Precio unitario (redondeado)</div>
+            <div className="text-base mt-1 font-medium">{moneyCOP(roundedUnit)}</div>
+          </div>
+          <div className="rounded-2xl border border-slate-200 p-4">
+            <div className="text-[11px] uppercase tracking-wide text-slate-500">+ Envío</div>
+            <div className="text-base mt-1 font-medium">{moneyCOP(Number(shipping || 0))}</div>
+          </div>
+          <div className="rounded-2xl border border-slate-200 p-4">
+            <div className="text-[11px] uppercase tracking-wide text-slate-500">Total antes de IVA</div>
+            <div className="text-base mt-1 font-medium">{moneyCOP(roundedTotal)}</div>
+          </div>
+        </div>
+
+        {/* Previsualización + acciones */}
+        <div className="mt-6">
+          <div className="text-sm font-medium mb-2">Previsualización (formato final)</div>
+          <pre className="text-sm whitespace-pre-wrap leading-6 border rounded-2xl p-3 bg-white">
+            {lockPreview ? (preview || block) : block}
+          </pre>
+
+          <div className="flex flex-wrap gap-2 items-center mt-3">
+            <button onClick={addReference} className="rounded-xl bg-white px-4 py-2 text-slate-700 font-semibold ring-1 ring-inset ring-slate-300 hover:bg-slate-50">➕ Agregar referencia</button>
+            <button onClick={copyBlock} className="rounded-xl bg-white px-4 py-2 text-slate-700 font-semibold ring-1 ring-inset ring-slate-300 hover:bg-slate-50">📋 Copiar</button>
+            <button onClick={resetAll} className="rounded-xl bg-white px-4 py-2 text-slate-700 font-semibold ring-1 ring-inset ring-slate-300 hover:bg-slate-50">🔄 Reiniciar</button>
+            <span className="text-sm ml-auto">{copyMsg}</span>
           </div>
         </div>
       </div>
