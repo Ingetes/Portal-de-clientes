@@ -3,6 +3,7 @@ const logoIngetes = `${import.meta.env.BASE_URL}ingetes.jpg`;
 const logoIngecap = `${import.meta.env.BASE_URL}ingecap.jpg`;
 
 import PortalClientesAuth from "./portal_de_acceso_clientes.jsx";
+import AdminAccessPortal from "./portal_administrador_de_usuarios.jsx";
 
 // helpers de UI para estilos consistentes
 const ui = {
@@ -225,6 +226,8 @@ export default function PortalDistribuidoresLanding() {
       <Header />
       {route === '#ingresar' ? (
         <PortalClientesAuth />
+      ) : route === '#administrador' ? (
+        <AdminAccessPortal />
       ) : route === '#documentos' ? (
         <DocumentosScreen />
       ) : route === '#herramientas' ? (
@@ -360,6 +363,12 @@ function Header() {
           <a className="text-slate-600 hover:text-emerald-700" href="#stats">Estadisticas</a>
         </nav>
         <div className="flex items-center gap-3">
+          <a
+            href="#administrador"
+            className="inline-flex items-center rounded-xl bg-white border border-emerald-600 text-emerald-700 hover:bg-emerald-50 px-4 py-2 text-sm font-semibold shadow-md transition-colors"
+          >
+            Administrador
+          </a>
           <a
             href="#ingresar"
             className="inline-flex items-center rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 text-sm font-semibold shadow-md transition-colors"
