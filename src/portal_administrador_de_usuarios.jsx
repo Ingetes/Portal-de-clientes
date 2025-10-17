@@ -86,8 +86,8 @@ function LoginCard() {
           <div className="flex flex-col items-center mb-6">
             <img src="/ingetes-logo.svg" alt="INGETES" className="h-12 w-auto mb-3" />
             <div className="flex items-center gap-3">
-              <ShieldCheck className="h-6 w-6 text-green-600" />
-              <h1 className="text-2xl font-semibold text-green-700 text-center">PORTAL ADMINISTRADOR DE USUARIOS</h1>
+              <ShieldCheck className="h-6 w-6 text-emerald-600" />
+              <h1 className="text-2xl font-semibold text-emerald-700 text-center">PORTAL ADMINISTRADOR DE USUARIOS</h1>
             </div>
           </div>
 
@@ -110,7 +110,7 @@ function LoginCard() {
               <Label htmlFor="password">Contraseña</Label>
               <Input id="password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required className="focus-visible:ring-green-500" />
             </div>
-            <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white" disabled={loading}>
+            <Button type="submit" className="w-full bg-green-600 hover:bg-emerald-700 text-white" disabled={loading}>
               <LogIn className="h-4 w-4 mr-2" /> {loading ? "Validando…" : "Ingresar"}
             </Button>
             <p className="text-xs text-center text-gray-500">
@@ -129,12 +129,12 @@ function RoleGate({ children }: { children: React.ReactNode }) {
   const allowed = session.role === "SUPER_ADMIN" || session.role === "ADMIN";
   if (!allowed) {
     return (
-      <div className="max-w-xl mx-auto mt-8 p-4 border border-green-300 bg-green-50 rounded-lg">
+      <div className="max-w-xl mx-auto mt-8 p-4 border border-emerald-300 bg-emerald-50 rounded-lg">
         <div className="flex items-center gap-2 mb-2">
-          <AlertCircle className="h-5 w-5 text-green-600" />
-          <h2 className="font-semibold text-green-700">Acceso denegado</h2>
+          <AlertCircle className="h-5 w-5 text-emerald-600" />
+          <h2 className="font-semibold text-emerald-700">Acceso denegado</h2>
         </div>
-        <p className="text-sm text-green-700">
+        <p className="text-sm text-emerald-700">
           Tu rol actual (<strong>{session.role}</strong>) no tiene permisos para ingresar al Administrador de Usuarios.
         </p>
       </div>
@@ -149,19 +149,19 @@ function AdminDashboard() {
     <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <User2 className="h-6 w-6 text-green-600" />
+          <User2 className="h-6 w-6 text-emerald-600" />
           <div>
-            <h2 className="text-xl font-semibold text-green-700">Administrador de Usuarios</h2>
+            <h2 className="text-xl font-semibold text-emerald-700">Administrador de Usuarios</h2>
             <p className="text-sm text-gray-600">Bienvenido, {session?.name} — Rol: <strong>{session?.role}</strong></p>
           </div>
         </div>
-        <Button variant="outline" onClick={logout} className="border-green-600 text-green-700 hover:bg-green-50">
+        <Button variant="outline" onClick={logout} className="border-green-600 text-emerald-700 hover:bg-emerald-50">
           <LogOut className="h-4 w-4 mr-2" /> Salir
         </Button>
       </div>
-      <Card className="shadow-sm border border-green-200">
+      <Card className="shadow-sm border border-emerald-200">
         <CardContent className="p-5">
-          <h3 className="font-medium mb-1 text-green-700">Acceso concedido</h3>
+          <h3 className="font-medium mb-1 text-emerald-700">Acceso concedido</h3>
           <p className="text-sm text-gray-600">El módulo de <strong>Administrador de Usuarios</strong> aún no está enlazado. Aquí se conectará el programa cuando esté listo.</p>
         </CardContent>
       </Card>
@@ -177,7 +177,7 @@ export default function AdminAccessPortal() {
 
   return (
     <AuthProvider>
-      <div className="min-h-screen w-full bg-gradient-to-br from-white to-green-50 flex items-center justify-center p-6">
+      <div className="min-h-screen w-full bg-gradient-to-br from-white to-emerald-50 flex items-center justify-center p-6">
         <div className="w-full max-w-5xl">
           {!sessionProxy() ? <LoginCardWrapper /> : <RoleGate><AdminDashboard /></RoleGate>}
         </div>
