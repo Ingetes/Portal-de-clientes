@@ -1,16 +1,5 @@
 import React, { useMemo, useState } from "react";
 
-// Portal de ingreso al Portal de Clientes INGETES
-// - Inicio de sesión con correo y contraseña
-// - Solicitud de creación de cuenta (registro)
-// - Recuperar contraseña por correo
-// 
-// NOTA: Este componente es 100% frontend. Conecta los manejadores onSubmit
-// a tus endpoints reales (Auth API / Firebase / Supabase / Backend propio).
-// 
-// Estilos: TailwindCSS
-// Diseño: limpio, corporativo (verde INGETES sugerido #1E8E3E)
-
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_RE = /^[0-9+()\-\s]{7,20}$/;
 const NIT_RE = /^[0-9]{5,12}(-[0-9Xx])?$/; // NIT simple (sin cálculo de dígito verificación)
