@@ -886,18 +886,18 @@ Disponibilidad: ${availability}${notesPart}`;
               className={ui.input}
               placeholder="6ES7131-6BH01-0BA0"
             />
-            
             <div className="flex gap-2 mt-2">
               <a
-                href={mallHref}
-                target="_blank"
-                rel="noopener"
-                className={ui.btnOutlineGreen}
+                onClick={()=>openIndustryMall(draft.ref)}
+                className="inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-slate-300 hover:bg-emerald-50 hover:ring-emerald-300"
               >
                 🔎 Industry Mall ↗
               </a>
             
-              <button onClick={fetchMallDescription} className={`${ui.btnPrimary} px-3 py-2 text-xs`}>
+              <button
+                onClick={traerDescripcion}
+                className="inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-slate-300 hover:bg-emerald-50 hover:ring-emerald-300"
+              >
                 ✨ Traer descripción
               </button>
             </div>
