@@ -1,7 +1,7 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
-import PortadaPortalClientes from './PortadaPortalClientes.jsx'
-import './index.css';
+import './index.css'
+import PortadaPortalClientes from './PortadaPortalClientes.jsx' // 👈 nombre y ruta correctos
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
