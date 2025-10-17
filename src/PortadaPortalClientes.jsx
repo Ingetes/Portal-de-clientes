@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import logoUrl from './ingetes.jpg';
 
 // ==========================================================
 // Tracking helper (cliente)
@@ -320,7 +321,7 @@ function Header() {
     <header className="w-full sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-white/70 border-b border-slate-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <img src="/ingetes.jpg" alt="INGETES" className="h-10 w-auto" />
+          <img src={logoUrl} alt="INGETES" className="h-10 w-auto" />
           <div className="hidden md:block">
             <p className="text-xs uppercase tracking-widest text-slate-500">Portal para Canales de Distribucion</p>
             <p className="text-sm font-medium text-slate-800">Fidelizacion - Cotizaciones - Listas de Precios</p>
