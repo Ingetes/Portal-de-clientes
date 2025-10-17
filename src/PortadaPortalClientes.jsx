@@ -356,9 +356,9 @@ function Header() {
           </div>
         </div>
         <nav className="hidden md:flex items-center gap-6 text-sm">
-          <a className="text-slate-600 hover:text-emerald-700" href="#proposito">Proposito</a>
+          <a className="text-slate-600 hover:text-emerald-700" href="#proposito">Próposito</a>
           <a className="text-slate-600 hover:text-emerald-700" href="#beneficios">Beneficios</a>
-          <a className="text-slate-600 hover:text-emerald-700" href="#como-empezar">Como empezar</a>
+          <a className="text-slate-600 hover:text-emerald-700" href="#como-empezar">Cómo empezar</a>
           <a className="text-slate-600 hover:text-emerald-700" href="#herramientas">Herramientas</a>
           <a className="text-slate-600 hover:text-emerald-700" href="#stats">Estadisticas</a>
         </nav>
@@ -405,15 +405,15 @@ function Landing({ setChatOpen, chatOpen }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 grid lg:grid-cols-2 gap-10 items-center">
           <div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900">Portal de Canales INGETES</h1>
-            <p className="mt-4 text-lg text-slate-700" id="proposito">Este portal es un espacio exclusivo para clientes que mantienen una relacion comercial con INGETES. Aqui encontraras documentacion que facilita la elaboracion de ofertas, herramientas para la seleccion de equipos y el diseno de tus proyectos, un cotizador para crear propuestas rapidas a tus clientes y acceso a privilegios exclusivos para miembros de INGECAP.</p>
+            <p className="mt-4 text-lg text-slate-700" id="proposito">Este portal es un espacio exclusivo para clientes que mantienen una relación comercial con INGETES. Aquí encontrarás documentación que facilita la elaboración de ofertas, herramientas para la selección de equipos y el diseño de tus proyectos, un cotizador para crear propuestas rápidas a tus clientes y acceso a privilegios exclusivos para miembros de INGECAP.</p>
             </div>
           <div className="relative">
             <div className="rounded-3xl bg-white/70 backdrop-blur shadow-xl p-6 lg:p-8 border border-slate-100">
-              <h3 className="text-xl font-bold text-slate-900">Que puedes hacer aqui?</h3>
+              <h3 className="text-xl font-bold text-slate-900">Qué puedes hacer aquí?</h3>
               <ul className="mt-4 space-y-3 text-slate-700">
                 <li className="flex gap-3"><span className="mt-1 h-2 w-2 rounded-full bg-emerald-500" />Descargar y consultar listas de precios Siemens.</li>
                 <li className="flex gap-3"><span className="mt-1 h-2 w-2 rounded-full bg-emerald-500" />Generar cotizaciones con plantillas estandarizadas de INGETES.</li>
-                <li className="flex gap-3"><span className="mt-1 h-2 w-2 rounded-full bg-emerald-500" />Hacer seguimiento a oportunidades y documentacion clave.</li>
+                <li className="flex gap-3"><span className="mt-1 h-2 w-2 rounded-full bg-emerald-500" />Hacer seguimiento a oportunidades y documentación clave.</li>
                 <li className="flex gap-3"><span className="mt-1 h-2 w-2 rounded-full bg-emerald-500" />Acumular y redimir <strong>INGEPUNTOS</strong> por tus compras.</li>
                 <li className="flex gap-3"><span className="mt-1 h-2 w-2 rounded-full bg-emerald-500" />Recibir soporte de nuestro <strong>Asistente Virtual</strong>.</li>
               </ul>
