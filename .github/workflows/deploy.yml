@@ -23,11 +23,7 @@ jobs:
           node-version: 20
       - run: npm i
       - run: npm run build
-
-      # Recomendado por GitHub Pages v4/v5
       - uses: actions/configure-pages@v5
-
-      # Sube la carpeta de build (Vite => dist)
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
@@ -35,13 +31,9 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
-
-    # 👇 OBLIGATORIO: environment github-pages
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - id: deployment
         uses: actions/deploy-pages@v4
