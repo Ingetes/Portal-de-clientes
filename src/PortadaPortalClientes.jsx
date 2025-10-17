@@ -545,7 +545,23 @@ function DocumentosScreen() {
   const copyReference = async () => { try { await navigator.clipboard.writeText(term || ''); setCopied(true); setTimeout(()=>setCopied(false),1500);} catch {} };
 
   const [zipProgress, setZipProgress] = React.useState({ current: 0, total: 0, status: 'idle' });
-  const downloadAllZip = async () => { track('zip_all_click', { total: items.length }); try { setZipProgress({ current:0, total: items.length, status:'preparando' }); const [{ default: JSZip }, { saveAs }] = await Promise.all([import('jszip'), import('file-saver')]); const zip = new JSZip(); const folder = zip.folder('documentos'); let processed=0; for (const it of items){ try { const encoded = encodeURI(it.href); const res = await fetch(encoded, { mode:'cors', credentials:'omit' }); if(!res.ok) throw new Error('HTTP '+res.status); const blob = await res.blob(); const name = fileNameFromUrl(encoded); folder.file(name, blob);} catch(e){ folder.file(`ERROR_${Date.now()}_${Math.random().toString(36).slice(2)}.txt`, `No se pudo agregar: ${it.title} -> ${it.href}`);} finally { processed += 1; setZipProgress({ current: processed, total: items.length, status: 'descargando' }); } } setZipProgress(p=>({...p, status:'comprimendo'})); const blobZip = await zip.generateAsync({ type:'blob' }); const fecha = new Date().toISOString().slice(0,10); saveAs(blobZip, `Documentos_Precios_Inventario_${fecha}.zip`); setZipProgress({ current: items.length, total: items.length, status: 'listo' }); } catch (e) { setZipProgress({ current:0, total:0, status:'error' }); items.forEach(it => window.open(it.href,'_blank','noopener')); } finally { setTimeout(()=>setZipProgress({ current:0, total:0, status:'idle' }), 4000); } };
+  const downloadAllZip = async () => { track('zip_all_click', { total: items.length }); 
+                                      try { setZipProgress({ current:0, total: items.length, status:'preparando' }); 
+                                           const [{ default: JSZip }, { saveAs }] = await Promise.all([
+                                              import(/* @vite-ignore */ 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/+esm'),
+                                              import(/* @vite-ignore */ 'https://cdn.jsdelivr.net/npm/file-saver@2.0.5/+esm'),
+                                            ]);
+                                           const zip = new JSZip(); const folder = zip.folder('documentos'); let processed=0; 
+                                           for (const it of items){ try { const encoded = encodeURI(it.href); 
+                                                                         const res = await fetch(encoded, { mode:'cors', credentials:'omit' }); 
+                                                                         if(!res.ok) throw new Error('HTTP '+res.status); 
+                                                                         const blob = await res.blob(); 
+                                                                         const name = fileNameFromUrl(encoded); 
+                                                                         folder.file(name, blob);} catch(e){ folder.file(`ERROR_${Date.now()}_${Math.random().toString(36).slice(2)}.txt`, `No se pudo agregar: ${it.title} -> ${it.href}`);} finally { processed += 1; setZipProgress({ current: processed, total: items.length, status: 'descargando' }); } } setZipProgress(p=>({...p, status:'comprimendo'})); 
+                                           const blobZip = await zip.generateAsync({ type:'blob' }); 
+                                           const fecha = new Date().toISOString().slice(0,10); saveAs(blobZip, `Documentos_Precios_Inventario_${fecha}.zip`); 
+                                           setZipProgress({ current: items.length, total: items.length, status: 'listo' }); } catch (e) { setZipProgress({ current:0, total:0, status:'error' }); 
+                                                                                                                                         items.forEach(it => window.open(it.href,'_blank','noopener')); } finally { setTimeout(()=>setZipProgress({ current:0, total:0, status:'idle' }), 4000); } };
 
   // --- Event listeners (desde chatbot) ---
   useEffect(() => {
