@@ -870,7 +870,7 @@ return (
         <div>
           <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">Cotizador Rápido</h1>
           <p className="mt-2 text-slate-700 max-w-2xl">
-            Calcula precio de venta con descuento, factor de utilidad, envío y redondeo a centena.
+            Calcula precio de venta con descuento, factor de utilidad y envío.
             Puedes <strong>agregar</strong> varias referencias a un bloque acumulado y copiarlo.
           </p>
         </div>
