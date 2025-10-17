@@ -44,7 +44,6 @@ export default function AdminPortal() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-neutral-50 to-white">
-      <TopBar />
       <div className="mx-auto max-w-7xl px-4 py-6">
         <Header onSearch={setQ} onCreateUser={() => setOpenCreate(true)} />
 
@@ -76,24 +75,6 @@ export default function AdminPortal() {
         />
       )}
     </div>
-  );
-}
-
-function TopBar() {
-  return (
-    <header className="sticky top-0 z-10 backdrop-blur bg-white/70 border-b">
-      <div className="mx-auto max-w-7xl px-4 h-14 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Logo />
-          <span className="font-semibold">Admin INGETES</span>
-          <span className="text-xs text-neutral-500 hidden sm:inline">Portal de Clientes & INGECAP</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <Badge text="App Router" />
-          <Avatar name="OP" />
-        </div>
-      </div>
-    </header>
   );
 }
 
@@ -333,7 +314,7 @@ function IngecapView() {
 // ——— UI PRIMITIVOS ———
 function Logo() {
   return (
-    <div className="h-7 w-7 grid place-items-center rounded-xl bg-neutral-900 text-white text-xs font-bold">IN</div>
+    <div className="h-7 w-7 grid place-items-center rounded-xl bg-[#009C63] text-white text-xs font-bold">IN</div>
   );
 }
 
@@ -366,15 +347,25 @@ function SearchInput({ value, onChange, placeholder }){
   );
 }
 
-function PrimaryButton({ label, onClick }){
+function PrimaryButton({ label, onClick }) {
   return (
-    <button onClick={onClick} className="rounded-xl bg-neutral-900 text-white text-sm px-3 py-2 hover:opacity-90 active:scale-[.98]">{label}</button>
+    <button
+      onClick={onClick}
+      className="rounded-xl bg-[#009C63] text-white text-sm px-3 py-2 hover:bg-[#008654] active:scale-[.98] transition-all"
+    >
+      {label}
+    </button>
   );
 }
 
-function SecondaryButton({ label, onClick }){
+function SecondaryButton({ label, onClick }) {
   return (
-    <button onClick={onClick} className="rounded-xl border text-sm px-3 py-2 hover:bg-neutral-50">{label}</button>
+    <button
+      onClick={onClick}
+      className="rounded-xl border border-[#009C63] text-[#009C63] text-sm px-3 py-2 hover:bg-[#009C63]/10 transition-all"
+    >
+      {label}
+    </button>
   );
 }
 
@@ -425,7 +416,7 @@ function RolePill({ role }){
 }
 
 function ActionCard({ title, description, action }){
-  const className = action.tone === "danger" ? "bg-red-600 hover:bg-red-700 text-white" : "bg-neutral-900 hover:bg-neutral-800 text-white";
+  const className = action.tone === "danger" ? "bg-red-600 hover:bg-red-700 text-white" : "bg-[#009C63] hover:bg-neutral-800 text-white";
   return (
     <div className="rounded-2xl border bg-white p-4 flex flex-col gap-3 justify-between">
       <div>
@@ -518,7 +509,7 @@ function CreateUserModal({ onClose, onCreate }){
         </div>
         <div className="flex justify-end gap-2 mt-4">
           <button onClick={onClose} className="px-3 py-2 text-sm rounded-xl border">Cancelar</button>
-          <button disabled={!valid || busy} onClick={submit} className="px-3 py-2 text-sm rounded-xl bg-neutral-900 text-white disabled:opacity-50">{busy?"Creando…":"Crear"}</button>
+          <button disabled={!valid || busy} onClick={submit} className="px-3 py-2 text-sm rounded-xl bg-[#009C63] text-white disabled:opacity-50">{busy?"Creando…":"Crear"}</button>
         </div>
       </div>
     </div>
