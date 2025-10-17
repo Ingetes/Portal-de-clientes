@@ -154,13 +154,13 @@ function LoginCard() {
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2 transition-colors"
-          >
-            <IconLogin /> {loading ? "Validando…" : "Ingresar"}
-          </button>
+            <button
+              type="button"
+              onClick={() => { window.location.hash = '#ingetes_admin'; }}
+              className="w-full rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-lg font-semibold py-3"
+            >
+              Ingresar
+            </button>
           <p className="text-xs text-center text-gray-500">
             Acceso restringido al <strong>SUPER_ADMIN</strong>.
           </p>
