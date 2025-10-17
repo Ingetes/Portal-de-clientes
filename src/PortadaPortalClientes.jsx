@@ -225,7 +225,7 @@ export default function PortalDistribuidoresLanding() {
       <Header />
       {route === '#ingresar' ? (
         <PortalClientesAuth />
-      {route === '#documentos' ? (
+      ) : route === '#documentos' ? (
         <DocumentosScreen />
       ) : route === '#herramientas' ? (
         <HerramientasScreen />
