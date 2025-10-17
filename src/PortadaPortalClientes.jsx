@@ -710,7 +710,7 @@ function CotizadorRapidoScreen() {
       if (start) {
         const mins = (Date.now() - start) / 60000;
         const arrRaw = localStorage.getItem(arrKey) || '[]';
-        let arr: number[] = [];
+        let arr = [];
         try { arr = JSON.parse(arrRaw); if (!Array.isArray(arr)) arr = []; } catch { arr = []; }
         arr.push(Number(mins));
         if (arr.length > 100) arr = arr.slice(-100);
