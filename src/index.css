@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Puedes añadir estilos globales personalizados aquí */
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
