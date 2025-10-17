@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-const logoUrl = `${import.meta.env.BASE_URL}ingetes.jpg`;
+const logoIngetes = `${import.meta.env.BASE_URL}ingetes.jpg`;
+const logoIngecap = `${import.meta.env.BASE_URL}ingecap.jpg`;
 
 // ==========================================================
 // Tracking helper (cliente)
@@ -321,7 +322,7 @@ function Header() {
     <header className="w-full sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-white/70 border-b border-slate-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <img src={logoUrl} alt="INGETES" className="h-10 w-auto" />
+          <img src={logoIngetes} alt="INGETES" className="h-10 w-auto" />
           <div className="hidden md:block">
             <p className="text-xs uppercase tracking-widest text-slate-500">Portal para Canales de Distribucion</p>
             <p className="text-sm font-medium text-slate-800">Fidelizacion - Cotizaciones - Listas de Precios</p>
@@ -448,13 +449,7 @@ function IngecapScreen({ hasAccess, setHasAccess }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-start justify-between gap-4">
           <div>
-<img src={logoUrl} alt="INGETES" className="h-10 w-auto"
-     onError={(e)=>{ // pequeño fallback por si cambia el base
-       if (!e.currentTarget.dataset.fbk) {
-         e.currentTarget.dataset.fbk = '1';
-         e.currentTarget.src = '/ingetes.jpg';
-       }
-     }} />
+            <img src={logoIngecap} alt="INGECAP" className="h-10 w-auto" />
             <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">INGECAP</h1>
             <p className="mt-1 text-sm font-semibold text-emerald-700">Centro de experiencia e innovación</p>
             <p className="mt-2 text-slate-700 max-w-2xl">Bienvenido a la membresía de <strong>INGECAP</strong>. Desde aquí podrás acceder a servicios exclusivos que potencian tus proyectos y ventas. Esta sección se mostrará completa únicamente a usuarios con acceso habilitado.</p>
