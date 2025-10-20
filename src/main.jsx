@@ -1,4 +1,4 @@
-import "./index.css"; 
+import "./index.css";
 import React from "react";
 import ReactDOM from "react-dom/client";
 
@@ -9,20 +9,29 @@ import PortalAdminUsuarios from "./portal_administrador_de_usuarios.jsx";
 import IngetesAdmin from "./ingetes_admin.jsx";
 
 const routes = {
-  "": PortadaPortalClientes,        // sin hash
-  "#home": PortadaPortalClientes,   // home
-  "#ingresar": PortalClientesAuth,  // login
-  "#admin": PortalAdminUsuarios,    // admin de usuarios
-  "#ingetes-admin": IngetesAdmin,   // backoffice demo
+  "": PortalClientesAuth,           // (sin hash) -> LOGIN
+  "#ingresar": PortalClientesAuth,  // /#ingresar -> LOGIN
+  "#home": PortadaPortalClientes,   // /#home     -> PORTADA
+  "#admin": PortalAdminUsuarios,
+  "#ingetes-admin": IngetesAdmin,
 };
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
+function normalizeHash() {
+  if (!window.location.hash) {
+    // si entra sin hash, fuerza /#ingresar (login)
+    window.location.hash = "#ingresar";
+    return "#ingresar";
+  }
+  return window.location.hash;
+}
+
 function mount() {
-  const hash = window.location.hash || "#home";
+  const hash = normalizeHash();
   const View = routes[hash] || PortadaPortalClientes;
   root.render(<View />);
 }
 
 window.addEventListener("hashchange", mount);
-mount(); // primer render
+mount();
