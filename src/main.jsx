@@ -10,8 +10,6 @@ const routes = {
   "": PortalClientesAuth,           // (sin hash) -> LOGIN
   "#ingresar": PortalClientesAuth,  // /#ingresar -> LOGIN
   "#home": PortadaPortalClientes,   // /#home     -> PORTADA
-  "#admin": PortalAdminUsuarios,
-  "#ingetes-admin": IngetesAdmin,
 };
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
