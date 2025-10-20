@@ -5,8 +5,6 @@ import ReactDOM from "react-dom/client";
 // Vistas
 import PortadaPortalClientes from "./PortadaPortalClientes.jsx";
 import PortalClientesAuth from "./portal_de_acceso_clientes.jsx";
-import PortalAdminUsuarios from "./portal_administrador_de_usuarios.jsx";
-import IngetesAdmin from "./ingetes_admin.jsx";
 
 const routes = {
   "": PortalClientesAuth,           // (sin hash) -> LOGIN
