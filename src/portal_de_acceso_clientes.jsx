@@ -86,34 +86,29 @@ export default function PortalClientesAuth() {
 }
 
 function LoginView({ onChangeMode }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState({ email: "", password: "" });
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [errors, setErrors] = React.useState({ email: "", password: "" });
 
-  // 1) Relleno automático (solo para la demo de redirección)
+  // Autorrelleno SOLO para la demo de redirección
   React.useEffect(() => {
     setEmail("cliente.demo@empresa.com");
     setPassword("Demo1234!");
   }, []);
 
-  // 2) Submit sin esperar nada: redirige directo al #home
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Si quieres exigir que no estén vacíos (pero sin más validación):
-    if (!email.trim() || !password.trim()) {
-      setErrors({
-        email: !email.trim() ? "Ingresa un correo" : "",
-        password: !password.trim() ? "Ingresa tu contraseña" : "",
-      });
-      return;
-    }
+    // Validación mínima (solo que no estén vacíos)
+    const nextErrors = {
+      email: email.trim() ? "" : "Ingresa un correo",
+      password: password.trim() ? "" : "Ingresa tu contraseña",
+    };
+    setErrors(nextErrors);
+    if (nextErrors.email || nextErrors.password) return;
 
-    // URL con hash. Queda: https://ingetes.github.io/Portal-de-clientes/#home
+    // Redirección directa al home con hash
     const to = `${window.location.origin}${window.location.pathname}#home`;
-
-    // Evita quedarse en el estado 'Ingresando...' y redirige ya:
     window.location.replace(to);
   };
 
