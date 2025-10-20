@@ -103,9 +103,9 @@ function LoginView({ onChangeMode }) {
       setLoading(true);
       // TODO: Llama tu endpoint real, por ejemplo:
       // await api.post('/auth/login', { email, password })
-      await new Promise((r) => setTimeout(r, 600));
-      alert("Inicio de sesión exitoso (demo). Redirigiendo al portal...");
-      // window.location.href = "/portal";
+      await new Promise((r) => setTimeout(r, 600)); // simula login
+      // Redirige al home del portal (PortadaPortalClientes)
+      window.location.hash = "#home";
     } catch (err) {
       alert("No fue posible iniciar sesión. Verifica tus datos.");
     } finally {
@@ -163,20 +163,15 @@ function LoginView({ onChangeMode }) {
           Solicitar creación de cuenta
         </button>
       </div>
-
-      <button
-        type="submit"
-        disabled={loading}
-        className={cn(
-          "w-full rounded-xl bg-emerald-600 text-white py-2.5 font-medium shadow-md",
-          "hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-100",
-          loading && "opacity-70 cursor-not-allowed"
-        )}
-        onClick={() => {
-          // redirigir al portal principal (PortadaPortalClientes)
-          window.location.hash = "#home";
-        }}
-      >
+     <button
+       type="submit"
+       disabled={loading}
+       className={cn(
+         "w-full rounded-xl bg-emerald-600 text-white py-2.5 font-medium shadow-md",
+         "hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-100",
+         loading && "opacity-70 cursor-not-allowed"
+       )}
+     >
         {loading ? "Ingresando…" : "Ingresar"}
       </button>
     </form>
