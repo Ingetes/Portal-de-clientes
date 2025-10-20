@@ -91,29 +91,93 @@ function LoginView({ onChangeMode }) {
   const [errors, setErrors] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
 
-const handleSubmit = (e) => {
-  e.preventDefault();
-  // simplemente redirige al portal principal
-  window.location.href = "https://ingetes.github.io/Portal-de-clientes/#home";
-};
-    if (!EMAIL_RE.test(email)) next.email = "Ingresa un correo válido";
-    if (password.length < 8) next.password = "La contraseña debe tener mínimo 8 caracteres";
-    setErrors(next);
-    if (next.email || next.password) return;
+  // 1) Relleno automático (solo para la demo de redirección)
+  React.useEffect(() => {
+    setEmail("cliente.demo@empresa.com");
+    setPassword("Demo1234!");
+  }, []);
 
-    try {
-      setLoading(true);
-      // TODO: Llama tu endpoint real, por ejemplo:
-      // await api.post('/auth/login', { email, password })
-      await new Promise((r) => setTimeout(r, 600)); // simula login
-      // Redirige al home del portal (PortadaPortalClientes)
-      window.location.hash = "#home";
-    } catch (err) {
-      alert("No fue posible iniciar sesión. Verifica tus datos.");
-    } finally {
-      setLoading(false);
+  // 2) Submit sin esperar nada: redirige directo al #home
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // Si quieres exigir que no estén vacíos (pero sin más validación):
+    if (!email.trim() || !password.trim()) {
+      setErrors({
+        email: !email.trim() ? "Ingresa un correo" : "",
+        password: !password.trim() ? "Ingresa tu contraseña" : "",
+      });
+      return;
     }
+
+    // URL con hash. Queda: https://ingetes.github.io/Portal-de-clientes/#home
+    const to = `${window.location.origin}${window.location.pathname}#home`;
+
+    // Evita quedarse en el estado 'Ingresando...' y redirige ya:
+    window.location.replace(to);
   };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-5">
+      <header className="mb-2">
+        <h2 className="text-xl font-semibold text-gray-900">Inicia sesión</h2>
+        <p className="text-sm text-gray-500 mt-1">
+          Accede con tu correo corporativo y contraseña.
+        </p>
+      </header>
+
+      <Field label="Correo electrónico" required>
+        <input
+          type="email"
+          className="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-4 focus:ring-emerald-100"
+          placeholder="tucorreo@empresa.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          autoComplete="email"
+          required
+        />
+        {errors.email && <ErrorMsg msg={errors.email} />}
+      </Field>
+
+      <Field label="Contraseña" required>
+        <input
+          type="password"
+          className="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-4 focus:ring-emerald-100"
+          placeholder="••••••••"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          autoComplete="current-password"
+          required
+        />
+        {errors.password && <ErrorMsg msg={errors.password} />}
+      </Field>
+
+      <div className="flex items-center justify-between text-sm">
+        <button
+          type="button"
+          onClick={() => onChangeMode("forgot")}
+          className="text-emerald-700 hover:underline"
+        >
+          ¿Olvidaste tu contraseña?
+        </button>
+        <button
+          type="button"
+          onClick={() => onChangeMode("signup")}
+          className="text-gray-700 hover:underline"
+        >
+          Solicitar creación de cuenta
+        </button>
+      </div>
+
+      <button
+        type="submit"
+        className="w-full rounded-xl bg-emerald-600 text-white py-2.5 font-medium shadow-md hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-100"
+      >
+        Ingresar
+      </button>
+    </form>
+  );
+}
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
