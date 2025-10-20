@@ -365,14 +365,6 @@ function Header() {
           <a className="text-slate-600 hover:text-emerald-700" href="#herramientas">Herramientas</a>
           <a className="text-slate-600 hover:text-emerald-700" href="#stats">Estadisticas</a>
         </nav>
-        <div className="flex items-center gap-3">
-          <a
-            href="#administrador"
-            className="inline-flex items-center rounded-xl bg-white border border-emerald-600 text-emerald-700 hover:bg-emerald-50 px-4 py-2 text-sm font-semibold shadow-md transition-colors"
-          >
-            Administrador
-          </a>
-        </div>
       </div>
     </header>
   );
