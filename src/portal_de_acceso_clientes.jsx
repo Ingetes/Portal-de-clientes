@@ -106,7 +106,7 @@ function LoginView({ onChangeMode }) {
     if (nextErrors.email || nextErrors.password) return;
 
     // Redirección directa al home con hash (#home)
-     window.location.hash = "home";
+     window.location.hash = "#home";
   };
 
   return (
