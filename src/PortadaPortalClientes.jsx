@@ -3,8 +3,6 @@ const logoIngetes = `${import.meta.env.BASE_URL}ingetes.jpg`;
 const logoIngecap = `${import.meta.env.BASE_URL}ingecap.jpg`;
 
 import PortalClientesAuth from "./portal_de_acceso_clientes.jsx";
-import AdminAccessPortal from "./portal_administrador_de_usuarios.jsx";
-import AdminPortal from "./ingetes_admin.jsx";
 
 // helpers de UI para estilos consistentes
 const ui = {
@@ -227,10 +225,6 @@ export default function PortalDistribuidoresLanding() {
       <Header />
       {route === '#ingresar' ? (
         <PortalClientesAuth />
-      ) : route === '#administrador' ? (
-        <AdminAccessPortal />
-      ) : route === '#ingetes_admin' ? (
-        <AdminPortal />
       ) : route === '#documentos' ? (
         <DocumentosScreen />
       ) : route === '#herramientas' ? (
