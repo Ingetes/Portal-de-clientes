@@ -98,8 +98,6 @@ function LoginView({ onChangeMode }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Validación mínima (solo que no estén vacíos)
     const nextErrors = {
       email: email.trim() ? "" : "Ingresa un correo",
       password: password.trim() ? "" : "Ingresa tu contraseña",
@@ -107,7 +105,7 @@ function LoginView({ onChangeMode }) {
     setErrors(nextErrors);
     if (nextErrors.email || nextErrors.password) return;
 
-    // Redirección directa al home con hash
+    // Redirección directa al home con hash (#home)
     const to = `${window.location.origin}${window.location.pathname}#home`;
     window.location.replace(to);
   };
@@ -169,71 +167,6 @@ function LoginView({ onChangeMode }) {
         className="w-full rounded-xl bg-emerald-600 text-white py-2.5 font-medium shadow-md hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-100"
       >
         Ingresar
-      </button>
-    </form>
-  );
-}
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <header className="mb-2">
-        <h2 className="text-xl font-semibold text-gray-900">Inicia sesión</h2>
-        <p className="text-sm text-gray-500 mt-1">Accede con tu correo corporativo y contraseña.</p>
-      </header>
-
-      <Field label="Correo electrónico" required>
-        <input
-          type="email"
-          className="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-4 focus:ring-emerald-100"
-          placeholder="tucorreo@empresa.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          autoComplete="email"
-          required
-        />
-        <ErrorMsg msg={errors.email} />
-      </Field>
-
-      <Field label="Contraseña" required>
-        <input
-          type="password"
-          className="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-4 focus:ring-emerald-100"
-          placeholder="••••••••"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          autoComplete="current-password"
-          required
-          minLength={8}
-        />
-        <ErrorMsg msg={errors.password} />
-      </Field>
-
-      <div className="flex items-center justify-between text-sm">
-        <button
-          type="button"
-          onClick={() => onChangeMode("forgot")}
-          className="text-emerald-700 hover:underline"
-        >
-          ¿Olvidaste tu contraseña?
-        </button>
-        <button
-          type="button"
-          onClick={() => onChangeMode("signup")}
-          className="text-gray-700 hover:underline"
-        >
-          Solicitar creación de cuenta
-        </button>
-      </div>
-     <button
-       type="submit"
-       disabled={loading}
-       className={cn(
-         "w-full rounded-xl bg-emerald-600 text-white py-2.5 font-medium shadow-md",
-         "hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-100",
-         loading && "opacity-70 cursor-not-allowed"
-       )}
-     >
-        {loading ? "Ingresando…" : "Ingresar"}
       </button>
     </form>
   );
