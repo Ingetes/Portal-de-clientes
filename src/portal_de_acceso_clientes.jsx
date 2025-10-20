@@ -91,9 +91,11 @@ function LoginView({ onChangeMode }) {
   const [errors, setErrors] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const next = { email: "", password: "" };
+const handleSubmit = (e) => {
+  e.preventDefault();
+  // simplemente redirige al portal principal
+  window.location.href = "https://ingetes.github.io/Portal-de-clientes/#home";
+};
     if (!EMAIL_RE.test(email)) next.email = "Ingresa un correo válido";
     if (password.length < 8) next.password = "La contraseña debe tener mínimo 8 caracteres";
     setErrors(next);
