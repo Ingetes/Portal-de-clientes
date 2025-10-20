@@ -51,16 +51,6 @@ export default function PortalClientesAuth() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center p-4">
 <div className="w-full max-w-5xl mx-auto">
-  {/* Barra superior con Volver (derecha) */}
-  <div className="flex justify-end mb-4">
-    <a
-      href="#home"
-      className="inline-flex items-center rounded-xl bg-white border border-slate-300 text-slate-700 px-4 py-2 text-sm font-semibold shadow-sm hover:bg-slate-50 transition-colors"
-    >
-      ← Volver
-    </a>
-  </div>
-
   {/* Contenido principal: grid de 2 columnas */}
   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
     {/* Branding / Lado izquierdo */}
@@ -182,6 +172,10 @@ function LoginView({ onChangeMode }) {
           "hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-100",
           loading && "opacity-70 cursor-not-allowed"
         )}
+        onClick={() => {
+          // redirigir al portal principal (PortadaPortalClientes)
+          window.location.hash = "#home";
+        }}
       >
         {loading ? "Ingresando…" : "Ingresar"}
       </button>
