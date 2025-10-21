@@ -5,7 +5,7 @@ const logoIngecap = `${import.meta.env.BASE_URL}ingecap.jpg`;
 import PortalClientesAuth from "./portal_de_acceso_clientes.jsx";
 
 const BASE = import.meta.env.BASE_URL;
-const DOCS = {s
+const DOCS = {
   siemens: `${BASE}Listaprecios2025.pdf`,
   innomotics: `${BASE}Listapreciosinnomotics.pdf`,
   inventario: `${BASE}INFORME%20BALANCE%20DE%20INVENTARIO.xlsx`, // espacio codificado
@@ -132,7 +132,7 @@ const docsMenu = [
     try { const res = await fetch(encoded, { mode: 'cors', credentials: 'omit' }); if (!res.ok) throw new Error('HTTP ' + res.status); const blob = await res.blob(); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },0); return; } catch {}
     window.open(encoded, '_blank', 'noopener');
   };
-  useEffect(() => { console.assert(docsMenu.length === 4, 'DocsMenu debe tener 4 opciones'); console.assert(docsMenu[0].href.includes('/Siemens/'), 'Primera opción debe ser Siemens'); }, []);
+  useEffect(() => { console.assert(docsMenu.length === 4, 'DocsMenu debe tener 4 opciones'); console.assert(docsMenu[0].label.includes('Siemens'), 'Primera opción debe ser Siemens'); }, []);
   const push = (msg) => setMessages((m) => [...m, msg]);
   const go = (hash) => { window.location.hash = hash; track('chat_navigate', { to: hash }); };
 
@@ -591,10 +591,17 @@ const items = [
     window.open(encoded, '_blank', 'noopener');
   };
 
-  const buildViewerSrc = (href, q, usePdf) => {
-    if (usePdf) { const viewer = '/pdfjs/web/viewer.html'; const fileParam = `?file=${encodeURIComponent(href)}`; const hash = q ? `#search=${encodeURIComponent(q)}` : ''; return `${viewer}${fileParam}${hash}`; }
-    const base = href.split('#')[0]; const hash = q ? `#search=${encodeURIComponent(q)}` : `#toolbar=1`; return `${base}${hash}`;
-  };
+const buildViewerSrc = (href, q, usePdf) => {
+  if (usePdf) {
+    const viewer = `${BASE}pdfjs/web/viewer.html`;
+    const fileParam = `?file=${encodeURIComponent(href)}`;
+    const hash = q ? `#search=${encodeURIComponent(q)}` : '';
+    return `${viewer}${fileParam}${hash}`;
+  }
+  const base = href.split('#')[0];
+  const hash = q ? `#search=${encodeURIComponent(q)}` : `#toolbar=1`;
+  return `${base}${hash}`;
+};
 
   useEffect(() => { const testSrc = buildViewerSrc('/a/b.pdf', 'xyz', true); console.assert(testSrc.includes('?file=') && testSrc.includes('search=xyz'), 'buildViewerSrc debe construir URL de pdf.js'); }, []);
 
@@ -1153,7 +1160,17 @@ function HerramientasScreen() {
 
   const fileNameFromUrl = (url, fallback = 'documento') => { try { const clean = url.split('#')[0].split('?')[0]; const last = clean.substring(clean.lastIndexOf('/') + 1) || fallback; return decodeURIComponent(last);} catch { return fallback; } };
   const downloadFile = async (url, suggestedName) => { const encoded = encodeURI(url); const name = suggestedName || fileNameFromUrl(encoded); track('tool_doc_download_click', { href: encoded, name }); try { const res = await fetch(encoded, { mode: 'cors', credentials: 'omit' }); if (!res.ok) throw new Error('HTTP ' + res.status); const blob = await res.blob(); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0); return; } catch (e) {} window.open(encoded, '_blank', 'noopener'); };
-  const buildViewerSrc = (href, q, usePdf) => { if (usePdf) { const viewer = '/pdfjs/web/viewer.html'; const fileParam = `?file=${encodeURIComponent(href)}`; const hash = q ? `#search=${encodeURIComponent(q)}` : ''; return `${viewer}${fileParam}${hash}`; } const base = href.split('#')[0]; const hash = q ? `#search=${encodeURIComponent(q)}` : `#toolbar=1`; return `${base}${hash}`; };
+const buildViewerSrc = (href, q, usePdf) => {
+  if (usePdf) {
+    const viewer = `${BASE}pdfjs/web/viewer.html`;
+    const fileParam = `?file=${encodeURIComponent(href)}`;
+    const hash = q ? `#search=${encodeURIComponent(q)}` : '';
+    return `${viewer}${fileParam}${hash}`;
+  }
+  const base = href.split('#')[0];
+  const hash = q ? `#search=${encodeURIComponent(q)}` : `#toolbar=1`;
+  return `${base}${hash}`;
+};
 
   const openPreview = (item) => { track('tool_doc_preview_open', { title: item.title, href: item.href }); const src = buildViewerSrc(item.href, term, usePdfJs); setTerm(''); setPreview({ item, src }); setCopied(false); };
   const applySearch = () => { if (!preview) return; const src = buildViewerSrc(preview.item.href, term, usePdfJs); setPreview({ ...preview, src }); };
