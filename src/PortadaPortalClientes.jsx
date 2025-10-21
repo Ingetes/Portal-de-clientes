@@ -4,6 +4,14 @@ const logoIngecap = `${import.meta.env.BASE_URL}ingecap.jpg`;
 
 import PortalClientesAuth from "./portal_de_acceso_clientes.jsx";
 
+const BASE = import.meta.env.BASE_URL;
+const DOCS = {s
+  siemens: `${BASE}Listaprecios2025.pdf`,
+  innomotics: `${BASE}Listapreciosinnomotics.pdf`,
+  inventario: `${BASE}INFORME%20BALANCE%20DE%20INVENTARIO.xlsx`, // espacio codificado
+  promo: `${BASE}inventario-promocion.xlsx`,
+};
+
 // helpers de UI para estilos consistentes
 const ui = {
   label: "block text-xs text-slate-600 mb-1",
@@ -82,13 +90,13 @@ export default function PortalDistribuidoresLanding() {
   ]);
   const [input, setInput] = useState('');
   // === Menú Documentos en el chatbot ===
-  const [showDocsMenu, setShowDocsMenu] = useState(false);
-  const docsMenu = [
-    { label: 'Lista de precios Siemens', href: '/documentos/listas-precios/Siemens/Listapreciosmayo2025.pdf' },
-    { label: 'Lista de precios Innomotics', href: '/documentos/listas-precios/Innomotics/Lista%20de%20precios%20innomotics-dic-23-1.pdf' },
-    { label: 'Inventario INGETES', href: '/documentos/inventario/INFORME%20BALANCE%20DE%20INVENTARIO%20-%2010%20OCTUBRE%202025.xlsx' },
-    { label: 'Inventario en Promoción', href: '/documentos/inventario/inventario-promocion.xlsx' }
-  ];
+const [showDocsMenu, setShowDocsMenu] = useState(false);
+const docsMenu = [
+  { label: 'Lista de precios Siemens',   href: DOCS.siemens },
+  { label: 'Lista de precios Innomotics', href: DOCS.innomotics },
+  { label: 'Inventario INGETES',         href: DOCS.inventario },
+  { label: 'Inventario en Promoción',    href: DOCS.promo, locked: true }, // marcado como restringido
+];
   // === Menú Herramientas en el chatbot ===
   const [showToolsMenu, setShowToolsMenu] = useState(false);
   const toolsMenu = [
@@ -284,13 +292,17 @@ export default function PortalDistribuidoresLanding() {
                   <p className="text-xs text-slate-600 mb-2">Descargas rápidas:</p>
                   <div className="flex flex-col gap-2">
                     {docsMenu.map((d, idx) => (
-                      <button key={idx} onClick={() => chatDownload(d.href)} className="w-full text-left rounded-lg px-3 py-2 text-sm font-medium bg-slate-50 hover:bg-slate-100 border border-slate-200">
-                        {d.label}
+                      <button
+                        key={idx}
+                        onClick={() => {
+                          if (d.locked) { window.location.hash = '#ingecap'; alert('Inventario en Promoción requiere membresía INGECAP.'); return; }
+                          chatDownload(d.href);
+                        }}
+                        className="w-full text-left rounded-lg px-3 py-2 text-sm font-medium bg-slate-50 hover:bg-slate-100 border border-slate-200"
+                      >
+                        {d.label}{d.locked ? ' · Requiere membresía' : ''}
                       </button>
                     ))}
-                  </div>
-                </div>
-              )}
 
               {/* Toggle del menú Herramientas */}
               <button onClick={() => { setShowToolsMenu(s => !s); track('chat_toggle_tools', { open: !showToolsMenu }); }} className="px-3 py-1 rounded-full border border-emerald-600 text-emerald-700 hover:bg-emerald-50 text-xs">{showToolsMenu ? 'Ocultar Herramientas' : 'Herramientas'}</button>
@@ -524,12 +536,41 @@ function DocumentosScreen() {
   const [usePdfJs, setUsePdfJs] = React.useState(false);
   const [copied, setCopied] = React.useState(false);
 
-  const items = [
-    { title: 'Lista de precios Siemens', desc: 'Tarifas vigentes de productos Siemens para canales de distribucion.', badge: 'Actualizado', href: '/documentos/listas-precios/Siemens/Listapreciosmayo2025.pdf', updated: 'Mayo 2025', size: '41.95 MB' },
-    { title: 'Lista de precios Innomotics', desc: 'Motores, variadores y soluciones de movimiento Innomotics.', badge: 'Nuevo', href: '/documentos/listas-precios/Innomotics/Lista%20de%20precios%20innomotics-dic-23-1.pdf', updated: 'Dic 2023', size: '1.82 MB' },
-    { title: 'Inventario INGETES', desc: 'Stock disponible por referencia con fechas de reposicion.', badge: 'Actualizable', href: '/documentos/inventario/INFORME%20BALANCE%20DE%20INVENTARIO%20-%2010%20OCTUBRE%202025.xlsx', updated: 'Oct 2025', size: '0.07 MB' },
-    { title: 'Inventario en Promocion', desc: 'Lotes en promocion con descuentos y fechas limite.', badge: 'Promocion', href: '/documentos/inventario/inventario-promocion.xlsx', updated: '-', size: '-' }
-  ];
+const items = [
+  {
+    title: 'Lista de precios Siemens',
+    desc: 'Tarifas vigentes de productos Siemens para canales de distribución.',
+    badge: 'Actualizado',
+    href: DOCS.siemens,
+    updated: '2025',
+    size: '—',
+  },
+  {
+    title: 'Lista de precios Innomotics',
+    desc: 'Motores, variadores y soluciones de movimiento Innomotics.',
+    badge: 'Nuevo',
+    href: DOCS.innomotics,
+    updated: '—',
+    size: '—',
+  },
+  {
+    title: 'Inventario INGETES',
+    desc: 'Stock disponible por referencia con fechas de reposición.',
+    badge: 'Actualizable',
+    href: DOCS.inventario,
+    updated: '—',
+    size: '—',
+  },
+  {
+    title: 'Inventario en Promoción',
+    desc: 'Lotes en promoción con descuentos y fechas límite.',
+    badge: 'Promoción',
+    href: DOCS.promo,
+    locked: true,                 // ← se marca como restringido
+    updated: '-',
+    size: '-',
+  },
+];
 
   useEffect(() => {
     console.assert(items.length >= 4, 'Deben existir al menos 4 documentos');
@@ -617,27 +658,58 @@ function DocumentosScreen() {
 
         <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {items.map((item, i) => (
-            <article key={i} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-bold text-slate-900">{item.title}</h3>
-                <span className="text-xs px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">{item.badge}</span>
-              </div>
-              <p className="mt-2 text-slate-700 text-sm">{item.desc}</p>
-              <dl className="mt-4 grid grid-cols-2 gap-3 text-xs text-slate-500">
-                <div>
-                  <dt className="uppercase tracking-wider">Actualizacion</dt>
-                  <dd className="mt-1">{item.updated}</dd>
-                </div>
-                <div>
-                  <dt className="uppercase tracking-wider">Tamano</dt>
-                  <dd className="mt-1">{item.size}</dd>
-                </div>
-              </dl>
-              <div className="mt-5 flex gap-3">
-                <button onClick={() => downloadFile(item.href, fileNameFromUrl(item.href))} className="rounded-xl bg-emerald-600 px-4 py-2 text-white font-semibold hover:bg-emerald-700">Descargar</button>
-                <button onClick={() => openPreview(item)} className="rounded-xl bg-white px-4 py-2 text-slate-700 font-semibold ring-1 ring-inset ring-slate-300 hover:bg-slate-50">Ver detalles</button>
-              </div>
-            </article>
+<article key={i} className="relative rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
+  {/* Overlay de restricción (solo para locked) */}
+  {item.locked && (
+    <div className="absolute inset-0 rounded-3xl bg-white/60 backdrop-blur-sm flex items-center justify-center z-10">
+      <div className="text-center">
+        <div className="mx-auto mb-2 h-8 w-8 rounded-full bg-slate-900 text-white flex items-center justify-center">🔒</div>
+        <p className="text-xs text-slate-600">Requiere membresía INGECAP</p>
+      </div>
+    </div>
+  )}
+
+  <div className="flex items-center justify-between">
+    <h3 className="text-lg font-bold text-slate-900">{item.title}</h3>
+    <span className="text-xs px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">{item.badge}</span>
+  </div>
+
+  <p className="mt-2 text-slate-700 text-sm">{item.desc}</p>
+  <dl className="mt-4 grid grid-cols-2 gap-3 text-xs text-slate-500">
+    <div>
+      <dt className="uppercase tracking-wider">Actualización</dt>
+      <dd className="mt-1">{item.updated}</dd>
+    </div>
+    <div>
+      <dt className="uppercase tracking-wider">Tamaño</dt>
+      <dd className="mt-1">{item.size}</dd>
+    </div>
+  </dl>
+
+  <div className="mt-5 flex gap-3">
+    <button
+      onClick={() => {
+        if (item.locked) { window.location.hash = '#ingecap'; alert('Inventario en Promoción requiere membresía INGECAP.'); return; }
+        downloadFile(item.href);
+      }}
+      className={`rounded-xl px-4 py-2 font-semibold ${item.locked ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-emerald-600 text-white hover:bg-emerald-700'}`}
+      disabled={item.locked}
+    >
+      Descargar
+    </button>
+
+    <button
+      onClick={() => {
+        if (item.locked) { window.location.hash = '#ingecap'; alert('Inventario en Promoción requiere membresía INGECAP.'); return; }
+        openPreview(item);
+      }}
+      className={`rounded-xl px-4 py-2 font-semibold ring-1 ring-inset ${item.locked ? 'bg-slate-50 text-slate-400 ring-slate-200 cursor-not-allowed' : 'bg-white text-slate-700 ring-slate-300 hover:bg-slate-50'}`}
+      disabled={item.locked}
+    >
+      Ver detalles
+    </button>
+  </div>
+</article>
           ))}
         </div>
 
