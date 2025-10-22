@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 const logoIngetes = `${import.meta.env.BASE_URL}ingetes.jpg`;
 const logoIngecap = `${import.meta.env.BASE_URL}ingecap.jpg`;
+// Usa el visor oficial de pdf.js desde CDN (evita subir la carpeta /pdfjs al repo)
+const PDF_VIEWER = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/web/viewer.html';
 
 import PortalClientesAuth from "./portal_de_acceso_clientes.jsx";
 
@@ -607,15 +609,16 @@ const items = [
   };
 
 const buildViewerSrc = (href, q, usePdf) => {
+  // Siempre que queramos visor, usamos el CDN
   if (usePdf) {
-    const viewer = `${BASE}pdfjs/web/viewer.html`;
     const fileParam = `?file=${encodeURIComponent(href)}`;
     const hash = q ? `#search=${encodeURIComponent(q)}` : '';
-    return `${viewer}${fileParam}${hash}`;
+    return `${PDF_VIEWER}${fileParam}${hash}`;
   }
-const base = href.split('#')[0];
-const hash = q ? `#search=${encodeURIComponent(q)}` : `#toolbar=1`;
-return `${base}${hash}`;
+  // Alternativa sin visor (abre el PDF nativo del navegador)
+  const base = href.split('#')[0];
+  const hash = q ? `#search=${encodeURIComponent(q)}` : `#toolbar=1`;
+  return `${base}${hash}`;
 };
 
   useEffect(() => { const testSrc = buildViewerSrc('/a/b.pdf', 'xyz', true); console.assert(testSrc.includes('?file=') && testSrc.includes('search=xyz'), 'buildViewerSrc debe construir URL de pdf.js'); }, []);
@@ -716,30 +719,28 @@ const openPreview = (item, q = '') => {
     </div>
   </dl>
 
-  <div className="mt-5 flex gap-3">
-    <button
-      onClick={() => {
-        if (item.locked) { window.location.hash = '#ingecap'; alert('Inventario en Promoción.'); return; }
-        downloadFile(item.href);
-      }}
-      className={`rounded-xl px-4 py-2 font-semibold ${item.locked ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-emerald-600 text-white hover:bg-emerald-700'}`}
-      disabled={item.locked}
-    >
-      Descargar
-    </button>
+<div className="mt-5 flex gap-3">
+  <button
+    onClick={() => {
+      if (item.locked) { window.location.hash = '#ingecap'; alert('Inventario en Promoción.'); return; }
+      downloadFile(item.href);
+    }}
+    className={`rounded-xl px-4 py-2 font-semibold ${item.locked ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-emerald-600 text-white hover:bg-emerald-700'}`}
+    disabled={item.locked}
+  >
+    Descargar
+  </button>
 
-      <button
-        onClick={() => {
-          if (item.locked) { window.location.hash = '#ingecap'; alert('Inventario en Promoción.'); return; }
-          openPreview(item);
-        }}
-        className={`rounded-xl px-4 py-2 font-semibold ring-1 ring-inset ${item.locked ? 'bg-slate-50 text-slate-400 ring-slate-200 cursor-not-allowed' : 'bg-white text-slate-700 ring-slate-300 hover:bg-slate-50'}`}
-        disabled={item.locked}
-      >
-        Ver detalles
-      </button>
-    )}
-  </div>
+  {/* Solo mostrar "Ver detalles" cuando el archivo sea PDF */}
+  { /\.pdf($|[?#])/i.test(item.href) && !item.locked && (
+    <button
+      onClick={() => openPreview(item)}
+      className="rounded-xl px-4 py-2 font-semibold bg-white text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50"
+    >
+      Ver detalles
+    </button>
+  )}
+</div>
 </article>
           ))}
         </div>
