@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 const logoIngetes = `${import.meta.env.BASE_URL}ingetes.jpg`;
 const logoIngecap = `${import.meta.env.BASE_URL}ingecap.jpg`;
+// Visor oficial de Mozilla (no hace falta copiar pdf.js al repo)
+const PDFJS_VIEWER = 'https://mozilla.github.io/pdf.js/web/viewer.html';
 
 import PortalClientesAuth from "./portal_de_acceso_clientes.jsx";
 
@@ -14,6 +16,28 @@ const DOCS = {
   chemical: `${BASE}Chemical_Resistance_Chart_202106.pdf`,
   celdas: `${BASE}manual%20de%20celdas%20y%20MODULOS%20DE%20PESAJE%20RICE%20LAKE%20en%20español.pdf`,
 };
+
+// ejemplo: abrir Siemens
+const href = `${BASE}Listaprecios2025.pdf`;  // tu ruta actual
+setDocHref(href);
+setDocQuery('');
+setUsePdfJs(true); // si quieres que entre usando pdf.js por defecto
+setIframeSrc(buildViewerSrc(href, '', true));
+setIsModalOpen(true);
+
+// ejemplo: abrir Innomotics
+const href = `${BASE}Listapreciosinnomotics.pdf`;
+setDocHref(href);
+setDocQuery('');
+setIframeSrc(buildViewerSrc(href, '', usePdfJs));
+setIsModalOpen(true);
+
+// ejemplo: abrir desde "Herramientas" un PDF en modal
+const href = `${BASE}Siemens%20Liner%20Full%20New.pdf`; // etc
+setDocHref(href);
+setDocQuery('');
+setIframeSrc(buildViewerSrc(href, '', usePdfJs));
+setIsModalOpen(true);
 
 // helpers de UI para estilos consistentes
 const ui = {
@@ -604,18 +628,17 @@ const items = [
   };
 
 // 👉 NUEVO: aceptar flag para usar pdf.js
-const buildViewerSrc = (href, q, usePdf) => {
+function buildViewerSrc(href, q, usePdf) {
   if (usePdf) {
-    const viewer = `${BASE}pdfjs/web/viewer.html`;
-    const fileParam = `?file=${encodeURIComponent(href)}`;
+    const abs = new URL(href, window.location.origin).href; // URL absoluta del PDF
+    const file = `?file=${encodeURIComponent(abs)}`;
     const hash = q ? `#search=${encodeURIComponent(q)}` : '';
-    return `${viewer}${fileParam}${hash}`;
+    return `${PDFJS_VIEWER}${file}${hash}`;
   }
-  // fallback: visor nativo
   const base = href.split('#')[0];
   const hash = q ? `#search=${encodeURIComponent(q)}` : '#toolbar=1';
   return `${base}${hash}`;
-};
+}
 
   useEffect(() => { const testSrc = buildViewerSrc('/a/b.pdf', 'xyz', true); console.assert(testSrc.includes('?file=') && testSrc.includes('search=xyz'), 'buildViewerSrc debe construir URL de pdf.js'); }, []);
 
@@ -1216,10 +1239,11 @@ const tools = [
 ];
 
 function HerramientasScreen() {
-  const [preview, setPreview] = React.useState(null); // { item, src }
-  const [term, setTerm] = React.useState('');
-  const [usePdfJs, setUsePdfJs] = React.useState(true);
-  const [copied, setCopied] = React.useState(false);
+const [usePdfJs, setUsePdfJs]   = React.useState(true);  // checkbox
+const [docHref, setDocHref]     = React.useState('');    // pdf actual
+const [docQuery, setDocQuery]   = React.useState('');    // texto de búsqueda
+const [iframeSrc, setIframeSrc] = React.useState('');    // src del iframe
+const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   const fileNameFromUrl = (url, fallback = 'documento') => { try { const clean = url.split('#')[0].split('?')[0]; const last = clean.substring(clean.lastIndexOf('/') + 1) || fallback; return decodeURIComponent(last);} catch { return fallback; } };
   const downloadFile = async (url, suggestedName) => { const encoded = encodeURI(url); const name = suggestedName || fileNameFromUrl(encoded); track('tool_doc_download_click', { href: encoded, name }); try { const res = await fetch(encoded, { mode: 'cors', credentials: 'omit' }); if (!res.ok) throw new Error('HTTP ' + res.status); const blob = await res.blob(); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0); return; } catch (e) {} window.open(encoded, '_blank', 'noopener'); };
