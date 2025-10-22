@@ -10,6 +10,9 @@ const DOCS = {
   innomotics: `${BASE}Listapreciosinnomotics.pdf`,
   inventario: `${BASE}INFORME%20BALANCE%20DE%20INVENTARIO.xlsx`, // espacio codificado
   promo: `${BASE}inventario-promocion.xlsx`,
+  liner: `${BASE}Siemens%Liner%Full%New.pdf`,
+  chemical: `${BASE}Chemical_Resistance_Chart_202106.pdf`,
+  celdas: `${BASE}manual%de%celdas%y%MODULOS%DE%PESAJE%RICE%LAKE%en%español.pdf`,
 };
 
 // helpers de UI para estilos consistentes
@@ -182,19 +185,19 @@ const docsMenu = [
     // Abrir visores en modal dentro de Herramientas
     if (lower === 'liner') {
       go('#herramientas');
-      emit('portal:openPreview', { section: 'herramientas', title: 'Compatibilidad de liner', href: '/herramientas/Siemens%20Liner%20Full%20New.pdf', search: '' });
+      emit('portal:openPreview', { section: 'documentos', title: 'Compatibilidad de liner', href: DOCS.liner, search: ref });
       push({ from:'bot', text:'Abriendo "Compatibilidad de liner" en visor interno.'});
       return;
     }
     if (lower === 'materiales') {
       go('#herramientas');
-      emit('portal:openPreview', { section: 'herramientas', title: 'Tabla de compatibilidad de materiales', href: '/herramientas/Chemical_Resistance_Chart_202106.pdf', search: '' });
+      emit('portal:openPreview', { section: 'documentos', title: 'Tabla de compatibilidad de materiales', href: DOCS.chemical, search: ref });
       push({ from:'bot', text:'Abriendo "Tabla de compatibilidad de materiales" en visor interno.'});
       return;
     }
     if (lower === 'guia' || lower === 'guía') {
       go('#herramientas');
-      emit('portal:openPreview', { section: 'herramientas', title: 'Guia de seleccion de celdas de carga', href: '/herramientas/manual%20de%20celdas%20y%20MODULOS%20DE%20PESAJE%20RICE%20LAKE%20en%20espa%C3%B1ol.pdf', search: '' });
+      emit('portal:openPreview', { section: 'documentos', title: 'Guia de seleccion de celdas de carga', href: DOCS.celdas, search: ref });
       push({ from:'bot', text:'Abriendo "Guía de selección de celdas de carga" en visor interno.'});
       return;
     }
@@ -204,7 +207,7 @@ const docsMenu = [
       const ref = txt.slice(7).trim();
       if (!ref) { push({ from:'bot', text:'Escribe: buscar <REFERENCIA> (ej. 3RT2016-1AN21)'}); return; }
       go('#documentos');
-      emit('portal:openPreview', { section: 'documentos', title: 'Lista de precios Siemens', href: '/documentos/listas-precios/Siemens/Listapreciosmayo2025.pdf', search: ref, usePdfJs: true });
+      emit('portal:openPreview', { section: 'documentos', title: 'Lista de precios Siemens', href: DOCS.siemens, search: ref, usePdfJs: true });
       push({ from:'bot', text:`Buscando "${ref}" en la Lista de precios Siemens...` });
       return;
     }
