@@ -608,17 +608,12 @@ const items = [
     window.open(encoded, '_blank', 'noopener');
   };
 
+// En HerramientasScreen()
 const buildViewerSrc = (href, q, usePdf) => {
-  // Siempre visor pdf.js por CDN
-  if (usePdf) {
-    const fileParam = `?file=${encodeURIComponent(href)}`;
-    const hash = q ? `#search=${encodeURIComponent(q)}` : '';
-    return `${PDF_VIEWER}${fileParam}${hash}`;
-  }
-  // Alternativa sin visor (abre PDF nativo del navegador)
-  const base = href.split('#')[0];
-  const hash = q ? `#search=${encodeURIComponent(q)}` : `#toolbar=1`;
-  return `${base}${hash}`;
+  // Siempre visor pdf.js por CDN para evitar descargas o 404s
+  const fileParam = `?file=${encodeURIComponent(href)}`;
+  const hash = q ? `#search=${encodeURIComponent(q)}` : '';
+  return `${PDF_VIEWER}${fileParam}${hash}`;
 };
 
   useEffect(() => { const testSrc = buildViewerSrc('/a/b.pdf', 'xyz', true); console.assert(testSrc.includes('?file=') && testSrc.includes('search=xyz'), 'buildViewerSrc debe construir URL de pdf.js'); }, []);
@@ -697,7 +692,7 @@ const openPreview = (item, q = '') => {
     <div className="absolute inset-0 rounded-3xl bg-white/60 backdrop-blur-sm flex items-center justify-center z-10">
       <div className="text-center">
         <div className="mx-auto mb-2 h-8 w-8 rounded-full bg-slate-900 text-white flex items-center justify-center">🔒</div>
-        <p className="text-xs text-slate-600">En construcción.</p>
+        <p className="text-xs text-slate-600">EN CONSTRUCCIÓN.</p>
       </div>
     </div>
   )}
