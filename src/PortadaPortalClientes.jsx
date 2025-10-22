@@ -609,13 +609,13 @@ const items = [
   };
 
 const buildViewerSrc = (href, q, usePdf) => {
-  // Siempre que queramos visor, usamos el CDN
+  // Siempre visor pdf.js por CDN
   if (usePdf) {
     const fileParam = `?file=${encodeURIComponent(href)}`;
     const hash = q ? `#search=${encodeURIComponent(q)}` : '';
     return `${PDF_VIEWER}${fileParam}${hash}`;
   }
-  // Alternativa sin visor (abre el PDF nativo del navegador)
+  // Alternativa sin visor (abre PDF nativo del navegador)
   const base = href.split('#')[0];
   const hash = q ? `#search=${encodeURIComponent(q)}` : `#toolbar=1`;
   return `${base}${hash}`;
