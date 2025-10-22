@@ -358,7 +358,6 @@ const docsMenu = [
               )}
             </div>
           </div>
-)}
           <div className="border-t border-slate-200 p-3 flex items-center gap-2">
             <input
               value={input}
@@ -371,9 +370,9 @@ const docsMenu = [
           </div>
         </div>
       )}
-
       <Footer />
     </div>
+    )}    
   );
 }
 
@@ -1192,69 +1191,135 @@ return (
 // ==========================================================
 // Arriba ya tienes: const BASE = import.meta.env.BASE_URL;
 
+// ==========================================================
+// Herramientas (con visor interno PDF)
+// ==========================================================
 function HerramientasScreen() {
-const [usePdfJs, setUsePdfJs]   = React.useState(true);  // checkbox
-const [docHref, setDocHref]     = React.useState('');    // pdf actual
-const [docQuery, setDocQuery]   = React.useState('');    // texto de búsqueda
-const [iframeSrc, setIframeSrc] = React.useState('');    // src del iframe
-const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [preview, setPreview]   = React.useState(null); // { item:{title,href}, src }
+  const [term, setTerm]         = React.useState('');
+  const [usePdfJs, setUsePdfJs] = React.useState(true);
+  const [copied, setCopied]     = React.useState(false);
 
-  const fileNameFromUrl = (url, fallback = 'documento') => { try { const clean = url.split('#')[0].split('?')[0]; const last = clean.substring(clean.lastIndexOf('/') + 1) || fallback; return decodeURIComponent(last);} catch { return fallback; } };
-  const downloadFile = async (url, suggestedName) => { const encoded = encodeURI(url); const name = suggestedName || fileNameFromUrl(encoded); track('tool_doc_download_click', { href: encoded, name }); try { const res = await fetch(encoded, { mode: 'cors', credentials: 'omit' }); if (!res.ok) throw new Error('HTTP ' + res.status); const blob = await res.blob(); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0); return; } catch (e) {} window.open(encoded, '_blank', 'noopener'); };
+  const isPdf = (u) => /\.pdf($|[?#])/i.test(u);
 
-const openPreview = (item, q = '') => {
-  // Si NO es PDF, no intentamos previsualizar: forzamos descarga y avisamos
-  if (!isPdf(item.href)) {
-    alert('Este archivo no puede previsualizarse. Se descargará.');
-    downloadFile(item.href);
-    return;
-  }
-  // Para PDFs usamos SIEMPRE pdf.js (evita que el navegador intente descargar)
-  const src = buildViewerSrc(item.href, q || term, true);
-  track('doc_preview_open', { title: item.title, href: item.href });
-  if (q) setTerm(q); else setTerm('');
-  setPreview({ item, src });
-  setCopied(false);
-};
-  
-  const applySearch = () => { if (!preview) return; const src = buildViewerSrc(preview.item.href, term, usePdfJs); setPreview({ ...preview, src }); };
-  const copyReference = async () => { try { await navigator.clipboard.writeText(term || ''); setCopied(true); setTimeout(() => setCopied(false), 1500); } catch {} };
+  const fileNameFromUrl = (url, fallback = 'documento') => {
+    try {
+      const clean = url.split('#')[0].split('?')[0];
+      const last = clean.substring(clean.lastIndexOf('/') + 1) || fallback;
+      return decodeURIComponent(last);
+    } catch { return fallback; }
+  };
 
-  // Lista de herramientas (con orden definido)
+  const downloadFile = async (url, suggestedName) => {
+    const encoded = encodeURI(url);
+    const name = suggestedName || fileNameFromUrl(encoded);
+    try {
+      const res = await fetch(encoded, { mode: 'cors', credentials: 'omit' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const blob = await res.blob();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+      return;
+    } catch {}
+    window.open(encoded, '_blank', 'noopener');
+  };
+
+  const openPreview = (item, q = '') => {
+    if (!isPdf(item.href)) {
+      alert('Este archivo no puede previsualizarse. Se descargará.');
+      downloadFile(item.href);
+      return;
+    }
+    const src = buildViewerSrc(item.href, q || term, usePdfJs);
+    if (q) setTerm(q); else setTerm('');
+    setPreview({ item, src });
+    setCopied(false);
+  };
+
+  const applySearch = () => {
+    if (!preview) return;
+    const src = buildViewerSrc(preview.item.href, term, usePdfJs);
+    setPreview({ ...preview, src });
+  };
+
+  const copyReference = async () => {
+    try {
+      await navigator.clipboard.writeText(term || '');
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {}
+  };
+
+  // IMPORTANTE: usa DOCS/BASE (nada de rutas absolutas tipo "/herramientas/...").
   const tools = [
-    { title: 'TIA SELECTION TOOL', desc: 'Seleccion de equipos para TIA Portal: CPUs, IOs, comunicaciones y accesorios.', badge: 'Siemens', actions: [ { label: 'Descargar software', href: 'https://www.siemens.com/tia-selection-tool-standalone' }, { label: 'Abrir en Nube', href: 'https://www.siemens.com/tstcloud' } ] },
-    { title: 'PIA SELECTION TOOL', desc: 'Seleccion para instrumentacion y analitica de procesos.', badge: 'Siemens', actions: [ { label: 'Abrir', href: 'https://www.pia-portal.automation.siemens.com/SIE(cz1TSUQlM2FBTk9OJTNhYWV1YzFjMDI1MjA3eF9SM1BfMDIlM2FkTncybW1RNzlFUEpmbWxIOEs1ZlR6c1UzZmtxNnJKQnRlRnc0UFFaLUFUVA==)/Z3_PIA_PORTAL#tab-selection' } ] },
-    // Configurador antes de la tabla de compatibilidad
-    { title: 'Configurador de variadores y servomotores SIEMENS', desc: 'Configura variadores, motores y servos segun requerimientos.', badge: 'Siemens', actions: [ { label: 'Abrir', href: 'https://mall.industry.siemens.com/spice/cloudcm/dashboard?caller=SPC' } ] },
-    { title: 'Compatibilidad de liner', desc: 'Guia para elegir liner adecuado segun fluido y condiciones.', badge: 'Referencia', actions: [ { label: 'Abrir documento', href: '/herramientas/Siemens%20Liner%20Full%20New.pdf', openInModal: true } ] },
-    { title: 'Tabla de compatibilidad de materiales', desc: 'Consulta rapida para compatibilidades quimicas y de proceso.', badge: 'Referencia', actions: [ { label: 'Abrir', href: 'https://www.coleparmer.com/chemical-resistance' }, { label: 'Abrir documento', href: '/herramientas/Chemical_Resistance_Chart_202106.pdf', openInModal: true } ] },
-    { title: 'Guia de seleccion de celdas de carga', desc: 'Criterios de seleccion para celdas de carga por aplicacion.', badge: 'Guia', actions: [ { label: 'Abrir documento', href: '/herramientas/manual%20de%20celdas%20y%20MODULOS%20DE%20PESAJE%20RICE%20LAKE%20en%20espa%C3%B1ol.pdf', openInModal: true } ] }
+    {
+      title: 'TIA SELECTION TOOL',
+      desc: 'Seleccion de equipos para TIA Portal: CPUs, IOs, comunicaciones y accesorios.',
+      badge: 'Siemens',
+      actions: [
+        { label: 'Descargar software', href: 'https://www.siemens.com/tia-selection-tool-standalone' },
+        { label: 'Abrir en Nube',      href: 'https://www.siemens.com/tstcloud' }
+      ]
+    },
+    {
+      title: 'PIA SELECTION TOOL',
+      desc: 'Seleccion para instrumentacion y analitica de procesos.',
+      badge: 'Siemens',
+      actions: [
+        { label: 'Abrir', href: 'https://www.pia-portal.automation.siemens.com/SIE(cz1TSUQlM2FBTk9OJTNhYWV1YzFjMDI1MjA3eF9SM1BfMDIlM2FkTncybW1RNzlFUEpmbWxIOEs1ZlR6c1UzZmtxNnJKQnRlRnc0UFFaLUFUVA==)/Z3_PIA_PORTAL#tab-selection' }
+      ]
+    },
+    {
+      title: 'Configurador de variadores y servomotores SIEMENS',
+      desc: 'Configura variadores, motores y servos segun requerimientos.',
+      badge: 'Siemens',
+      actions: [
+        { label: 'Abrir', href: 'https://mall.industry.siemens.com/spice/cloudcm/dashboard?caller=SPC' }
+      ]
+    },
+    {
+      title: 'Compatibilidad de liner',
+      desc: 'Guia para elegir liner adecuado segun fluido y condiciones.',
+      badge: 'Referencia',
+      actions: [
+        { label: 'Abrir documento', href: DOCS.liner, openInModal: true }
+      ]
+    },
+    {
+      title: 'Tabla de compatibilidad de materiales',
+      desc: 'Consulta rapida para compatibilidades quimicas y de proceso.',
+      badge: 'Referencia',
+      actions: [
+        { label: 'Abrir',           href: 'https://www.coleparmer.com/chemical-resistance' },
+        { label: 'Abrir documento', href: DOCS.chemical, openInModal: true }
+      ]
+    },
+    {
+      title: 'Guia de seleccion de celdas de carga',
+      desc: 'Criterios de seleccion para celdas de carga por aplicacion.',
+      badge: 'Guia',
+      actions: [
+        { label: 'Abrir documento', href: DOCS.celdas, openInModal: true }
+      ]
+    }
   ];
 
-  // Tests de estructura y orden
-  useEffect(() => {
-    const tia = tools.find(t => t.title.includes('TIA')); console.assert(tia && tia.actions?.length === 2, 'TIA debe tener 2 acciones');
-    console.assert(tools.length === 6, 'Deben existir 6 herramientas');
-    const pia = tools.find(t => t.title.includes('PIA')); console.assert(pia?.actions?.[0]?.href?.includes('pia-portal'), 'PIA URL debe ser del portal oficial');
-    const liner = tools.find(t => t.title.toLowerCase().includes('liner')); console.assert(liner?.actions?.[0]?.label === 'Abrir documento', 'Liner debe usar Abrir documento');
-    const mat = tools.find(t => t.title.toLowerCase().includes('compatibilidad de materiales')); console.assert(mat?.actions?.length >= 2, 'Materiales debe tener 2 acciones'); console.assert(mat?.actions?.some(a => (a.href || '').includes('/herramientas/Chemical_Resistance_Chart_202106.pdf')), 'Materiales debe apuntar al PDF local');
-    const idxCfg = tools.findIndex(t => t.title.toLowerCase().includes('configurador')); const idxMat = tools.findIndex(t => t.title.toLowerCase().includes('compatibilidad de materiales')); console.assert(idxCfg > -1 && idxMat > -1 && idxCfg < idxMat, 'Configurador debe estar antes que la tabla de compatibilidad');
-    const tSrc = buildViewerSrc('/x.pdf', 'PTFE', true); console.assert(tSrc.includes('?file=') && tSrc.includes('search=PTFE'), 'buildViewerSrc (herramientas) ok');
-  }, []);
-
-  // --- Event listeners (desde chatbot) ---
-  useEffect(() => {
+  // Desde el chatbot
+  React.useEffect(() => {
     const onOpen = (e) => {
       const d = e.detail || {};
-      if (d.section !== 'herramientas') return;
-      if (!d.href) return;
-      const src = buildViewerSrc(d.href, d.search || '', true);
+      if (d.section !== 'herramientas' || !d.href) return;
+      const src = buildViewerSrc(d.href, d.search || '', usePdfJs);
       setTerm(d.search || '');
-      setPreview({ item: { title: d.title || 'Documento' }, src });
+      setPreview({ item: { title: d.title || 'Documento', href: d.href }, src });
     };
     window.addEventListener('portal:openPreview', onOpen);
     return () => window.removeEventListener('portal:openPreview', onOpen);
-  }, []);
+  }, [usePdfJs]);
 
   return (
     <section id="herramientas" className="min-h-[70vh] border-t border-slate-100 bg-white">
@@ -1276,22 +1341,38 @@ const openPreview = (item, q = '') => {
               </div>
               <p className="mt-2 text-slate-700 text-sm">{t.desc}</p>
               <div className="mt-5 flex flex-wrap gap-3">
-                {t.actions?.map((a, idx) => (
+                {t.actions?.map((a, idx) =>
                   a.openInModal ? (
-                    <button key={idx} onClick={() => { track('tool_click', { tool: t.title, action: a.label, href: a.href }); openPreview({ title: t.title, href: a.href }); }} className={`rounded-xl px-4 py-2 text-sm font-semibold ${idx === 0 ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-white text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50'}`}>{a.label}</button>
+                    <button
+                      key={idx}
+                      onClick={() => openPreview({ title: t.title, href: a.href })}
+                      className={`rounded-xl px-4 py-2 text-sm font-semibold ${idx === 0 ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-white text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50'}`}
+                    >
+                      {a.label}
+                    </button>
                   ) : (
-                    <a key={idx} href={a.href} target="_blank" rel="noopener" onClick={() => track('tool_click', { tool: t.title, action: a.label, href: a.href })} className={`rounded-xl px-4 py-2 text-sm font-semibold ${idx === 0 ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-white text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50'}`}>{a.label}</a>
+                    <a
+                      key={idx}
+                      href={a.href}
+                      target="_blank"
+                      rel="noopener"
+                      className={`rounded-xl px-4 py-2 text-sm font-semibold ${idx === 0 ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-white text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50'}`}
+                    >
+                      {a.label}
+                    </a>
                   )
-                ))}
+                )}
               </div>
             </article>
           ))}
         </div>
 
-        <div className="mt-8"><a href="#home" className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">← Volver al inicio</a></div>
+        <div className="mt-8">
+          <a href="#home" className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">← Volver al inicio</a>
+        </div>
       </div>
 
-      {/* Modal de previsualizacion PDF + Buscador */}
+      {/* Modal visor */}
       {preview && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
           <div className="w-full max-w-6xl rounded-3xl bg-white shadow-2xl overflow-hidden">
@@ -1301,15 +1382,36 @@ const openPreview = (item, q = '') => {
                 <p className="text-xs text-slate-500">Visor interno • Herramientas</p>
               </div>
               <div className="flex items-center gap-2">
-                <div className="hidden md:flex items-center gap-2 mr-3 text-xs text-slate-600"><label className="flex items-center gap-2 cursor-pointer select-none"><input type="checkbox" checked={usePdfJs} onChange={(e) => setUsePdfJs(e.target.checked)} />Usar visor pdf.js</label></div>
-                <input value={term} onChange={(e) => setTerm(e.target.value)} placeholder="Buscar (ej. PTFE, 3RT...)" className="w-64 md:w-72 rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600" />
+                <label className="hidden md:flex items-center gap-2 mr-3 text-xs text-slate-600">
+                  <input
+                    type="checkbox"
+                    checked={usePdfJs}
+                    onChange={(e) => {
+                      const v = e.target.checked;
+                      setUsePdfJs(v);
+                      setPreview(p => p ? ({ ...p, src: buildViewerSrc(p.item.href, term, v) }) : p);
+                    }}
+                  />
+                  Usar visor pdf.js
+                </label>
+                <input
+                  value={term}
+                  onChange={(e) => setTerm(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') applySearch(); }}
+                  placeholder="Buscar (ej. PTFE, 3RT...)"
+                  className="w-64 md:w-72 rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                />
                 <button onClick={applySearch} className="rounded-xl bg-emerald-600 px-3 py-2 text-white text-sm font-semibold hover:bg-emerald-700">Buscar</button>
-                <button onClick={copyReference} disabled={!term} className="rounded-xl bg-white px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-slate-300 hover:bg-slate-50 disabled:opacity-40">Copiar</button>
+                <button onClick={async()=>{ try{ await navigator.clipboard.writeText(term||''); setCopied(true); setTimeout(()=>setCopied(false),1500);}catch{} }} disabled={!term} className="rounded-xl bg-white px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-slate-300 hover:bg-slate-50 disabled:opacity-40">
+                  {copied ? 'Copiado' : 'Copiar'}
+                </button>
                 <button onClick={() => downloadFile(preview.item.href, fileNameFromUrl(preview.item.href))} className="rounded-xl bg-slate-900 px-3 py-2 text-white text-sm font-semibold hover:bg-black">Descargar</button>
                 <button onClick={() => setPreview(null)} className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold hover:bg-slate-50">Cerrar</button>
               </div>
             </div>
-            <div className="h-[75vh]"><iframe title="Visor PDF" src={buildViewerSrc(preview.item.href, term, usePdfJs)} className="w-full h-full" /></div>
+            <div className="h-[75vh]">
+              <iframe title="Visor PDF" src={preview.src} className="w-full h-full" />
+            </div>
           </div>
         </div>
       )}
