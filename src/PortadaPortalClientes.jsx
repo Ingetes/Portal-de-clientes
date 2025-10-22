@@ -10,7 +10,7 @@ const BASE = import.meta.env.BASE_URL;
 const DOCS = {
   siemens: `${BASE}Listaprecios2025.pdf`,
   innomotics: `${BASE}Listapreciosinnomotics.pdf`,
-  inventario: `${BASE}INFORME%20BALANCE%20DE%20INVENTARIO.xlsx`,
+  inventario: `${BASE}INVENTARIO.xlsx`,
   promo: `${BASE}inventario-promocion.xlsx`,
   liner: `${BASE}Siemens%20Liner%20Full%20New.pdf`,
   chemical: `${BASE}Chemical_Resistance_Chart_202106.pdf`,
