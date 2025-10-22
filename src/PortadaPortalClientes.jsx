@@ -305,7 +305,8 @@ const docsMenu = [
                       >
                         {d.label}{d.locked ? ' · Requiere membresía' : ''}
                       </button>
-                    ))}
+                    ))} 
+                    </div> 
 
               {/* Toggle del menú Herramientas */}
               <button onClick={() => { setShowToolsMenu(s => !s); track('chat_toggle_tools', { open: !showToolsMenu }); }} className="px-3 py-1 rounded-full border border-emerald-600 text-emerald-700 hover:bg-emerald-50 text-xs">{showToolsMenu ? 'Ocultar Herramientas' : 'Herramientas'}</button>
