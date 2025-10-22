@@ -606,9 +606,19 @@ const items = [
     window.open(encoded, '_blank', 'noopener');
   };
 
-// En HerramientasScreen()
-const buildViewerSrc = (href, q) => {
-  // siempre visor nativo del navegador
+// helpers por tipo de archivo
+const isPdf   = (u) => /\.pdf($|[?#])/i.test(u);
+const isExcel = (u) => /\.(xlsx?|csv)($|[?#])/i.test(u);
+
+// 👉 NUEVO: aceptar flag para usar pdf.js
+const buildViewerSrc = (href, q, usePdf) => {
+  if (usePdf) {
+    const viewer = `${BASE}pdfjs/web/viewer.html`;
+    const fileParam = `?file=${encodeURIComponent(href)}`;
+    const hash = q ? `#search=${encodeURIComponent(q)}` : '';
+    return `${viewer}${fileParam}${hash}`;
+  }
+  // fallback: visor nativo
   const base = href.split('#')[0];
   const hash = q ? `#search=${encodeURIComponent(q)}` : '#toolbar=1';
   return `${base}${hash}`;
@@ -616,24 +626,23 @@ const buildViewerSrc = (href, q) => {
 
   useEffect(() => { const testSrc = buildViewerSrc('/a/b.pdf', 'xyz', true); console.assert(testSrc.includes('?file=') && testSrc.includes('search=xyz'), 'buildViewerSrc debe construir URL de pdf.js'); }, []);
 
+// Estado ya lo tienes
+const [usePdfJs, setUsePdfJs] = React.useState(true);
+
+// abrir el modal
 const openPreview = (item, q = '') => {
-  // Si NO es PDF, se descarga (xlsx, csv, etc.)
-  if (!isPdf(item.href)) {
-    alert('Este archivo no puede previsualizarse. Se descargará.');
-    downloadFile(item.href);
-    return;
-  }
-  // Visor nativo con búsqueda
-  const src = buildViewerSrc(item.href, q || term);
+  if (!isPdf(item.href)) { alert('Este archivo no puede previsualizarse. Se descargará.'); downloadFile(item.href); return; }
+  const src = buildViewerSrc(item.href, q || term, usePdfJs); // 👈 pasar usePdfJs
   track('doc_preview_open', { title: item.title, href: item.href });
   if (q) setTerm(q); else setTerm('');
   setPreview({ item, src });
   setCopied(false);
 };
-  
-  const applySearch = () => {
+
+// ejecutar búsqueda
+const applySearch = () => {
   if (!preview) return;
-  const src = buildViewerSrc(preview.item.href, term);
+  const src = buildViewerSrc(preview.item.href, term, usePdfJs); // 👈 pasar usePdfJs
   setPreview({ ...preview, src });
 };
 
