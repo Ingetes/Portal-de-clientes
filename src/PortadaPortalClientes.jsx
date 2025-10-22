@@ -114,14 +114,14 @@ const docsMenu = [
       { label: 'Abrir', href: 'https://mall.industry.siemens.com/spice/cloudcm/dashboard?caller=SPC', external: true }
     ]},
     { title: 'Compatibilidad de liner', actions: [
-      { label: 'Abrir documento', href: '/herramientas/Siemens%20Liner%20Full%20New.pdf', modal: true }
+      { label: 'Abrir documento', href: DOCS.liner, modal: true }
     ]},
     { title: 'Tabla de compatibilidad de materiales', actions: [
       { label: 'Abrir', href: 'https://www.coleparmer.com/chemical-resistance', external: true },
-      { label: 'Abrir documento', href: '/herramientas/Chemical_Resistance_Chart_202106.pdf', modal: true }
+      { label: 'Abrir documento', href: DOCS.chemical, modal: true }
     ]},
     { title: 'Guía de selección de celdas de carga', actions: [
-      { label: 'Abrir documento', href: '/herramientas/manual%20de%20celdas%20y%20MODULOS%20DE%20PESAJE%20RICE%20LAKE%20en%20espa%C3%B1ol.pdf', modal: true }
+      { label: 'Abrir documento', href: DOCS.celdas, modal: true }
     ]}
   ];
   // Tests rápidos
@@ -613,9 +613,9 @@ const buildViewerSrc = (href, q, usePdf) => {
     const hash = q ? `#search=${encodeURIComponent(q)}` : '';
     return `${viewer}${fileParam}${hash}`;
   }
-  const base = href.split('#')[0];
-  const hash = q ? `#search=${encodeURIComponent(q)}` : `#toolbar=1`;
-  return `${base}${hash}`;
+const base = href.split('#')[0];
+const hash = q ? `#search=${encodeURIComponent(q)}` : `#toolbar=1`;
+return `${base}${hash}`;
 };
 
   useEffect(() => { const testSrc = buildViewerSrc('/a/b.pdf', 'xyz', true); console.assert(testSrc.includes('?file=') && testSrc.includes('search=xyz'), 'buildViewerSrc debe construir URL de pdf.js'); }, []);
@@ -628,7 +628,7 @@ const openPreview = (item, q = '') => {
     return;
   }
   // Para PDFs usamos SIEMPRE pdf.js (evita que el navegador intente descargar)
-  const src = buildViewerSrc(item.href, q || term, true);
+  const src = buildViewerSrc(item.href, q || term, false);
   track('doc_preview_open', { title: item.title, href: item.href });
   if (q) setTerm(q); else setTerm('');
   setPreview({ item, src });
