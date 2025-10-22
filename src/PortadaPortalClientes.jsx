@@ -670,10 +670,16 @@ const downloadFile = (url, suggestedName) => {
 
   // ZIP (opcional: igual al que ya tenías; omito por brevedad)
   const [zipProgress, setZipProgress] = React.useState({ current: 0, total: 0, status: 'idle' });
-  const downloadAllZip = async () => {
-    /* ... si ya lo tienes funcionando, déjalo tal cual ... */
-    alert('ZIP en construcción (opcional).');
-  };
+// Función para descargar todo en ZIP
+const downloadAllZip = () => {
+  const zipUrl = `${BASE}DocumentosINGETES.zip`; // nombre del archivo ZIP en /public/
+  const a = document.createElement('a');
+  a.href = encodeURI(zipUrl);
+  a.download = 'DocumentosINGETES.zip';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+};
 
   // Eventos desde el chatbot (opcional)
   React.useEffect(() => {
