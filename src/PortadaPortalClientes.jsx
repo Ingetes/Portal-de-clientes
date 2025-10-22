@@ -139,7 +139,7 @@ const docsMenu = [
       { label: 'Abrir en Nube', href: 'https://www.siemens.com/tstcloud', external: true }
     ]},
     { title: 'PIA SELECTION TOOL', actions: [
-      { label: 'Abrir', href: 'https://www.pia-portal.automation.siemens.com/SIE(cz1TSUQlM2FBTk9OJTNhYWV1YzFjMDI1MjA3eF9SM1BfMDIlM2FkTncybW1RNzlFUEpmbWxIOEs1ZlR6c1UzZmtxNnJKQnRlRnc0UFFaLUFUVA==)/Z3_PIA_PORTAL#tab-selection', external: true }
+      { label: 'Abrir', href: 'https://www.pia-portal.automation.siemens.com/default.htm', external: true }
     ]},
     { title: 'Configurador de variadores y servomotores SIEMENS', actions: [
       { label: 'Abrir', href: 'https://mall.industry.siemens.com/spice/cloudcm/dashboard?caller=SPC', external: true }
@@ -202,7 +202,7 @@ const docsMenu = [
     }
     if (lower === 'pia') {
       track('chat_open', { tool: 'PIA' });
-      window.open('https://www.pia-portal.automation.siemens.com/SIE(cz1TSUQlM2FBTk9OJTNhYWV1YzFjMDI1MjA3eF9SM1BfMDIlM2FkTncybW1RNzlFUEpmbWxIOEs1ZlR6c1UzZmtxNnJKQnRlRnc0UFFaLUFUVA==)/Z3_PIA_PORTAL#tab-selection', '_blank', 'noopener');
+      window.open('https://www.pia-portal.automation.siemens.com/default.htm', '_blank', 'noopener');
       push({ from:'bot', text:'Abriendo PIA Selection Tool en una nueva pestaña.'});
       return;
     }
@@ -1333,7 +1333,7 @@ const downloadFile = (url, suggestedName) => {
       desc: 'Seleccion para instrumentacion y analitica de procesos.',
       badge: 'Siemens',
       actions: [
-        { label: 'Abrir', href: 'https://www.pia-portal.automation.siemens.com/SIE(cz1TSUQlM2FBTk9OJTNhYWV1YzFjMDI1MjA3eF9SM1BfMDIlM2FkTncybW1RNzlFUEpmbWxIOEs1ZlR6c1UzZmtxNnJKQnRlRnc0UFFaLUFUVA==)/Z3_PIA_PORTAL#tab-selection' }
+        { label: 'Abrir', href: 'https://www.pia-portal.automation.siemens.com/default.htm' }
       ]
     },
     {
