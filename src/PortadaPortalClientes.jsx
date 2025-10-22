@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 const logoIngetes = `${import.meta.env.BASE_URL}ingetes.jpg`;
 const logoIngecap = `${import.meta.env.BASE_URL}ingecap.jpg`;
-// Usa el visor oficial de pdf.js desde CDN (evita subir la carpeta /pdfjs al repo)
-const PDF_VIEWER = 'https://mozilla.github.io/pdf.js/web/viewer.html';
 
 import PortalClientesAuth from "./portal_de_acceso_clientes.jsx";
 
@@ -609,31 +607,36 @@ const items = [
   };
 
 // En HerramientasScreen()
-const buildViewerSrc = (href, q, usePdf) => {
-  const fileParam = `?file=${encodeURIComponent(href)}`;
-  const hash = q ? `#search=${encodeURIComponent(q)}` : '';
-  return `${PDF_VIEWER}${fileParam}${hash}`;
+const buildViewerSrc = (href, q) => {
+  // siempre visor nativo del navegador
+  const base = href.split('#')[0];
+  const hash = q ? `#search=${encodeURIComponent(q)}` : '#toolbar=1';
+  return `${base}${hash}`;
 };
-
 
   useEffect(() => { const testSrc = buildViewerSrc('/a/b.pdf', 'xyz', true); console.assert(testSrc.includes('?file=') && testSrc.includes('search=xyz'), 'buildViewerSrc debe construir URL de pdf.js'); }, []);
 
 const openPreview = (item, q = '') => {
-  // Si NO es PDF, no intentamos previsualizar: forzamos descarga y avisamos
+  // Si NO es PDF, se descarga (xlsx, csv, etc.)
   if (!isPdf(item.href)) {
     alert('Este archivo no puede previsualizarse. Se descargará.');
     downloadFile(item.href);
     return;
   }
-  // Para PDFs usamos SIEMPRE pdf.js (evita que el navegador intente descargar)
-  const src = buildViewerSrc(item.href, q || term, true);
+  // Visor nativo con búsqueda
+  const src = buildViewerSrc(item.href, q || term);
   track('doc_preview_open', { title: item.title, href: item.href });
   if (q) setTerm(q); else setTerm('');
   setPreview({ item, src });
   setCopied(false);
 };
+  
+  const applySearch = () => {
+  if (!preview) return;
+  const src = buildViewerSrc(preview.item.href, term);
+  setPreview({ ...preview, src });
+};
 
-  const applySearch = () => { if (!preview) return; const src = buildViewerSrc(preview.item.href, term, usePdfJs); setPreview({ ...preview, src }); };
   const copyReference = async () => { try { await navigator.clipboard.writeText(term || ''); setCopied(true); setTimeout(()=>setCopied(false),1500);} catch {} };
 
   const [zipProgress, setZipProgress] = React.useState({ current: 0, total: 0, status: 'idle' });
