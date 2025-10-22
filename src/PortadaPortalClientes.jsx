@@ -541,10 +541,15 @@ function IngecapScreen({ hasAccess, setHasAccess }) {
 // Documentos
 // ==========================================================
 function DocumentosScreen() {
-  const [preview, setPreview] = React.useState(null); // { item, src }
-  const [term, setTerm] = React.useState('');
-  const [usePdfJs, setUsePdfJs] = React.useState(false);
-  const [copied, setCopied] = React.useState(false);
+const [preview, setPreview] = React.useState(null);
+const [term, setTerm] = React.useState('');
+// Para evitar descargas inesperadas, el visor por defecto será pdf.js
+const [usePdfJs, setUsePdfJs] = React.useState(true);
+
+// helpers por tipo de archivo
+const isPdf   = (u) => /\.pdf($|[?#])/i.test(u);
+const isExcel = (u) => /\.(xlsx?|csv)($|[?#])/i.test(u);
+const [copied, setCopied] = React.useState(false);
 
 const items = [
   {
@@ -615,12 +620,20 @@ const buildViewerSrc = (href, q, usePdf) => {
 
   useEffect(() => { const testSrc = buildViewerSrc('/a/b.pdf', 'xyz', true); console.assert(testSrc.includes('?file=') && testSrc.includes('search=xyz'), 'buildViewerSrc debe construir URL de pdf.js'); }, []);
 
-  const openPreview = (item, q = '') => {
-    track('doc_preview_open', { title: item.title, href: item.href });
-    const src = buildViewerSrc(item.href, q || term, usePdfJs);
-    if (q) setTerm(q); else setTerm('');
-    setPreview({ item, src }); setCopied(false);
-  };
+const openPreview = (item, q = '') => {
+  // Si NO es PDF, no intentamos previsualizar: forzamos descarga y avisamos
+  if (!isPdf(item.href)) {
+    alert('Este archivo no puede previsualizarse. Se descargará.');
+    downloadFile(item.href);
+    return;
+  }
+  // Para PDFs usamos SIEMPRE pdf.js (evita que el navegador intente descargar)
+  const src = buildViewerSrc(item.href, q || term, true);
+  track('doc_preview_open', { title: item.title, href: item.href });
+  if (q) setTerm(q); else setTerm('');
+  setPreview({ item, src });
+  setCopied(false);
+};
 
   const applySearch = () => { if (!preview) return; const src = buildViewerSrc(preview.item.href, term, usePdfJs); setPreview({ ...preview, src }); };
   const copyReference = async () => { try { await navigator.clipboard.writeText(term || ''); setCopied(true); setTimeout(()=>setCopied(false),1500);} catch {} };
@@ -1182,7 +1195,21 @@ const buildViewerSrc = (href, q, usePdf) => {
   return `${base}${hash}`;
 };
 
-  const openPreview = (item) => { track('tool_doc_preview_open', { title: item.title, href: item.href }); const src = buildViewerSrc(item.href, term, usePdfJs); setTerm(''); setPreview({ item, src }); setCopied(false); };
+const openPreview = (item, q = '') => {
+  // Si NO es PDF, no intentamos previsualizar: forzamos descarga y avisamos
+  if (!isPdf(item.href)) {
+    alert('Este archivo no puede previsualizarse. Se descargará.');
+    downloadFile(item.href);
+    return;
+  }
+  // Para PDFs usamos SIEMPRE pdf.js (evita que el navegador intente descargar)
+  const src = buildViewerSrc(item.href, q || term, true);
+  track('doc_preview_open', { title: item.title, href: item.href });
+  if (q) setTerm(q); else setTerm('');
+  setPreview({ item, src });
+  setCopied(false);
+};
+  
   const applySearch = () => { if (!preview) return; const src = buildViewerSrc(preview.item.href, term, usePdfJs); setPreview({ ...preview, src }); };
   const copyReference = async () => { try { await navigator.clipboard.writeText(term || ''); setCopied(true); setTimeout(() => setCopied(false), 1500); } catch {} };
 
