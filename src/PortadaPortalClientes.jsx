@@ -670,15 +670,57 @@ const downloadFile = (url, suggestedName) => {
 
   // ZIP (opcional: igual al que ya tenías; omito por brevedad)
   const [zipProgress, setZipProgress] = React.useState({ current: 0, total: 0, status: 'idle' });
-// Función para descargar todo en ZIP
-const downloadAllZip = () => {
-  const zipUrl = `${BASE}DocumentosINGETES.zip`; // nombre del archivo ZIP en /public/
-  const a = document.createElement('a');
-  a.href = encodeURI(zipUrl);
-  a.download = 'DocumentosINGETES.zip';
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
+// dentro de DocumentosScreen() — reemplaza TODA la función downloadAllZip por esto:
+const downloadAllZip = async () => {
+  try {
+    setZipProgress({ current: 0, total: 0, status: 'loading' });
+
+    // Cargamos librerías solo cuando se necesiten
+    const [{ default: JSZip }, { saveAs }] = await Promise.all([
+      import('jszip'),
+      import('file-saver'),
+    ]);
+
+    const zip = new JSZip();
+
+    // Toma los mismos items que renderizas en las tarjetas
+    const files = items
+      .filter((it) => !it.locked)  // no incluimos los bloqueados
+      .map((it) => it.href);
+
+    setZipProgress({ current: 0, total: files.length, status: 'fetching' });
+
+    // Helper para nombre de archivo
+    const toName = (url) => {
+      try {
+        const clean = url.split('#')[0].split('?')[0];
+        return decodeURIComponent(clean.substring(clean.lastIndexOf('/') + 1) || 'archivo');
+      } catch { return 'archivo'; }
+    };
+
+    let done = 0;
+    for (const href of files) {
+      // usa la misma lógica que tus descargas individuales: respeta espacios, etc.
+      const encoded = encodeURI(href);
+      const res = await fetch(encoded, { mode: 'cors', credentials: 'omit' });
+      if (!res.ok) throw new Error(`No se pudo obtener ${encoded} (HTTP ${res.status})`);
+      const buf = await res.arrayBuffer();
+      zip.file(toName(encoded), buf);
+      done += 1;
+      setZipProgress({ current: done, total: files.length, status: 'adding' });
+    }
+
+    setZipProgress((p) => ({ ...p, status: 'zipping' }));
+    const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE' });
+
+    // nombre del zip (puedes cambiarlo)
+    saveAs(blob, 'Documentos_INGETES.zip');
+    setZipProgress({ current: files.length, total: files.length, status: 'done' });
+  } catch (err) {
+    console.error(err);
+    alert('No se pudo crear el ZIP. Revisa la consola.');
+    setZipProgress({ current: 0, total: 0, status: 'idle' });
+  }
 };
 
   // Eventos desde el chatbot (opcional)
