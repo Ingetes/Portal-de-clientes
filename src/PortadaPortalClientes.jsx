@@ -629,23 +629,24 @@ function DocumentosScreen() {
     }
   };
 
-  const downloadFile = async (url, suggestedName) => {
-    const encoded = encodeURI(url);
-    const name = suggestedName || fileNameFromUrl(encoded);
+// Reemplaza la función downloadFile por esta versión (en DocumentosScreen y HerramientasScreen)
+const downloadFile = (url, suggestedName) => {
+  const encoded = encodeURI(url); // respeta %20, etc.
+  const name = suggestedName || (() => {
     try {
-      const res = await fetch(encoded, { mode: 'cors', credentials: 'omit' });
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const blob = await res.blob();
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = name;
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
-      return;
-    } catch {}
-    window.open(encoded, '_blank', 'noopener');
-  };
+      const clean = encoded.split('#')[0].split('?')[0];
+      return decodeURIComponent(clean.substring(clean.lastIndexOf('/') + 1) || 'documento');
+    } catch { return 'documento'; }
+  })();
+
+  const a = document.createElement('a');
+  a.href = encoded;
+  a.download = name;            // sugiere el nombre
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+};
 
   // Abrir modal (siempre que sea PDF), con o sin pdf.js
   const openPreview = (item, q = '') => {
@@ -1223,23 +1224,24 @@ function HerramientasScreen() {
     } catch { return fallback; }
   };
 
-  const downloadFile = async (url, suggestedName) => {
-    const encoded = encodeURI(url);
-    const name = suggestedName || fileNameFromUrl(encoded);
+// Reemplaza la función downloadFile por esta versión (en DocumentosScreen y HerramientasScreen)
+const downloadFile = (url, suggestedName) => {
+  const encoded = encodeURI(url); // respeta %20, etc.
+  const name = suggestedName || (() => {
     try {
-      const res = await fetch(encoded, { mode: 'cors', credentials: 'omit' });
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const blob = await res.blob();
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = name;
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
-      return;
-    } catch {}
-    window.open(encoded, '_blank', 'noopener');
-  };
+      const clean = encoded.split('#')[0].split('?')[0];
+      return decodeURIComponent(clean.substring(clean.lastIndexOf('/') + 1) || 'documento');
+    } catch { return 'documento'; }
+  })();
+
+  const a = document.createElement('a');
+  a.href = encoded;
+  a.download = name;            // sugiere el nombre
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+};
 
   const openPreview = (item, q = '') => {
     if (!isPdf(item.href)) {
