@@ -1187,6 +1187,34 @@ return (
 // ==========================================================
 // Herramientas (con visor interno PDF clonado)
 // ==========================================================
+// Arriba ya tienes: const BASE = import.meta.env.BASE_URL;
+
+const tools = [
+  // ...
+  {
+    title: 'Compatibilidad de liner',
+    // ...
+    actions: [
+      { label: 'Abrir documento', href: `${BASE}Siemens%20Liner%20Full%20New.pdf`, openInModal: true }
+    ]
+  },
+  {
+    title: 'Tabla de compatibilidad de materiales',
+    // ...
+    actions: [
+      { label: 'Abrir', href: 'https://www.coleparmer.com/chemical-resistance' },
+      { label: 'Abrir documento', href: `${BASE}Chemical_Resistance_Chart_202106.pdf`, openInModal: true }
+    ]
+  },
+  {
+    title: 'Guia de seleccion de celdas de carga',
+    // ...
+    actions: [
+      { label: 'Abrir documento', href: `${BASE}manual%20de%20celdas%20y%20MODULOS%20DE%20PESAJE%20RICE%20LAKE%20en%20español.pdf`, openInModal: true }
+    ]
+  }
+];
+
 function HerramientasScreen() {
   const [preview, setPreview] = React.useState(null); // { item, src }
   const [term, setTerm] = React.useState('');
