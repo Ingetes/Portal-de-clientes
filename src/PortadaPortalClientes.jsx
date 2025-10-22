@@ -294,19 +294,25 @@ const docsMenu = [
                 <div className="w-full mt-2 border border-slate-200 rounded-xl p-2 bg-white">
                   <p className="text-xs text-slate-600 mb-2">Descargas rápidas:</p>
                   <div className="flex flex-col gap-2">
-                    {docsMenu.map((d, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => {
-                          if (d.locked) { window.location.hash = '#ingecap'; alert('Inventario en Promoción requiere membresía INGECAP.'); return; }
-                          chatDownload(d.href);
-                        }}
-                        className="w-full text-left rounded-lg px-3 py-2 text-sm font-medium bg-slate-50 hover:bg-slate-100 border border-slate-200"
-                      >
-                        {d.label}{d.locked ? ' · Requiere membresía' : ''}
-                      </button>
-                    ))} 
-                    </div> 
+                    {showDocsMenu && (
+                      <div className="w-full mt-2 border border-slate-200 rounded-xl p-2 bg-white">
+                        <p className="text-xs text-slate-600 mb-2">Descargas rápidas:</p>
+                        <div className="flex flex-col gap-2">
+                          {docsMenu.map((d, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => {
+                                if (d.locked) { window.location.hash = '#ingecap'; alert('Inventario en Promoción requiere membresía INGECAP.'); return; }
+                                chatDownload(d.href);
+                              }}
+                              className="w-full text-left rounded-lg px-3 py-2 text-sm font-medium bg-slate-50 hover:bg-slate-100 border border-slate-200"
+                            >
+                              {d.label}{d.locked ? ' · Requiere membresía' : ''}
+                            </button>
+                          ))}
+                        </div>
+                      </div>  
+                    )}     
 
               {/* Toggle del menú Herramientas */}
               <button onClick={() => { setShowToolsMenu(s => !s); track('chat_toggle_tools', { open: !showToolsMenu }); }} className="px-3 py-1 rounded-full border border-emerald-600 text-emerald-700 hover:bg-emerald-50 text-xs">{showToolsMenu ? 'Ocultar Herramientas' : 'Herramientas'}</button>
