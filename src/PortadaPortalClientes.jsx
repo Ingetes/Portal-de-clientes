@@ -341,7 +341,7 @@ const docsMenu = [
               )}
             </div>
           </div>
-
+          )
           <div className="border-t border-slate-200 p-3 flex items-center gap-2">
             <input
               value={input}
