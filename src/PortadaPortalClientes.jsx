@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 const logoIngetes = `${import.meta.env.BASE_URL}ingetes.jpg`;
 const logoIngecap = `${import.meta.env.BASE_URL}ingecap.jpg`;
 // Usa el visor oficial de pdf.js desde CDN (evita subir la carpeta /pdfjs al repo)
-const PDF_VIEWER = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/web/viewer.html';
+const PDF_VIEWER = 'https://mozilla.github.io/pdf.js/web/viewer.html';
 
 import PortalClientesAuth from "./portal_de_acceso_clientes.jsx";
 
@@ -610,11 +610,11 @@ const items = [
 
 // En HerramientasScreen()
 const buildViewerSrc = (href, q, usePdf) => {
-  // Siempre visor pdf.js por CDN para evitar descargas o 404s
   const fileParam = `?file=${encodeURIComponent(href)}`;
   const hash = q ? `#search=${encodeURIComponent(q)}` : '';
   return `${PDF_VIEWER}${fileParam}${hash}`;
 };
+
 
   useEffect(() => { const testSrc = buildViewerSrc('/a/b.pdf', 'xyz', true); console.assert(testSrc.includes('?file=') && testSrc.includes('search=xyz'), 'buildViewerSrc debe construir URL de pdf.js'); }, []);
 
