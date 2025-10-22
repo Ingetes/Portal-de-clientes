@@ -778,7 +778,22 @@ const applySearch = () => {
               </div>
               <div className="flex items-center gap-2">
                 <div className="hidden md:flex items-center gap-2 mr-3 text-xs text-slate-600">
-                  <label className="flex items-center gap-2 cursor-pointer select-none"><input type="checkbox" checked={usePdfJs} onChange={(e) => setUsePdfJs(e.target.checked)} />Usar visor pdf.js</label>
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={usePdfJs}
+                            onChange={(e) => {
+                              const v = e.target.checked;
+                              setUsePdfJs(v);
+                              // 👉 recalcular el iframe del visor en caliente
+                              if (preview) {
+                                const next = buildViewerSrc(preview.item.href, term, v);
+                                setPreview((p) => ({ ...p, src: next }));
+                              }
+                            }}
+                          />
+                          Usar visor pdf.js
+                        </label>
                 </div>
                 <input value={term} onChange={(e) => setTerm(e.target.value)} placeholder="Buscar referencia (ej. 3RT2016-1AN21)" className="w-64 md:w-72 rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600" />
                 <button onClick={applySearch} className="rounded-xl bg-emerald-600 px-3 py-2 text-white text-sm font-semibold hover:bg-emerald-700">Buscar</button>
