@@ -185,19 +185,19 @@ const docsMenu = [
     // Abrir visores en modal dentro de Herramientas
     if (lower === 'liner') {
       go('#herramientas');
-      emit('portal:openPreview', { section: 'documentos', title: 'Compatibilidad de liner', href: DOCS.liner, search: ref });
+      emit('portal:openPreview', { section: 'documentos', title: 'Compatibilidad de liner', href: DOCS.liner, search: '' });
       push({ from:'bot', text:'Abriendo "Compatibilidad de liner" en visor interno.'});
       return;
     }
     if (lower === 'materiales') {
       go('#herramientas');
-      emit('portal:openPreview', { section: 'documentos', title: 'Tabla de compatibilidad de materiales', href: DOCS.chemical, search: ref });
+      emit('portal:openPreview', { section: 'documentos', title: 'Tabla de compatibilidad de materiales', href: DOCS.chemical, search: '' });
       push({ from:'bot', text:'Abriendo "Tabla de compatibilidad de materiales" en visor interno.'});
       return;
     }
     if (lower === 'guia' || lower === 'guía') {
       go('#herramientas');
-      emit('portal:openPreview', { section: 'documentos', title: 'Guia de seleccion de celdas de carga', href: DOCS.celdas, search: ref });
+      emit('portal:openPreview', { section: 'documentos', title: 'Guia de seleccion de celdas de carga', href: DOCS.celdas, search: '' });
       push({ from:'bot', text:'Abriendo "Guía de selección de celdas de carga" en visor interno.'});
       return;
     }
