@@ -15,27 +15,20 @@ const DOCS = {
   celdas: `${BASE}manual%20de%20celdas%20y%20MODULOS%20DE%20PESAJE%20RICE%20LAKE%20en%20español.pdf`,
 };
 
-// ejemplo: abrir Siemens
-const href = `${BASE}Listaprecios2025.pdf`;  // tu ruta actual
-setDocHref(href);
-setDocQuery('');
-setUsePdfJs(true); // si quieres que entre usando pdf.js por defecto
-setIframeSrc(buildViewerSrc(href, '', true));
-setIsModalOpen(true);
-
-// ejemplo: abrir Innomotics
-const href = `${BASE}Listapreciosinnomotics.pdf`;
-setDocHref(href);
-setDocQuery('');
-setIframeSrc(buildViewerSrc(href, '', usePdfJs));
-setIsModalOpen(true);
-
-// ejemplo: abrir desde "Herramientas" un PDF en modal
-const href = `${BASE}Siemens%20Liner%20Full%20New.pdf`; // etc
-setDocHref(href);
-setDocQuery('');
-setIframeSrc(buildViewerSrc(href, '', usePdfJs));
-setIsModalOpen(true);
+// Único helper global para construir el src del visor
+function buildViewerSrc(href, q = '', usePdf = true) {
+  if (usePdf) {
+    // usa pdf.js empacado en tu app (carpeta /pdfjs)
+    const viewer = `${BASE}pdfjs/web/viewer.html`;
+    const fileParam = `?file=${encodeURIComponent(href)}`;
+    const hash = q ? `#search=${encodeURIComponent(q)}` : '';
+    return `${viewer}${fileParam}${hash}`;
+  }
+  // visor nativo del navegador
+  const base = href.split('#')[0];
+  const hash = q ? `#search=${encodeURIComponent(q)}` : `#toolbar=1`;
+  return `${base}${hash}`;
+}
 
 // helpers de UI para estilos consistentes
 const ui = {
@@ -768,19 +761,19 @@ function DocumentosScreen() {
 
               <div className="flex items-center gap-2">
                 {/* Checkbox pdf.js -> recalcula el src al vuelo */}
-                <label className="hidden md:inline-flex items-center gap-2 mr-3 text-xs text-slate-600 cursor-pointer select-none">
-                  <input
-                    type="checkbox"
-                    checked={usePdfJs}
-                    onChange={(e) => {
-                      const v = e.target.checked;
-                      setUsePdfJs(v);
-                      setPreview(p => p ? ({ ...p, src: buildViewerSrc(p.item.href, term, v) }) : p);
-                    }}
-                  />
-                  Usar visor pdf.js
-                </label>
-
+                  <label className="hidden md:inline-flex items-center gap-2 mr-3 text-xs text-slate-600 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={usePdfJs}
+                      onChange={(e) => {
+                        const v = e.target.checked;
+                        setUsePdfJs(v);
+                        // ← recalcula el src DEL MISMO PDF al vuelo
+                        setPreview(p => p ? ({ ...p, src: buildViewerSrc(p.item.href, term, v) }) : p);
+                      }}
+                    />
+                    Usar visor pdf.js
+                  </label>
                 <input
                   value={term}
                   onChange={(e) => setTerm(e.target.value)}
@@ -1197,32 +1190,6 @@ return (
 // ==========================================================
 // Arriba ya tienes: const BASE = import.meta.env.BASE_URL;
 
-const tools = [
-  // ...
-  {
-    title: 'Compatibilidad de liner',
-    // ...
-    actions: [
-      { label: 'Abrir documento', href: `${BASE}Siemens%20Liner%20Full%20New.pdf`, openInModal: true }
-    ]
-  },
-  {
-    title: 'Tabla de compatibilidad de materiales',
-    // ...
-    actions: [
-      { label: 'Abrir', href: 'https://www.coleparmer.com/chemical-resistance' },
-      { label: 'Abrir documento', href: `${BASE}Chemical_Resistance_Chart_202106.pdf`, openInModal: true }
-    ]
-  },
-  {
-    title: 'Guia de seleccion de celdas de carga',
-    // ...
-    actions: [
-      { label: 'Abrir documento', href: `${BASE}manual%20de%20celdas%20y%20MODULOS%20DE%20PESAJE%20RICE%20LAKE%20en%20español.pdf`, openInModal: true }
-    ]
-  }
-];
-
 function HerramientasScreen() {
 const [usePdfJs, setUsePdfJs]   = React.useState(true);  // checkbox
 const [docHref, setDocHref]     = React.useState('');    // pdf actual
@@ -1232,17 +1199,6 @@ const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   const fileNameFromUrl = (url, fallback = 'documento') => { try { const clean = url.split('#')[0].split('?')[0]; const last = clean.substring(clean.lastIndexOf('/') + 1) || fallback; return decodeURIComponent(last);} catch { return fallback; } };
   const downloadFile = async (url, suggestedName) => { const encoded = encodeURI(url); const name = suggestedName || fileNameFromUrl(encoded); track('tool_doc_download_click', { href: encoded, name }); try { const res = await fetch(encoded, { mode: 'cors', credentials: 'omit' }); if (!res.ok) throw new Error('HTTP ' + res.status); const blob = await res.blob(); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0); return; } catch (e) {} window.open(encoded, '_blank', 'noopener'); };
-const buildViewerSrc = (href, q, usePdf) => {
-  if (usePdf) {
-    const viewer = `${BASE}pdfjs/web/viewer.html`;
-    const fileParam = `?file=${encodeURIComponent(href)}`;
-    const hash = q ? `#search=${encodeURIComponent(q)}` : '';
-    return `${viewer}${fileParam}${hash}`;
-  }
-  const base = href.split('#')[0];
-  const hash = q ? `#search=${encodeURIComponent(q)}` : `#toolbar=1`;
-  return `${base}${hash}`;
-};
 
 const openPreview = (item, q = '') => {
   // Si NO es PDF, no intentamos previsualizar: forzamos descarga y avisamos
