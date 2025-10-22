@@ -372,7 +372,6 @@ const docsMenu = [
       )}
       <Footer />
     </div>
-    )}    
   );
 }
 
