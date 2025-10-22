@@ -17,17 +17,31 @@ const DOCS = {
   celdas: `${BASE}manual%20de%20celdas%20y%20MODULOS%20DE%20PESAJE%20RICE%20LAKE%20en%20español.pdf`,
 };
 
-// Único helper global para construir el src del visor
+// Único helper para construir el src del visor (PDF.js o nativo)
 function buildViewerSrc(href, q = '', usePdf = true) {
+  // Asegurar URL ABSOLUTA del PDF (importante cuando el visor está en otro dominio)
+  const fileUrl = (() => {
+    try {
+      // Si ya viene con http(s) lo dejamos; si no, lo resolvemos contra el origin
+      return href.startsWith('http')
+        ? href
+        : new URL(href, window.location.origin).href;
+    } catch {
+      // fallback por si algo raro pasa
+      return href;
+    }
+  })();
+
   if (usePdf) {
-    // Visor PDF.js hospedado por Mozilla (no necesitas /public/pdfjs)
+    // Visor PDF.js hospedado por Mozilla
     const viewer = 'https://mozilla.github.io/pdf.js/web/viewer.html';
-    const fileParam = `?file=${encodeURIComponent(href)}`;
+    const fileParam = `?file=${encodeURIComponent(fileUrl)}`;
     const hash = q ? `#search=${encodeURIComponent(q)}` : '';
     return `${viewer}${fileParam}${hash}`;
   }
-  // Visor nativo del navegador
-  const base = href.split('#')[0];
+
+  // Visor nativo del navegador (la URL puede ser relativa o absoluta)
+  const base = fileUrl.split('#')[0];
   const hash = q ? `#search=${encodeURIComponent(q)}` : '#toolbar=1';
   return `${base}${hash}`;
 }
