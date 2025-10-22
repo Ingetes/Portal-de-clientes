@@ -628,7 +628,7 @@ const openPreview = (item, q = '') => {
     return;
   }
   // Para PDFs usamos SIEMPRE pdf.js (evita que el navegador intente descargar)
-  const src = buildViewerSrc(item.href, q || term, false);
+  const src = buildViewerSrc(item.href, q || term, true);
   track('doc_preview_open', { title: item.title, href: item.href });
   if (q) setTerm(q); else setTerm('');
   setPreview({ item, src });
@@ -728,16 +728,17 @@ const openPreview = (item, q = '') => {
       Descargar
     </button>
 
-    <button
-      onClick={() => {
-        if (item.locked) { window.location.hash = '#ingecap'; alert('Inventario en Promoción.'); return; }
-        openPreview(item);
-      }}
-      className={`rounded-xl px-4 py-2 font-semibold ring-1 ring-inset ${item.locked ? 'bg-slate-50 text-slate-400 ring-slate-200 cursor-not-allowed' : 'bg-white text-slate-700 ring-slate-300 hover:bg-slate-50'}`}
-      disabled={item.locked}
-    >
-      Ver detalles
-    </button>
+      <button
+        onClick={() => {
+          if (item.locked) { window.location.hash = '#ingecap'; alert('Inventario en Promoción.'); return; }
+          openPreview(item);
+        }}
+        className={`rounded-xl px-4 py-2 font-semibold ring-1 ring-inset ${item.locked ? 'bg-slate-50 text-slate-400 ring-slate-200 cursor-not-allowed' : 'bg-white text-slate-700 ring-slate-300 hover:bg-slate-50'}`}
+        disabled={item.locked}
+      >
+        Ver detalles
+      </button>
+    )}
   </div>
 </article>
           ))}
