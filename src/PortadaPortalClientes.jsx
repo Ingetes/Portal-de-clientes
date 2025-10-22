@@ -10,9 +10,9 @@ const DOCS = {
   innomotics: `${BASE}Listapreciosinnomotics.pdf`,
   inventario: `${BASE}INFORME%20BALANCE%20DE%20INVENTARIO.xlsx`, // espacio codificado
   promo: `${BASE}inventario-promocion.xlsx`,
-  liner: `${BASE}Siemens%Liner%Full%New.pdf`,
+  liner: `${BASE}Siemens%20Liner%20Full%20New.pdf`,
   chemical: `${BASE}Chemical_Resistance_Chart_202106.pdf`,
-  celdas: `${BASE}manual%de%celdas%y%MODULOS%DE%PESAJE%RICE%LAKE%en%español.pdf`,
+  celdas: `${BASE}manual%20de%20celdas%20y%20MODULOS%20DE%20PESAJE%20RICE%20LAKE%20en%20español.pdf`,
 };
 
 // helpers de UI para estilos consistentes
