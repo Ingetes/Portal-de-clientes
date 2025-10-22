@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from 'react';
+
 const logoIngetes = `${import.meta.env.BASE_URL}ingetes.jpg`;
 const logoIngecap = `${import.meta.env.BASE_URL}ingecap.jpg`;
 
@@ -18,15 +20,15 @@ const DOCS = {
 // Único helper global para construir el src del visor
 function buildViewerSrc(href, q = '', usePdf = true) {
   if (usePdf) {
-    // usa pdf.js empacado en tu app (carpeta /pdfjs)
-    const viewer = `${BASE}pdfjs/web/viewer.html`;
+    // Visor PDF.js hospedado por Mozilla (no necesitas /public/pdfjs)
+    const viewer = 'https://mozilla.github.io/pdf.js/web/viewer.html';
     const fileParam = `?file=${encodeURIComponent(href)}`;
     const hash = q ? `#search=${encodeURIComponent(q)}` : '';
     return `${viewer}${fileParam}${hash}`;
   }
-  // visor nativo del navegador
+  // Visor nativo del navegador
   const base = href.split('#')[0];
-  const hash = q ? `#search=${encodeURIComponent(q)}` : `#toolbar=1`;
+  const hash = q ? `#search=${encodeURIComponent(q)}` : '#toolbar=1';
   return `${base}${hash}`;
 }
 
