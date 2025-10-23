@@ -105,7 +105,8 @@ function LoginView({ onChangeMode }) {
     setErrors(nextErrors);
     if (nextErrors.email || nextErrors.password) return;
 
-    // Redirección directa al home con hash (#home)
+// Guardar sesión activa y redirigir al home
+localStorage.setItem("isLoggedIn", "true");
 window.location.hash = "#home";
   };
 
