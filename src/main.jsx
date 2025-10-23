@@ -16,6 +16,9 @@ function boot() {
 
   const root = createRoot(container);
 
+  // --- Cerrar sesión automática cada vez que se recargue la página ---
+localStorage.removeItem("isLoggedIn");
+
 const render = () => {
   // Leer hash actual sin "#"
   let hash = (window.location.hash || "").replace(/^#/, "");
