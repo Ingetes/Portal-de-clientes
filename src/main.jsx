@@ -16,32 +16,26 @@ function boot() {
 
   const root = createRoot(container);
 
-  const render = () => {
-    // hash sin el “#”; si no hay, por defecto “home”
-    let hash = (window.location.hash || "#home").replace(/^#/, "");
-    const isLogged = localStorage.getItem("isLoggedIn") === "true";
+const render = () => {
+  let hash = (window.location.hash || "#ingresar").replace(/^#/, "");
+  const isLogged = localStorage.getItem("isLoggedIn") === "true";
 
-    // 1) Si no hay sesión → mostrar login (salvo que ya la tenga)
-    if (!isLogged) {
-      // Si el usuario intenta ir a algo distinto a ingresar, mantenlo en login
-      if (hash !== "ingresar") {
-        window.location.hash = "#ingresar";
-        hash = "ingresar";
-      }
-      root.render(<PortalClientesAuth />);
-      return;
-    }
+  // 1️⃣ Si NO hay sesión, mostrar siempre el login (independiente del hash actual)
+  if (!isLogged) {
+    window.location.hash = "#ingresar";
+    root.render(<PortalClientesAuth />);
+    return;
+  }
 
-    // 2) Con sesión:
-    //    - si pide “ingresar”, lo mandamos a home (no tiene sentido ver login)
-    if (hash === "ingresar" || hash === "") {
-      window.location.hash = "#home";
-      hash = "home";
-    }
+  // 2️⃣ Si SÍ hay sesión, asegurar que no se quede en #ingresar
+  if (hash === "ingresar" || !hash) {
+    window.location.hash = "#home";
+    hash = "home";
+  }
 
-    // 3) Para cualquier otro hash con sesión activa, mostramos la portada
-    root.render(<PortadaPortalClientes />);
-  };
+  // 3️⃣ Renderizar la portada del portal
+  root.render(<PortadaPortalClientes />);
+};
 
   render();
   window.addEventListener("hashchange", render);
