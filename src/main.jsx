@@ -17,13 +17,30 @@ function boot() {
   const root = createRoot(container);
 
   const render = () => {
-    const hash = (window.location.hash || "").replace(/^#/, "");
-    if (hash === "home") {
-      root.render(<PortadaPortalClientes />);
-    } else {
-      // "#ingresar" (y cualquier otro hash distinto de "home") muestra el login
+    // hash sin el “#”; si no hay, por defecto “home”
+    let hash = (window.location.hash || "#home").replace(/^#/, "");
+    const isLogged = localStorage.getItem("isLoggedIn") === "true";
+
+    // 1) Si no hay sesión → mostrar login (salvo que ya la tenga)
+    if (!isLogged) {
+      // Si el usuario intenta ir a algo distinto a ingresar, mantenlo en login
+      if (hash !== "ingresar") {
+        window.location.hash = "#ingresar";
+        hash = "ingresar";
+      }
       root.render(<PortalClientesAuth />);
+      return;
     }
+
+    // 2) Con sesión:
+    //    - si pide “ingresar”, lo mandamos a home (no tiene sentido ver login)
+    if (hash === "ingresar" || hash === "") {
+      window.location.hash = "#home";
+      hash = "home";
+    }
+
+    // 3) Para cualquier otro hash con sesión activa, mostramos la portada
+    root.render(<PortadaPortalClientes />);
   };
 
   render();
