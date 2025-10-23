@@ -582,26 +582,17 @@ function DocumentosScreen() {
     {
       title: 'Lista de precios Siemens',
       desc: 'Tarifas vigentes de productos Siemens para canales de distribución.',
-      badge: 'Actualizado',
       href: DOCS.siemens,
-      updated: '2025',
-      size: '—',
     },
     {
       title: 'Lista de precios Innomotics',
       desc: 'Motores, variadores y soluciones de movimiento Innomotics.',
-      badge: 'Nuevo',
       href: DOCS.innomotics,
-      updated: '—',
-      size: '—',
     },
     {
       title: 'Inventario INGETES',
       desc: 'Stock disponible por referencia con fechas de reposición.',
-      badge: 'Actualizable',
       href: DOCS.inventario,
-      updated: '—',
-      size: '—',
     },
     {
       title: 'Inventario en Promoción',
@@ -609,8 +600,6 @@ function DocumentosScreen() {
       badge: 'Promoción',
       href: DOCS.promo,
       locked: true,
-      updated: '-',
-      size: '-',
     },
   ];
 
@@ -765,18 +754,6 @@ const downloadAllZip = async () => {
                 <h3 className="text-lg font-bold text-slate-900">{item.title}</h3>
                 <span className="text-xs px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">{item.badge}</span>
               </div>
-
-              <p className="mt-2 text-slate-700 text-sm">{item.desc}</p>
-              <dl className="mt-4 grid grid-cols-2 gap-3 text-xs text-slate-500">
-                <div>
-                  <dt className="uppercase tracking-wider">Actualización</dt>
-                  <dd className="mt-1">{item.updated}</dd>
-                </div>
-                <div>
-                  <dt className="uppercase tracking-wider">Tamaño</dt>
-                  <dd className="mt-1">{item.size}</dd>
-                </div>
-              </dl>
 
               <div className="mt-5 flex gap-3">
                 <button
