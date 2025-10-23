@@ -1,6 +1,7 @@
 // src/main.jsx
 import React from "react";
 import { createRoot } from "react-dom/client";
+import "./index.css";
 
 import PortalClientesAuth from "./portal_de_acceso_clientes.jsx";
 import PortadaPortalClientes from "./PortadaPortalClientes.jsx";
