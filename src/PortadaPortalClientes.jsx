@@ -500,59 +500,6 @@ function Landing({ setChatOpen, chatOpen, hasIngecapAccess }) {
   );
 }
 
-function Landing({ setChatOpen, chatOpen, hasIngecapAccess }) {
-  const cards = [
-    { title: '1. Ingresar a INGECAP', desc: 'Centro de experiencia e innovación.', cta: 'Ingresar', href: '#ingecap' },
-    { title: '2. Descarga listas y documentos', desc: 'Encuentra listas de precios Siemens, plantillas y guías de cotización.', cta: 'Ir a documentos', href: '#documentos' },
-    { title: '3. Herramientas comerciales para los canales', desc: 'Accede a utilidades de selección, compatibilidad y configuradores.', cta: 'Abrir herramientas', href: '#herramientas' },
-    { title: '4. Cotizador Rápido', desc: 'Crea cotizaciones sencillas, aplica descuentos e impuestos, y exporta.', cta: 'Ingresar', href: '#cotizador' }
-  ];
-
-  return (
-    <section id="home" className="min-h-[70vh] border-t border-slate-100 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {cards.map((card, idx) => {
-            const locked = card.href === '#ingecap' && !hasIngecapAccess; // 🔒 borroso hasta tener acceso
-            return (
-              <div
-                key={idx}
-                className="relative rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow bg-white"
-              >
-                {locked && (
-                  <div className="absolute inset-0 rounded-3xl bg-white/60 backdrop-blur-sm flex items-center justify-center z-10">
-                    <div className="text-center">
-                      <div className="mx-auto mb-2 h-8 w-8 rounded-full bg-slate-900 text-white flex items-center justify-center">
-                        🔒
-                      </div>
-                      <p className="text-xs text-slate-600">Requiere membresía INGECAP</p>
-                    </div>
-                  </div>
-                )}
-
-                <h4 className="text-lg font-bold text-slate-900">{card.title}</h4>
-                <p className="mt-2 text-slate-700">{card.desc}</p>
-                <a
-                  href={card.href}
-                  aria-disabled={locked}
-                  className={
-                    "mt-4 inline-block rounded-xl px-4 py-2 font-semibold " +
-                    (locked
-                      ? "bg-slate-100 text-slate-400 pointer-events-none border border-slate-200"
-                      : "bg-emerald-600 text-white hover:bg-emerald-700")
-                  }
-                >
-                  {card.cta}
-                </a>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function PortalClientesAuth() {
   // Versión mínima (puedes mejorarla luego)
   // Si quieres que al entrar redirija inmediatamente al home, descomenta el useEffect:
