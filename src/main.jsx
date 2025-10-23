@@ -5,8 +5,19 @@ import { createRoot } from "react-dom/client";
 import PortalClientesAuth from "./portal_de_acceso_clientes.jsx";
 import PortadaPortalClientes from "./PortadaPortalClientes.jsx";
 
-// contenedor raíz (asegúrate de tener <div id="root"></div> en index.html)
-const root = createRoot(document.getElementById("root"));
+function render() {
+  const rootElement = document.getElementById("root");
+  if (!rootElement) return; // aún no existe el div
+  const root = createRoot(rootElement);
+
+  // Si la URL tiene #home, mostramos la portada.
+  // En cualquier otro caso, mostramos el login.
+  if (window.location.hash === "#home") {
+    root.render(<PortadaPortalClientes />);
+  } else {
+    root.render(<PortalClientesAuth />);
+  }
+}
 
 function render() {
   // Si la URL tiene #home, mostramos la portada.
