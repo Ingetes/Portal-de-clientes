@@ -132,7 +132,9 @@ const emit = (type, detail = {}) => {
 // ==========================================================
 export default function PortalDistribuidoresLanding() {
   const [chatOpen, setChatOpen] = useState(false);
-  const [route, setRoute] = useState(typeof window !== 'undefined' ? window.location.hash || '#home' : '#home');
+const [route, setRoute] = useState(
+  typeof window !== 'undefined' ? (window.location.hash || '#ingresar') : '#ingresar'
+);
   
   // Control de acceso a INGECAP (placeholder, luego se conectará a backend/auth)
   const [hasIngecapAccess, setHasIngecapAccess] = useState(false);
