@@ -518,13 +518,29 @@ function Landing({ setChatOpen, chatOpen }) {
       {/* Como empezar */}
       <section id="como-empezar" className="border-t border-slate-100 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid md:grid-cols-3 gap-6">
-          {[
-            { title: '1. Ingresar a INGECAP', desc: 'Centro de experiencia e innovación.', cta: 'Ingresar', href: '#ingecap' },
-            { title: '2. Descarga listas y documentos', desc: 'Encuentra listas de precios Siemens, plantillas y guias de cotizacion.', cta: 'Ir a documentos', href: '#documentos' },
-            { title: '3. Herramientas comerciales para los canales', desc: 'Accede a utilidades de selección, compatibilidad y configuradores.', cta: 'Abrir herramientas', href: '#herramientas' },
-            { title: '4. Cotizador Rapido', desc: 'Crea cotizaciones sencillas, aplica descuentos e impuestos, y exporta.', cta: 'Ingresar', href: '#cotizador' }
-          ].map((card, idx) => (
-            <div key={idx} className="rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow bg-white">
+{[
+  { title: '1. Ingresar a INGECAP', desc: 'Centro de experiencia e innovación.', cta: 'Ingresar', href: '#ingecap', locked: true },
+  { title: '2. Descarga listas y documentos', desc: 'Encuentra listas de precios Siemens, plantillas y guías de cotización.', cta: 'Ir a documentos', href: '#documentos' },
+  { title: '3. Herramientas comerciales para los canales', desc: 'Accede a utilidades de selección, compatibilidad y configuradores.', cta: 'Abrir herramientas', href: '#herramientas' },
+  { title: '4. Cotizador Rápido', desc: 'Crea cotizaciones sencillas, aplica descuentos e impuestos, y exporta.', cta: 'Ingresar', href: '#cotizador' }
+].map((card, idx) => (
+  <div key={idx} className="relative rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow bg-white">
+    {card.locked && (
+      <div className="absolute inset-0 rounded-3xl bg-white/70 backdrop-blur-sm flex items-center justify-center z-10">
+        <div className="text-center">
+          <div className="mx-auto mb-2 h-8 w-8 rounded-full bg-slate-900 text-white flex items-center justify-center">🔒</div>
+          <p className="text-xs text-slate-600">EN CONSTRUCCIÓN.</p>
+        </div>
+      </div>
+    )}
+
+    <h4 className="text-lg font-bold text-slate-900">{card.title}</h4>
+    <p className="mt-2 text-slate-700">{card.desc}</p>
+    <a href={card.href} className="mt-4 inline-block rounded-xl bg-emerald-600 px-4 py-2 text-white font-semibold hover:bg-emerald-700">
+      {card.cta}
+    </a>
+  </div>
+))}
               <h4 className="text-lg font-bold text-slate-900">{card.title}</h4>
               <p className="mt-2 text-slate-700">{card.desc}</p>
               <a href={card.href} className="mt-4 inline-block rounded-xl bg-emerald-600 px-4 py-2 text-white font-semibold hover:bg-emerald-700">{card.cta}</a>
@@ -555,15 +571,6 @@ function IngecapScreen({ hasAccess, setHasAccess }) {
   return (
     <section id="ingecap" className="relative min-h-[70vh] border-t border-slate-100 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        {/* Capa temporal borrosa “En construcción” */}
-        <div className="absolute inset-0 rounded-3xl bg-white/70 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="text-center">
-            <div className="mx-auto mb-2 h-10 w-10 rounded-full bg-slate-900 text-white flex items-center justify-center text-xl">
-              🔒
-            </div>
-            <p className="text-sm font-semibold text-slate-700">EN CONSTRUCCIÓN</p>
-          </div>
-        </div>
         <div className="flex items-start justify-between gap-4">
           <div>
             <img src={logoIngecap} alt="INGECAP" className="h-10 w-auto" />
