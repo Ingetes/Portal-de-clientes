@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 
 const logoIngetes = `${import.meta.env.BASE_URL}ingetes.jpg`;
 const logoIngecap = `${import.meta.env.BASE_URL}ingecap.jpg`;
+
+// Visor oficial de Mozilla (NO hay que copiar pdf.js al repo)
 const PDFJS_VIEWER = 'https://mozilla.github.io/pdf.js/web/viewer.html';
 
 const BASE = import.meta.env.BASE_URL;
@@ -14,36 +16,6 @@ const DOCS = {
   chemical: `${BASE}Chemical_Resistance_Chart_202106.pdf`,
   celdas: `${BASE}manual%20de%20celdas%20y%20MODULOS%20DE%20PESAJE%20RICE%20LAKE%20en%20español.pdf`,
 };
-// === GitHub repo info (ajústalo si tu rama NO es main)
-const REPO = { owner: 'ingetes', repo: 'Portal-de-clientes', branch: 'main' };
-
-// saca el "path" del archivo dentro del repo a partir de la URL pública
-function pathFromUrl(u) {
-  try {
-    const base = import.meta.env.BASE_URL; // p.ej. /Portal-de-clientes/
-    const url  = new URL(u, window.location.origin);
-    const root = new URL(base, window.location.origin);
-    // /Portal-de-clientes/Listaprecios2025.pdf  ->  Listaprecios2025.pdf
-    let p = url.pathname.replace(root.pathname, '');
-    return decodeURIComponent(p);
-  } catch {
-    return '';
-  }
-}
-
-// consulta la fecha del último commit que tocó ese archivo
-async function githubLastCommitDate(path) {
-  if (!path) return null;
-  const q = `https://api.github.com/repos/${REPO.owner}/${REPO.repo}/commits` +
-            `?path=${encodeURIComponent(path)}&per_page=1&sha=${REPO.branch}`;
-  try {
-    const r = await fetch(q, { headers: { 'Accept': 'application/vnd.github+json' } });
-    if (!r.ok) return null;
-    const arr = await r.json().catch(() => []);
-    const iso = arr?.[0]?.commit?.committer?.date || arr?.[0]?.commit?.author?.date;
-    return iso ? new Date(iso) : null;
-  } catch { return null; }
-}
 
 // Único helper para construir el src del visor (PDF.js o nativo)
 function buildViewerSrc(href, q = '', usePdf = true) {
@@ -513,7 +485,7 @@ function Landing({ setChatOpen, chatOpen }) {
           {[
             { title: '1. Ingresar a INGECAP', desc: 'Centro de experiencia e innovación.', cta: 'Ingresar', href: '#ingecap' },
             { title: '2. Descarga listas y documentos', desc: 'Encuentra listas de precios Siemens, plantillas y guias de cotizacion.', cta: 'Ir a documentos', href: '#documentos' },
-            { title: '3. Herramientas comerciales para los canales', desc: 'Accede a utilidades de selección, compatibilidad y configuradores.', cta: 'Abrir herramientas', href: '#herramientas' },
+            { title: '3. Herramientas comerciales para los canales', desc: 'Accede a utilidades de seleccion, compatibilidad y configuradores.', cta: 'Abrir herramientas', href: '#herramientas' },
             { title: '4. Cotizador Rapido', desc: 'Crea cotizaciones sencillas, aplica descuentos e impuestos, y exporta.', cta: 'Ingresar', href: '#cotizador' }
           ].map((card, idx) => (
             <div key={idx} className="rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow bg-white">
@@ -638,32 +610,18 @@ const [items, setItems] = React.useState([
 // Actualiza fecha y tamaño al montar
 React.useEffect(() => {
   async function fetchFileMeta(url) {
-    // 1) tamaño + posible Last-Modified del CDN
-    let size = null;
-    let headerDate = null;
     try {
       const res = await fetch(url, { method: 'HEAD' });
-      if (res.ok) {
-        const s = res.headers.get('content-length');
-        size = s ? Number(s) : null;
-        const lm = res.headers.get('last-modified');
-        headerDate = lm ? new Date(lm) : null;
-      }
-    } catch { /* no-op */ }
-
-    // 2) fecha real desde GitHub (último commit) si:
-    //    - no hay Last-Modified, o
-    //    - el CDN nos dio "hoy" (muy cercano a ahora), típico de GitHub Pages
-    let date = headerDate;
-    const tooFresh =
-      date && Math.abs(Date.now() - date.getTime()) < 18 * 60 * 60 * 1000; // 18 h
-    if (!date || tooFresh) {
-      const path = pathFromUrl(url);
-      const ghDate = await githubLastCommitDate(path);
-      if (ghDate) date = ghDate;
+      if (!res.ok) return { date: null, size: null };
+      const date = res.headers.get('last-modified');
+      const size = res.headers.get('content-length');
+      return {
+        date: date ? new Date(date) : null,
+        size: size ? Number(size) : null,
+      };
+    } catch {
+      return { date: null, size: null };
     }
-
-    return { date, size };
   }
 
   async function refreshMeta() {
@@ -671,13 +629,17 @@ React.useEffect(() => {
       items.map(async (it) => {
         const meta = await fetchFileMeta(it.href);
         const last = meta.date
-          ? meta.date.toLocaleDateString('es-CO', { year: 'numeric', month: 'short', day: 'numeric' })
+          ? meta.date.toLocaleDateString('es-CO', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            })
           : '—';
         const size = meta.size
           ? `${(meta.size / 1024 / 1024).toFixed(2)} MB`
           : '—';
 
-        // “Nuevo” la primera vez que el usuario lo ve en este navegador
+        // Detecta si ya se había mostrado antes
         const prev = localStorage.getItem(`docmeta:${it.key}`);
         const badge = prev ? 'Actualizado' : 'Nuevo';
         localStorage.setItem(`docmeta:${it.key}`, last);
@@ -689,7 +651,6 @@ React.useEffect(() => {
   }
 
   refreshMeta();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
 }, []);
 
   const fileNameFromUrl = (url, fallback = 'documento') => {
@@ -1577,7 +1538,7 @@ function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid md:grid-cols-2 gap-8">
         <div>
           <p className="text-sm uppercase tracking-widest text-slate-400">INGETES S.A.S.</p>
-          <p className="mt-2 text-sm text-slate-300">Soluciones de automatización industrial. Bogotá, Colombia.</p>
+          <p className="mt-2 text-sm text-slate-300">Soluciones de automatizacion industrial. Bogota, Colombia.</p>
         </div>
         <div className="md:text-right text-sm text-slate-300">
           <p>Soporte: <a href="mailto:soporte@ingetes.com" className="underline underline-offset-4">soporte@ingetes.com</a></p>
@@ -1587,3 +1548,4 @@ function Footer() {
     </footer>
   );
 }
+
