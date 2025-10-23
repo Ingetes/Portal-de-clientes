@@ -805,7 +805,6 @@ const downloadAllZip = async () => {
         </div>
 
         <div className="mt-8 flex items-center justify-between">
-          <a href="#home" className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">← Volver al inicio</a>
           <button onClick={downloadAllZip} className="inline-flex items-center rounded-xl bg-slate-900 px-4 py-2 text-white font-semibold hover:bg-black">
             Descargar todo (.zip)
           </button>
@@ -1238,11 +1237,6 @@ return (
 }
 
 // ==========================================================
-// Herramientas (con visor interno PDF clonado)
-// ==========================================================
-// Arriba ya tienes: const BASE = import.meta.env.BASE_URL;
-
-// ==========================================================
 // Herramientas (con visor interno PDF)
 // ==========================================================
 function HerramientasScreen() {
@@ -1417,10 +1411,6 @@ const downloadFile = (url, suggestedName) => {
               </div>
             </article>
           ))}
-        </div>
-
-        <div className="mt-8">
-          <a href="#home" className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">← Volver al inicio</a>
         </div>
       </div>
 
