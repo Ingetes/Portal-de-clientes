@@ -578,46 +578,80 @@ function DocumentosScreen() {
   const isPdf   = (u) => /\.pdf($|[?#])/i.test(u);
   const isExcel = (u) => /\.(xlsx?|csv)($|[?#])/i.test(u);
 
-  const items = [
-    {
-      title: 'Lista de precios Siemens',
-      desc: 'Tarifas vigentes de productos Siemens para canales de distribución.',
-      badge: 'Actualizado',
-      href: DOCS.siemens,
-      updated: '2025',
-      size: '—',
-    },
-    {
-      title: 'Lista de precios Innomotics',
-      desc: 'Motores, variadores y soluciones de movimiento Innomotics.',
-      badge: 'Nuevo',
-      href: DOCS.innomotics,
-      updated: '—',
-      size: '—',
-    },
-    {
-      title: 'Inventario INGETES',
-      desc: 'Stock disponible por referencia con fechas de reposición.',
-      badge: 'Actualizable',
-      href: DOCS.inventario,
-      updated: '—',
-      size: '—',
-    },
-    {
-      title: 'Inventario en Promoción',
-      desc: 'Lotes en promoción con descuentos y fechas límite.',
-      badge: 'Promoción',
-      href: DOCS.promo,
-      locked: true,
-      updated: '-',
-      size: '-',
-    },
-  ];
+// === Documentos ===
+const [items, setItems] = React.useState([
+  {
+    key: 'siemens',
+    title: 'Lista de precios Siemens',
+    desc: 'Tarifas vigentes de productos Siemens para canales de distribución.',
+    href: DOCS.siemens,
+  },
+  {
+    key: 'innomotics',
+    title: 'Lista de precios Innomotics',
+    desc: 'Motores, variadores y soluciones de movimiento Innomotics.',
+    href: DOCS.innomotics,
+  },
+  {
+    key: 'inventario',
+    title: 'Inventario INGETES',
+    desc: 'Stock disponible por referencia con fechas de reposición.',
+    href: DOCS.inventario,
+  },
+  {
+    key: 'promo',
+    title: 'Inventario en Promoción',
+    desc: 'Lotes en promoción con descuentos y fechas límite.',
+    href: DOCS.promo,
+    locked: true,
+  },
+]);
 
-  React.useEffect(() => {
-    console.assert(items.length >= 4, 'Deben existir al menos 4 documentos');
-    items.forEach((it, idx) => { console.assert(!!it.title && !!it.href, `Item invalido en posicion ${idx}`); });
-  }, []);
+// Actualiza fecha y tamaño al montar
+React.useEffect(() => {
+  async function fetchFileMeta(url) {
+    try {
+      const res = await fetch(url, { method: 'HEAD' });
+      if (!res.ok) return { date: null, size: null };
+      const date = res.headers.get('last-modified');
+      const size = res.headers.get('content-length');
+      return {
+        date: date ? new Date(date) : null,
+        size: size ? Number(size) : null,
+      };
+    } catch {
+      return { date: null, size: null };
+    }
+  }
+
+  async function refreshMeta() {
+    const updated = await Promise.all(
+      items.map(async (it) => {
+        const meta = await fetchFileMeta(it.href);
+        const last = meta.date
+          ? meta.date.toLocaleDateString('es-CO', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            })
+          : '—';
+        const size = meta.size
+          ? `${(meta.size / 1024 / 1024).toFixed(2)} MB`
+          : '—';
+
+        // Detecta si ya se había mostrado antes
+        const prev = localStorage.getItem(`docmeta:${it.key}`);
+        const badge = prev ? 'Actualizado' : 'Nuevo';
+        localStorage.setItem(`docmeta:${it.key}`, last);
+
+        return { ...it, updated: last, size, badge };
+      })
+    );
+    setItems(updated);
+  }
+
+  refreshMeta();
+}, []);
 
   const fileNameFromUrl = (url, fallback = 'documento') => {
     try {
