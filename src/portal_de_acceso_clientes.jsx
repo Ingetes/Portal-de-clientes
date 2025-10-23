@@ -380,3 +380,4 @@ function ForgotView({ onChangeMode }) {
     </form>
   );
 }
+
