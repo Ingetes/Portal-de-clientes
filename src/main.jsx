@@ -19,16 +19,6 @@ function render() {
   }
 }
 
-function render() {
-  // Si la URL tiene #home, mostramos la portada.
-  // En cualquier otro caso, mostramos el login.
-  if (window.location.hash === "#home") {
-    root.render(<PortadaPortalClientes />);
-  } else {
-    root.render(<PortalClientesAuth />);
-  }
-}
-
 // Render inicial
 render();
 
