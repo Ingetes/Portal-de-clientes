@@ -1,33 +1,22 @@
-import "./index.css";
 import React from "react";
-import ReactDOM from "react-dom/client";
-
-// Vistas
-import PortadaPortalClientes from "./PortadaPortalClientes.jsx";
+import { createRoot } from "react-dom/client";
 import PortalClientesAuth from "./portal_de_acceso_clientes.jsx";
+import PortadaPortalClientes from "./PortadaPortalClientes.jsx";
 
-const routes = {
-  "": PortalClientesAuth,           // (sin hash) -> LOGIN
-  "#ingresar": PortalClientesAuth,  // /#ingresar -> LOGIN
-  "#home": PortadaPortalClientes,   // /#home     -> PORTADA
-};
+function AppRouter() {
+  const [hash, setHash] = React.useState(window.location.hash || "");
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
+  React.useEffect(() => {
+    const onHash = () => setHash(window.location.hash || "");
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
 
-function normalizeHash() {
-  if (!window.location.hash) {
-    // si entra sin hash, fuerza /#ingresar (login)
-    window.location.hash = "#ingresar";
-    return "#ingresar";
-  }
-  return window.location.hash;
+  // Cuando tengas #home => renderiza el Home
+  if (hash === "#home") return <PortadaPortalClientes />;
+  // Default => Login
+  return <PortalClientesAuth />;
 }
 
-function mount() {
-  const hash = normalizeHash();
-  const View = routes[hash] || PortadaPortalClientes;
-  root.render(<View />);
-}
+createRoot(document.getElementById("root")).render(<AppRouter />);
 
-window.addEventListener("hashchange", mount);
-mount();
