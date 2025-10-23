@@ -553,8 +553,17 @@ function IngecapScreen({ hasAccess, setHasAccess }) {
   const goHome = () => window.location.hash = '#home';
 
   return (
-    <section id="ingecap" className="min-h-[70vh] border-t border-slate-100 bg-white">
+    <section id="ingecap" className="relative min-h-[70vh] border-t border-slate-100 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        {/* Capa temporal borrosa “En construcción” */}
+        <div className="absolute inset-0 rounded-3xl bg-white/70 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="text-center">
+            <div className="mx-auto mb-2 h-10 w-10 rounded-full bg-slate-900 text-white flex items-center justify-center text-xl">
+              🔒
+            </div>
+            <p className="text-sm font-semibold text-slate-700">EN CONSTRUCCIÓN</p>
+          </div>
+        </div>
         <div className="flex items-start justify-between gap-4">
           <div>
             <img src={logoIngecap} alt="INGECAP" className="h-10 w-auto" />
