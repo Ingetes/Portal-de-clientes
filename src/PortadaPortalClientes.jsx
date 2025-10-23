@@ -513,7 +513,7 @@ function Landing({ setChatOpen, chatOpen }) {
           {[
             { title: '1. Ingresar a INGECAP', desc: 'Centro de experiencia e innovación.', cta: 'Ingresar', href: '#ingecap' },
             { title: '2. Descarga listas y documentos', desc: 'Encuentra listas de precios Siemens, plantillas y guias de cotizacion.', cta: 'Ir a documentos', href: '#documentos' },
-            { title: '3. Herramientas comerciales para los canales', desc: 'Accede a utilidades de seleccion, compatibilidad y configuradores.', cta: 'Abrir herramientas', href: '#herramientas' },
+            { title: '3. Herramientas comerciales para los canales', desc: 'Accede a utilidades de selección, compatibilidad y configuradores.', cta: 'Abrir herramientas', href: '#herramientas' },
             { title: '4. Cotizador Rapido', desc: 'Crea cotizaciones sencillas, aplica descuentos e impuestos, y exporta.', cta: 'Ingresar', href: '#cotizador' }
           ].map((card, idx) => (
             <div key={idx} className="rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow bg-white">
@@ -1577,7 +1577,7 @@ function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid md:grid-cols-2 gap-8">
         <div>
           <p className="text-sm uppercase tracking-widest text-slate-400">INGETES S.A.S.</p>
-          <p className="mt-2 text-sm text-slate-300">Soluciones de automatizacion industrial. Bogota, Colombia.</p>
+          <p className="mt-2 text-sm text-slate-300">Soluciones de automatización industrial. Bogotá, Colombia.</p>
         </div>
         <div className="md:text-right text-sm text-slate-300">
           <p>Soporte: <a href="mailto:soporte@ingetes.com" className="underline underline-offset-4">soporte@ingetes.com</a></p>
