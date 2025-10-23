@@ -1,22 +1,29 @@
+// src/main.jsx
 import React from "react";
 import { createRoot } from "react-dom/client";
+
 import PortalClientesAuth from "./portal_de_acceso_clientes.jsx";
 import PortadaPortalClientes from "./PortadaPortalClientes.jsx";
 
-function AppRouter() {
-  const [hash, setHash] = React.useState(window.location.hash || "");
+// contenedor raíz (asegúrate de tener <div id="root"></div> en index.html)
+const root = createRoot(document.getElementById("root"));
 
-  React.useEffect(() => {
-    const onHash = () => setHash(window.location.hash || "");
-    window.addEventListener("hashchange", onHash);
-    return () => window.removeEventListener("hashchange", onHash);
-  }, []);
-
-  // Cuando tengas #home => renderiza el Home
-  if (hash === "#home") return <PortadaPortalClientes />;
-  // Default => Login
-  return <PortalClientesAuth />;
+function render() {
+  // Si la URL tiene #home, mostramos la portada.
+  // En cualquier otro caso, mostramos el login.
+  if (window.location.hash === "#home") {
+    root.render(<PortadaPortalClientes />);
+  } else {
+    root.render(<PortalClientesAuth />);
+  }
 }
 
-createRoot(document.getElementById("root")).render(<AppRouter />);
+// Render inicial
+render();
+
+// Re-render al cambiar el hash
+window.addEventListener("hashchange", render);
+
+// (opcional) Forzar render si el DOM se carga antes del script
+document.addEventListener("DOMContentLoaded", render);
 
