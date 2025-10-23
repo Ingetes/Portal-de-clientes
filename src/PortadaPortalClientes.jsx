@@ -1446,17 +1446,6 @@ const downloadFile = (url, suggestedName) => {
                   />
                   Usar visor pdf.js
                 </label>
-                <input
-                  value={term}
-                  onChange={(e) => setTerm(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === 'Enter') applySearch(); }}
-                  placeholder="Buscar (ej. PTFE, 3RT...)"
-                  className="w-64 md:w-72 rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                />
-                <button onClick={applySearch} className="rounded-xl bg-emerald-600 px-3 py-2 text-white text-sm font-semibold hover:bg-emerald-700">Buscar</button>
-                <button onClick={async()=>{ try{ await navigator.clipboard.writeText(term||''); setCopied(true); setTimeout(()=>setCopied(false),1500);}catch{} }} disabled={!term} className="rounded-xl bg-white px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-slate-300 hover:bg-slate-50 disabled:opacity-40">
-                  {copied ? 'Copiado' : 'Copiar'}
-                </button>
                 <button onClick={() => downloadFile(preview.item.href, fileNameFromUrl(preview.item.href))} className="rounded-xl bg-slate-900 px-3 py-2 text-white text-sm font-semibold hover:bg-black">Descargar</button>
                 <button onClick={() => setPreview(null)} className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold hover:bg-slate-50">Cerrar</button>
               </div>
