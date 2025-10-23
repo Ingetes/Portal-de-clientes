@@ -133,6 +133,17 @@ const emit = (type, detail = {}) => {
 export default function PortalDistribuidoresLanding() {
   const [chatOpen, setChatOpen] = useState(false);
   const [route, setRoute] = useState(typeof window !== 'undefined' ? window.location.hash || '#home' : '#home');
+useEffect(() => {
+  const checkAccess = () => {
+    const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+    if (!loggedIn && window.location.hash !== "#ingresar") {
+      window.location.hash = "#ingresar";
+    }
+  };
+  checkAccess();
+  window.addEventListener("hashchange", checkAccess);
+  return () => window.removeEventListener("hashchange", checkAccess);
+}, []);
   // Control de acceso a INGECAP (placeholder, luego se conectará a backend/auth)
   const [hasIngecapAccess, setHasIngecapAccess] = useState(false);
 
