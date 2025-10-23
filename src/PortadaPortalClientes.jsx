@@ -139,15 +139,20 @@ const [route, setRoute] = useState(
   // Control de acceso a INGECAP (placeholder, luego se conectará a backend/auth)
   const [hasIngecapAccess, setHasIngecapAccess] = useState(false);
 
-  useEffect(() => {
-    const onHash = () => setRoute(window.location.hash || '#home');
-    window.addEventListener('hashchange', onHash);
-    // contar sesión local para KPIs
-    const key = 'trk:session_count';
-    const curr = parseInt(localStorage.getItem(key) || '0', 10) + 1;
-    localStorage.setItem(key, String(curr));
-    return () => window.removeEventListener('hashchange', onHash);
-  }, []);
+useEffect(() => {
+  // si entran sin hash, forzar #ingresar
+  if (!window.location.hash) window.location.hash = '#ingresar';
+
+  const onHash = () => setRoute(window.location.hash || '#ingresar');
+  window.addEventListener('hashchange', onHash);
+
+  // contar sesión local para KPIs
+  const key = 'trk:session_count';
+  const curr = parseInt(localStorage.getItem(key) || '0', 10) + 1;
+  localStorage.setItem(key, String(curr));
+
+  return () => window.removeEventListener('hashchange', onHash);
+}, []);
 
   // ---------------- Chatbot state & handlers ----------------
   const [messages, setMessages] = useState([
