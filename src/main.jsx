@@ -17,23 +17,27 @@ function boot() {
   const root = createRoot(container);
 
 const render = () => {
-  let hash = (window.location.hash || "#ingresar").replace(/^#/, "");
+  // Leer hash actual sin "#"
+  let hash = (window.location.hash || "").replace(/^#/, "");
   const isLogged = localStorage.getItem("isLoggedIn") === "true";
 
-  // 1️⃣ Si NO hay sesión, mostrar siempre el login (independiente del hash actual)
+  // 1️⃣ Si no hay sesión, mostrar siempre el login
   if (!isLogged) {
-    window.location.hash = "#ingresar";
+    // Asegura que se mantenga el hash correcto
+    if (hash !== "ingresar") {
+      window.location.hash = "#ingresar";
+    }
     root.render(<PortalClientesAuth />);
     return;
   }
 
-  // 2️⃣ Si SÍ hay sesión, asegurar que no se quede en #ingresar
-  if (hash === "ingresar" || !hash) {
+  // 2️⃣ Si hay sesión, evita mostrar login
+  if (hash === "ingresar" || hash === "") {
     window.location.hash = "#home";
     hash = "home";
   }
 
-  // 3️⃣ Renderizar la portada del portal
+  // 3️⃣ Muestra el portal con sesión activa
   root.render(<PortadaPortalClientes />);
 };
 
