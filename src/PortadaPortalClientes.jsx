@@ -306,11 +306,7 @@ const docsMenu = [
       ) : route === '#stats' ? (
         <StatsScreen />
       ) : (
-        <Landing
-          setChatOpen={setChatOpen}
-          chatOpen={chatOpen}
-          hasIngecapAccess={hasIngecapAccess}
-        />
+        <Landing setChatOpen={setChatOpen} chatOpen={chatOpen} />
       )}
 
       {/* Botón flotante del Asistente */}
@@ -447,81 +443,88 @@ function Header() {
   );
 }
 
-function Landing({ setChatOpen, chatOpen, hasIngecapAccess }) {
-  const cards = [
-    { title: '1. Ingresar a INGECAP', desc: 'Centro de experiencia e innovación.', cta: 'Ingresar', href: '#ingecap' },
-    { title: '2. Descarga listas y documentos', desc: 'Encuentra listas de precios Siemens, plantillas y guías de cotización.', cta: 'Ir a documentos', href: '#documentos' },
-    { title: '3. Herramientas comerciales para los canales', desc: 'Accede a utilidades de selección, compatibilidad y configuradores.', cta: 'Abrir herramientas', href: '#herramientas' },
-    { title: '4. Cotizador Rápido', desc: 'Crea cotizaciones sencillas, aplica descuentos e impuestos, y exporta.', cta: 'Ingresar', href: '#cotizador' }
-  ];
-
+// ==========================================================
+// Landing (home)
+// ==========================================================
+function Landing({ setChatOpen, chatOpen }) {
   return (
-    <section id="home" className="min-h-[70vh] border-t border-slate-100 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {cards.map((card, idx) => {
-            const locked = card.href === '#ingecap' && !hasIngecapAccess; // 🔒 borroso hasta tener acceso
-            return (
-              <div
-                key={idx}
-                className="relative rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow bg-white"
-              >
-                {locked && (
-                  <div className="absolute inset-0 rounded-3xl bg-white/60 backdrop-blur-sm flex items-center justify-center z-10">
-                    <div className="text-center">
-                      <div className="mx-auto mb-2 h-8 w-8 rounded-full bg-slate-900 text-white flex items-center justify-center">
-                        🔒
+    <>
+      {/* Hero */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 -z-10">
+          <svg viewBox="0 0 1200 600" className="w-full h-full opacity-10">
+            <defs>
+              <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#10b981" />
+                <stop offset="100%" stopColor="#065f46" />
+              </linearGradient>
+            </defs>
+            <circle cx="200" cy="100" r="200" fill="url(#g)" />
+            <circle cx="1000" cy="500" r="240" fill="url(#g)" />
+          </svg>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 grid lg:grid-cols-2 gap-10 items-center">
+          <div>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900">Portal de Canales INGETES</h1>
+            <p className="mt-4 text-lg text-slate-700" id="proposito">Este portal es un espacio exclusivo para clientes que mantienen una relación comercial con INGETES. Aquí encontrarás documentación que facilita la elaboración de ofertas, herramientas para la selección de equipos y el diseño de tus proyectos, un cotizador para crear propuestas rápidas a tus clientes y acceso a privilegios exclusivos para miembros de INGECAP.</p>
+            </div>
+          <div className="relative">
+            <div className="rounded-3xl bg-white/70 backdrop-blur shadow-xl p-6 lg:p-8 border border-slate-100">
+              <h3 className="text-xl font-bold text-slate-900">Qué puedes hacer aquí?</h3>
+              <ul className="mt-4 space-y-3 text-slate-700">
+                <li className="flex gap-3"><span className="mt-1 h-2 w-2 rounded-full bg-emerald-500" />Descargar y consultar listas de precios Siemens.</li>
+                <li className="flex gap-3"><span className="mt-1 h-2 w-2 rounded-full bg-emerald-500" />Generar cotizaciones con plantillas estandarizadas de INGETES.</li>
+                <li className="flex gap-3"><span className="mt-1 h-2 w-2 rounded-full bg-emerald-500" />Hacer seguimiento a oportunidades y documentación clave.</li>
+                <li className="flex gap-3"><span className="mt-1 h-2 w-2 rounded-full bg-emerald-500" />Acumular y redimir <strong>INGEPUNTOS</strong> por tus compras.</li>
+                <li className="flex gap-3"><span className="mt-1 h-2 w-2 rounded-full bg-emerald-500" />Recibir soporte de nuestro <strong>Asistente Virtual</strong>.</li>
+              </ul>
+              <div className="mt-6 grid grid-cols-2 gap-4" id="beneficios">
+                {(() => { 
+                  // KPI 1: Tiempo a 1ª respuesta (min) - promedio local
+                  let avg = null;
+                  try { const arr = JSON.parse(localStorage.getItem('kpi:cot_durations')||'[]'); if (Array.isArray(arr) && arr.length) { avg = arr.reduce((a,b)=>a+b,0)/arr.length; } } catch {}
+                  // KPI 3: Uso de herramientas por sesión
+                  let tools = 0; let sessions = parseInt(localStorage.getItem('trk:session_count')||'1',10) || 1;
+                  for (let i=0;i<localStorage.length;i++){ const k=localStorage.key(i)||''; if(k.startsWith('trk:tool_click')||k.startsWith('trk:chat_tool_action')){ tools += parseInt(localStorage.getItem(k)||'0',10)||0; } }
+                  const perSess = tools / sessions;
+                  return (
+                    <>
+                      <div className="rounded-2xl border border-slate-200 p-4">
+                        <p className="text-sm text-slate-600">Tiempo a 1ª respuesta (min)</p>
+                        <p className="text-2xl font-extrabold text-slate-900">{avg!==null ? avg.toFixed(1) : '—'}</p>
                       </div>
-                      <p className="text-xs text-slate-600">Requiere membresía INGECAP</p>
-                    </div>
-                  </div>
-                )}
-
-                <h4 className="text-lg font-bold text-slate-900">{card.title}</h4>
-                <p className="mt-2 text-slate-700">{card.desc}</p>
-                <a
-                  href={card.href}
-                  aria-disabled={locked}
-                  className={
-                    "mt-4 inline-block rounded-xl px-4 py-2 font-semibold " +
-                    (locked
-                      ? "bg-slate-100 text-slate-400 pointer-events-none border border-slate-200"
-                      : "bg-emerald-600 text-white hover:bg-emerald-700")
-                  }
-                >
-                  {card.cta}
-                </a>
+                      <div className="rounded-2xl border border-slate-200 p-4">
+                        <p className="text-sm text-slate-600">Herramientas por sesión</p>
+                        <p className="text-2xl font-extrabold text-slate-900">{perSess ? perSess.toFixed(1) : '0.0'}</p>
+                      </div>
+                    </>
+                  ); })()}
               </div>
-            );
-          })}
+              <p className="mt-4 text-xs text-slate-500">*KPIs calculados localmente con base en el uso del portal en este navegador.</p>
+            </div>
+          </div>
         </div>
-      </div>
-    </section>
-  );
-}
+      </section>
 
-function PortalClientesAuth() {
-  // Versión mínima (puedes mejorarla luego)
-  // Si quieres que al entrar redirija inmediatamente al home, descomenta el useEffect:
-  // React.useEffect(() => { window.location.hash = '#home'; }, []);
-
-  return (
-    <section id="ingresar" className="min-h-[60vh] bg-white border-t border-slate-100">
-      <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
-        <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">Ingreso</h1>
-        <p className="mt-2 text-slate-700">
-          Esta es una pantalla de acceso simple (placeholder). Puedes volver al inicio o navegar a documentos.
-        </p>
-        <div className="mt-6 flex gap-3 justify-center">
-          <a href="#home" className="rounded-xl bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-4 py-2 font-semibold">
-            ← Volver al inicio
-          </a>
-          <a href="#documentos" className="rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 px-4 py-2 font-semibold">
-            Ir a Documentos
-          </a>
+      {/* Como empezar */}
+      <section id="como-empezar" className="border-t border-slate-100 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid md:grid-cols-3 gap-6">
+          {[
+            { title: '1. Ingresar a INGECAP', desc: 'Centro de experiencia e innovación.', cta: 'Ingresar', href: '#ingecap' },
+            { title: '2. Descarga listas y documentos', desc: 'Encuentra listas de precios Siemens, plantillas y guias de cotizacion.', cta: 'Ir a documentos', href: '#documentos' },
+            { title: '3. Herramientas comerciales para los canales', desc: 'Accede a utilidades de selección, compatibilidad y configuradores.', cta: 'Abrir herramientas', href: '#herramientas' },
+            { title: '4. Cotizador Rapido', desc: 'Crea cotizaciones sencillas, aplica descuentos e impuestos, y exporta.', cta: 'Ingresar', href: '#cotizador' }
+          ].map((card, idx) => (
+            <div key={idx} className="rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow bg-white">
+              <h4 className="text-lg font-bold text-slate-900">{card.title}</h4>
+              <p className="mt-2 text-slate-700">{card.desc}</p>
+              <a href={card.href} className="mt-4 inline-block rounded-xl bg-emerald-600 px-4 py-2 text-white font-semibold hover:bg-emerald-700">{card.cta}</a>
+            </div>
+          ))}
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }
 
