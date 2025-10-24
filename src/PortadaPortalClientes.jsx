@@ -1069,14 +1069,14 @@ if (REF && DESC && roundedTotal != null) {
   if (Q === 1) {
     block = `${REF}
 ${DESC}
-Costo total (incluye envío): ${moneyCOP(roundedTotal)} + IVA
+Costo total: ${moneyCOP(roundedTotal)} + IVA
 Disponibilidad: ${availability}${notesPart}`;
   } else {
     block = `${REF}
 ${DESC}
 Cantidad: ${Q}
-Precio unitario (incluye envío): ${moneyCOP(finalUnitWithShipping)}
-Costo total (incluye envío): ${moneyCOP(roundedTotal)} + IVA
+Precio unitario: ${moneyCOP(finalUnitWithShipping)}
+Costo total: ${moneyCOP(roundedTotal)} + IVA
 Disponibilidad: ${availability}${notesPart}`;
   }
 }
