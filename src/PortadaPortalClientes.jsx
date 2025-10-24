@@ -515,43 +515,49 @@ function Landing({ setChatOpen, chatOpen }) {
         </div>
       </section>
 
-      {/* Como empezar */}
-      <section id="como-empezar" className="border-t border-slate-100 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid md:grid-cols-3 gap-6">
-{[
-  { title: '1. Ingresar a INGECAP', desc: 'Centro de experiencia e innovación.', cta: 'Ingresar', href: '#ingecap', locked: true },
-  { title: '2. Descarga listas y documentos', desc: 'Encuentra listas de precios Siemens, plantillas y guías de cotización.', cta: 'Ir a documentos', href: '#documentos' },
-  { title: '3. Herramientas comerciales para los canales', desc: 'Accede a utilidades de selección, compatibilidad y configuradores.', cta: 'Abrir herramientas', href: '#herramientas' },
-  { title: '4. Cotizador Rápido', desc: 'Crea cotizaciones sencillas, aplica descuentos e impuestos, y exporta.', cta: 'Ingresar', href: '#cotizador' }
-].map((card, idx) => (
-<div
-  key={idx}
-  className="relative rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow bg-white"
-  style={{ pointerEvents: card.locked ? 'none' : 'auto' }}
->
-  {card.locked && (
-  <div className="absolute inset-0 rounded-3xl bg-white/70 backdrop-blur-sm flex items-center justify-center z-10 pointer-events-auto">
-    <div className="text-center select-none">
-      <div className="mx-auto mb-2 h-8 w-8 rounded-full bg-slate-900 text-white flex items-center justify-center">🔒</div>
-      <p className="text-xs text-slate-600 font-medium">EN CONSTRUCCIÓN.</p>
-    </div>
-  </div>
-)}
-
-    <h4 className="text-lg font-bold text-slate-900">{card.title}</h4>
-    <p className="mt-2 text-slate-700">{card.desc}</p>
-    <a href={card.href} className="mt-4 inline-block rounded-xl bg-emerald-600 px-4 py-2 text-white font-semibold hover:bg-emerald-700">
-      {card.cta}
-    </a>
-  </div>
-))}
-              <h4 className="text-lg font-bold text-slate-900">{card.title}</h4>
-              <p className="mt-2 text-slate-700">{card.desc}</p>
-              <a href={card.href} className="mt-4 inline-block rounded-xl bg-emerald-600 px-4 py-2 text-white font-semibold hover:bg-emerald-700">{card.cta}</a>
+{/* Como empezar */}
+<section id="como-empezar" className="border-t border-slate-100 bg-white">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid md:grid-cols-3 gap-6">
+    {[
+      { title: '1. Ingresar a INGECAP', desc: 'Centro de experiencia e innovación.', cta: 'Ingresar', href: '#ingecap', locked: true },
+      { title: '2. Descarga listas y documentos', desc: 'Encuentra listas de precios Siemens, plantillas y guías de cotización.', cta: 'Ir a documentos', href: '#documentos' },
+      { title: '3. Herramientas comerciales para los canales', desc: 'Accede a utilidades de selección, compatibilidad y configuradores.', cta: 'Abrir herramientas', href: '#herramientas' },
+      { title: '4. Cotizador Rápido', desc: 'Crea cotizaciones sencillas, aplica descuentos e impuestos, y exporta.', cta: 'Ingresar', href: '#cotizador' },
+    ].map((card, idx) => (
+      <div
+        key={idx}
+        className="relative rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow bg-white"
+      >
+        {/* SOLO esta tarjeta queda “borrosa” y con candado */}
+        {card.locked && (
+          <div className="absolute inset-0 rounded-3xl bg-white/70 backdrop-blur-sm flex items-center justify-center z-10">
+            <div className="text-center select-none">
+              <div className="mx-auto mb-2 h-8 w-8 rounded-full bg-slate-900 text-white flex items-center justify-center">🔒</div>
+              <p className="text-xs text-slate-600 font-medium">EN CONSTRUCCIÓN.</p>
             </div>
-          ))}
-        </div>
-      </section>
+          </div>
+        )}
+
+        <h4 className="text-lg font-bold text-slate-900">{card.title}</h4>
+        <p className="mt-2 text-slate-700">{card.desc}</p>
+
+        {/* Botón: deshabilitado si es la bloqueada */}
+        {card.locked ? (
+          <span className="mt-4 inline-block rounded-xl px-4 py-2 font-semibold bg-slate-100 text-slate-400 cursor-not-allowed select-none">
+            {card.cta}
+          </span>
+        ) : (
+          <a
+            href={card.href}
+            className="mt-4 inline-block rounded-xl bg-emerald-600 px-4 py-2 text-white font-semibold hover:bg-emerald-700"
+          >
+            {card.cta}
+          </a>
+        )}
+      </div>
+    ))}
+  </div>
+</section>
     </>
   );
 }
