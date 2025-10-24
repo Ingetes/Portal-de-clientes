@@ -976,6 +976,16 @@ function CotizadorRapidoScreen() {
   const [preview, setPreview] = useState("");        // acumulado
   const [lockPreview, setLockPreview] = useState(false);
   const [copyMsg, setCopyMsg] = useState("");
+const openMall = (e) => {
+  e.preventDefault();
+  const q = (ref || '').trim().toUpperCase();
+  if (!q) {
+    alert('Escribe una referencia (MLFB) primero.');
+    return;
+  }
+  const url = `https://mall.industry.siemens.com/mall/es/ww/Catalog/Product/?mlfb=${encodeURIComponent(q)}`;
+  window.open(url, '_blank', 'noopener,noreferrer');
+};
 
   useEffect(() => {
     localStorage.setItem('ts:cot_open', String(Date.now()));
@@ -1167,14 +1177,11 @@ return (
             placeholder="6ES7131-6BH01-0BA0"
           />
           <div className="flex gap-2 mt-2">
-            <a
-              href={mallHref}
-              target="_blank"
-              rel="noopener"
+            <button
+              onClick={openMall}
               className="inline-flex items-center gap-2 rounded-xl border border-emerald-600 text-emerald-700 hover:bg-emerald-50 font-semibold px-3 py-2 text-sm"
-            >
+              >
               🔎 Industry Mall ↗
-            </a>
             <button
               onClick={fetchMallDescription}
               className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-2 text-sm"
