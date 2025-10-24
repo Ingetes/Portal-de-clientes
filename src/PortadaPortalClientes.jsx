@@ -1042,8 +1042,21 @@ const openMall = (e) => {
 
     const afterDisc = baseCOP ? baseCOP * (1 - Number(discount || 0) / 100) : null;
     const saleAfter = afterDisc != null ? afterDisc * (Number(util || 1) || 1) : null;
-    const roundedUnit = saleAfter != null ? roundUpTo(saleAfter, 100) : null;
-    const roundedTotal = roundedUnit != null ? Math.max(0, roundUpTo((roundedUnit * Q) + Number(shipping || 0), 100)) : null;
+// costo del envío total dividido entre unidades
+const shippingPerUnit = Q > 0 ? Number(shipping || 0) / Q : 0;
+
+// precio unitario sin envío
+const roundedUnit = saleAfter != null ? roundUpTo(saleAfter, 100) : null;
+
+// precio unitario con envío prorrateado
+const finalUnitWithShipping =
+  roundedUnit != null ? roundUpTo(roundedUnit + shippingPerUnit, 100) : null;
+
+// total final considerando el envío
+const roundedTotal =
+  finalUnitWithShipping != null
+    ? Math.max(0, roundUpTo(finalUnitWithShipping * Q, 100))
+    : null;
 
     const availability = normalizeAvailability(lead);
     const notesPart = notes.trim() ? `\n\nNOTAS: ${notes.trim()}` : "";
@@ -1052,21 +1065,22 @@ const openMall = (e) => {
     const REF = ref.trim().toUpperCase();
     const DESC = cleanDesc(desc);
 
-    if (REF && DESC && roundedTotal != null) {
-      if (Q === 1) {
-        block = `${REF}
+if (REF && DESC && roundedTotal != null) {
+  if (Q === 1) {
+    block = `${REF}
 ${DESC}
-Costo total: ${moneyCOP(roundedTotal)} + IVA
+Costo total (incluye envío): ${moneyCOP(roundedTotal)} + IVA
 Disponibilidad: ${availability}${notesPart}`;
-      } else {
-        block = `${REF}
+  } else {
+    block = `${REF}
 ${DESC}
 Cantidad: ${Q}
-Precio unitario: ${moneyCOP(roundedUnit)}
-Costo total: ${moneyCOP(roundedTotal)} + IVA
+Precio unitario (incluye envío): ${moneyCOP(finalUnitWithShipping)}
+Costo total (incluye envío): ${moneyCOP(roundedTotal)} + IVA
 Disponibilidad: ${availability}${notesPart}`;
-      }
-    }
+  }
+}
+    
     return {
       baseCOP,
       roundedUnit,
