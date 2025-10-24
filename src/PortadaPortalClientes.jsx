@@ -1176,19 +1176,19 @@ return (
             className={ui.input}
             placeholder="6ES7131-6BH01-0BA0"
           />
-          <div className="flex gap-2 mt-2">
-            <button
-              onClick={openMall}
-              className="inline-flex items-center gap-2 rounded-xl border border-emerald-600 text-emerald-700 hover:bg-emerald-50 font-semibold px-3 py-2 text-sm"
-              >
-              🔎 Industry Mall ↗
-            <button
-              onClick={fetchMallDescription}
-              className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-2 text-sm"
-            >
-              ✨ Traer descripción
-            </button>
-          </div>
+<div className="flex gap-2 mt-2">
+  <button
+    onClick={openMall}
+    className="inline-flex items-center gap-2 rounded-xl border border-emerald-600 text-emerald-700 hover:bg-emerald-50 font-semibold px-3 py-2 text-sm"
+  >
+    🔎 Industry Mall ↗
+  <button
+    onClick={fetchMallDescription}
+    className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-2 text-sm"
+  >
+    ✨ Traer descripción
+  </button>
+</div>
         </div>
 
         {/* Descripción */}
