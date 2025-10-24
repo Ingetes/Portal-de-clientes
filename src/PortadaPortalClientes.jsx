@@ -524,15 +524,19 @@ function Landing({ setChatOpen, chatOpen }) {
   { title: '3. Herramientas comerciales para los canales', desc: 'Accede a utilidades de selección, compatibilidad y configuradores.', cta: 'Abrir herramientas', href: '#herramientas' },
   { title: '4. Cotizador Rápido', desc: 'Crea cotizaciones sencillas, aplica descuentos e impuestos, y exporta.', cta: 'Ingresar', href: '#cotizador' }
 ].map((card, idx) => (
-  <div key={idx} className="relative rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow bg-white">
-    {card.locked && (
-      <div className="absolute inset-0 rounded-3xl bg-white/70 backdrop-blur-sm flex items-center justify-center z-10">
-        <div className="text-center">
-          <div className="mx-auto mb-2 h-8 w-8 rounded-full bg-slate-900 text-white flex items-center justify-center">🔒</div>
-          <p className="text-xs text-slate-600">EN CONSTRUCCIÓN.</p>
-        </div>
-      </div>
-    )}
+<div
+  key={idx}
+  className="relative rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow bg-white"
+  style={{ pointerEvents: card.locked ? 'none' : 'auto' }}
+>
+  {card.locked && (
+  <div className="absolute inset-0 rounded-3xl bg-white/70 backdrop-blur-sm flex items-center justify-center z-10 pointer-events-auto">
+    <div className="text-center select-none">
+      <div className="mx-auto mb-2 h-8 w-8 rounded-full bg-slate-900 text-white flex items-center justify-center">🔒</div>
+      <p className="text-xs text-slate-600 font-medium">EN CONSTRUCCIÓN.</p>
+    </div>
+  </div>
+)}
 
     <h4 className="text-lg font-bold text-slate-900">{card.title}</h4>
     <p className="mt-2 text-slate-700">{card.desc}</p>
