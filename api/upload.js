@@ -1,22 +1,24 @@
 // /api/upload.js  — Vercel Serverless Function (Node 18+)
 // NOTA: no uses "node-fetch". fetch es global.
-
+export const config = { runtime: 'nodejs20.x' }; // o 'nodejs18.x'
 export default async function handler(req, res) {
-  // --- CORS (permite llamadas desde GitHub Pages) ---
+  // CORS
   res.setHeader('Access-Control-Allow-Origin', 'https://ingetes.github.io');
-  res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
+
+  // --- DIAGNÓSTICO: /api/upload?debug=1 ---
+  if (req.method === 'GET' && req.query?.debug === '1') {
+    const keys = ['GH_TOKEN3','GH_OWNER3','GH_REPO3','GH_BRANCH3','ADMIN_KEY_CLIENTES'];
+    const present = Object.fromEntries(keys.map(k => [k, Boolean(process.env[k])]));
+    console.log('env present:', present); // mira esto en Vercel → Functions → Logs
+    return res.status(200).json({ ok: true, present, note: 'solo booleans' });
+  }
 
   if (req.method !== 'POST') {
     return res.status(405).json({ ok: false, msg: 'Use POST' });
   }
-// GET ?debug=1 -> muestra qué envs están presentes (true/false)
-if (req.method === 'GET' && req.query?.debug === '1') {
-  const keys = ['GH_TOKEN3','GH_OWNER3','GH_REPO3','GH_BRANCH3','ADMIN_KEY_CLIENTES'];
-  const present = Object.fromEntries(keys.map(k => [k, Boolean(process.env[k])]));
-  return res.status(200).json({ ok: true, present, runtime: 'node', note: 'solo booleans; no muestra valores' });
-}
   try {
     // Verificación rápida de envs
     const missing = ['GH_TOKEN3','GH_OWNER3','GH_REPO3','GH_BRANCH3','ADMIN_KEY_CLIENTES']
