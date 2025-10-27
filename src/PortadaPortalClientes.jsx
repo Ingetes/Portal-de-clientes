@@ -27,7 +27,7 @@ const EDITABLE_FILES = [
 
 // === ENDPOINT del repo de Vercel que hará el commit al repositorio CORRESPONDIENTE
 // (cámbialo por tu URL real)
-const UPLOAD_ENDPOINT = 'https://TU-APP-VERCEL-nuevo-repo.vercel.app/api/upload';
+const UPLOAD_ENDPOINT = 'https://portal-de-clientes.vercel.app/api/upload';
 
 // === GitHub repo info (ajústalo si tu rama NO es main)
 const REPO = { owner: 'ingetes', repo: 'Portal-de-clientes', branch: 'main' };
