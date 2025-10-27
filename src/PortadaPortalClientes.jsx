@@ -14,6 +14,21 @@ const DOCS = {
   chemical: `${BASE}Chemical_Resistance_Chart_202106.pdf`,
   celdas: `${BASE}manual%20de%20celdas%20y%20MODULOS%20DE%20PESAJE%20RICE%20LAKE%20en%20español.pdf`,
 };
+// === Archivos editables desde "Ajustes" (coinciden con los que sirves en GH Pages)
+const EDITABLE_FILES = [
+  { key: 'siemens',    label: 'Lista de precios Siemens (PDF)',     path: 'Listaprecios2025.pdf',                                  url: `${import.meta.env.BASE_URL}Listaprecios2025.pdf` },
+  { key: 'innomotics', label: 'Lista de precios Innomotics (PDF)',  path: 'Listapreciosinnomotics.pdf',                            url: `${import.meta.env.BASE_URL}Listapreciosinnomotics.pdf` },
+  { key: 'inventario', label: 'Inventario INGETES (XLSX)',          path: 'INVENTARIO.xlsx',                                       url: `${import.meta.env.BASE_URL}INVENTARIO.xlsx` },
+  { key: 'promo',      label: 'Inventario en Promoción (XLSX)',     path: 'inventario-promocion.xlsx',                             url: `${import.meta.env.BASE_URL}inventario-promocion.xlsx` },
+  { key: 'liner',      label: 'Siemens Liner (PDF)',                path: 'Siemens%20Liner%20Full%20New.pdf',                      url: `${import.meta.env.BASE_URL}Siemens%20Liner%20Full%20New.pdf` },
+  { key: 'chemical',   label: 'Chemical Resistance Chart (PDF)',    path: 'Chemical_Resistance_Chart_202106.pdf',                  url: `${import.meta.env.BASE_URL}Chemical_Resistance_Chart_202106.pdf` },
+  { key: 'celdas',     label: 'Guía celdas de carga (PDF)',         path: 'manual%20de%20celdas%20y%20MODULOS%20DE%20PESAJE%20RICE%20LAKE%20en%20español.pdf', url: `${import.meta.env.BASE_URL}manual%20de%20celdas%20y%20MODULOS%20DE%20PESAJE%20RICE%20LAKE%20en%20español.pdf` },
+];
+
+// === ENDPOINT del repo de Vercel que hará el commit al repositorio CORRESPONDIENTE
+// (cámbialo por tu URL real)
+const UPLOAD_ENDPOINT = 'https://TU-APP-VERCEL-nuevo-repo.vercel.app/api/upload';
+
 // === GitHub repo info (ajústalo si tu rama NO es main)
 const REPO = { owner: 'ingetes', repo: 'Portal-de-clientes', branch: 'main' };
 
@@ -957,6 +972,187 @@ const downloadAllZip = async () => {
     </section>
   );
 }
+
+function SettingsModal({ open, onClose, files, endpoint, onUpdated }) {
+  const [logged, setLogged] = React.useState(false);
+  const [adminKey, setAdminKey] = React.useState('');
+  const [busy, setBusy] = React.useState(false);
+  const [rows, setRows] = React.useState(() =>
+    (files || []).map(f => ({ ...f, file: null, status: '' }))
+  );
+
+  React.useEffect(() => {
+    // reinicia selección y estados cada vez que se vuelve a abrir
+    if (open) {
+      setLogged(false);
+      setAdminKey('');
+      setBusy(false);
+      setRows((files || []).map(f => ({ ...f, file: null, status: '' })));
+    }
+  }, [open, files]);
+
+  if (!open) return null;
+
+  const close = () => {
+    if (busy) return;
+    onClose?.();
+  };
+
+  const onPick = (idx, file) => {
+    setRows(r => r.map((row, i) => i === idx ? { ...row, file, status: file ? `Seleccionado: ${file.name}` : '' } : row));
+  };
+
+  async function fileToBase64(f) {
+    const buf = await f.arrayBuffer();
+    let binary = '';
+    const bytes = new Uint8Array(buf);
+    for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+    return btoa(binary);
+  }
+
+  async function uploadOne(row) {
+    const res = { key: row.key, ok: false, msg: '' };
+    if (!row.file) { res.msg = 'Sin archivo'; return res; }
+
+    try {
+      setRows(prev => prev.map(r => r.key === row.key ? { ...r, status: 'Subiendo…' } : r));
+      const body = {
+        adminKey: adminKey.trim(),              // la clave que escribe el usuario (tu backend validará)
+        fileBase64: await fileToBase64(row.file),
+        path: row.path,                         // ruta/archivo exacto en el repo GH Pages de este portal
+        message: `Update ${row.path} desde PortadaPortalClientes`,
+      };
+      const r = await fetch(String(endpoint), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || !j?.ok) {
+        res.msg = j?.msg || `HTTP ${r.status}`;
+        setRows(prev => prev.map(rr => rr.key === row.key ? { ...rr, status: `❌ ${res.msg}` } : rr));
+        return res;
+      }
+      res.ok = true;
+      res.msg = 'OK';
+      setRows(prev => prev.map(rr => rr.key === row.key ? { ...rr, status: '✅ Subido. Puede tardar ~5 min en reflejarse para todos.' } : rr));
+      return res;
+    } catch (e) {
+      res.msg = 'Error de red';
+      setRows(prev => prev.map(rr => rr.key === row.key ? { ...rr, status: '❌ Error de red' } : rr));
+      return res;
+    }
+  }
+
+  async function doUploadAll() {
+    if (!logged) return;
+    if (!adminKey.trim()) { alert('Ingresa la clave de administrador.'); return; }
+
+    const toSend = rows.filter(r => !!r.file);
+    if (toSend.length === 0) { alert('No seleccionaste archivos.'); return; }
+
+    setBusy(true);
+    const results = [];
+    for (const row of toSend) {
+      // eslint-disable-next-line no-await-in-loop
+      const r = await uploadOne(row);
+      results.push(r);
+    }
+    setBusy(false);
+
+    const report = results.map(r => `${r.key}: ${r.ok ? 'OK' : 'ERROR'}${r.msg ? ` (${r.msg})` : ''}`).join('\n');
+    alert(report);
+
+    // Romper caché de los que subieron OK para que se refresquen en la grilla
+    if (typeof onUpdated === 'function') {
+      const bust = `?v=${Date.now()}`;
+      onUpdated(results.map(r => ({ ...r, bust })));
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-[80] bg-black/50 flex items-center justify-center p-4" role="dialog" aria-modal>
+      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div className="flex items-center justify-between p-4 border-b">
+          <h3 className="font-semibold">Ajustes · Archivos publicados</h3>
+          <button onClick={close} className="rounded-md px-3 py-1 border">Cerrar</button>
+        </div>
+
+        {!logged ? (
+          <div className="p-4 space-y-3">
+            <p className="text-sm text-slate-600">
+              Ingresa la clave de administrador para habilitar la subida de archivos (la validará tu endpoint de Vercel).
+            </p>
+            <input
+              type="password"
+              className="w-full border rounded-lg px-3 py-2"
+              placeholder="Clave de administrador"
+              value={adminKey}
+              onChange={(e) => setAdminKey(e.target.value)}
+            />
+            <div className="flex justify-end">
+              <button
+                onClick={() => setLogged(true)}
+                className="rounded-lg bg-emerald-600 text-white px-4 py-2"
+              >
+                Entrar
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="p-4 space-y-4">
+            {rows.map((row, idx) => (
+              <div key={row.key} className="border rounded-xl p-3">
+                <div className="font-medium">{row.label}</div>
+                <div className="text-xs text-slate-500 break-all">{row.path}</div>
+                <div className="mt-2 flex items-center gap-2">
+                  <input
+                    type="file"
+                    accept={row.path.toLowerCase().endsWith('.xlsx') ? '.xlsx,.xls' : 'application/pdf'}
+                    onChange={e => onPick(idx, e.target.files?.[0] || null)}
+                    className="flex-1"
+                    disabled={busy}
+                  />
+                  <button
+                    onClick={() => uploadOne(rows[idx]).then(r => {
+                      if (r.ok && typeof onUpdated === 'function') {
+                        const bust = `?v=${Date.now()}`;
+                        onUpdated([{ ...r, bust }]);
+                      }
+                    })}
+                    className="rounded-lg border px-3 py-1"
+                    disabled={busy || !rows[idx].file}
+                  >
+                    Subir
+                  </button>
+                </div>
+                {row.status && <div className="text-xs text-slate-600 mt-1">{row.status}</div>}
+              </div>
+            ))}
+
+            <div className="flex items-center justify-between pt-2 border-t">
+              <button
+                onClick={() => { setLogged(false); setAdminKey(''); }}
+                className="rounded-lg px-3 py-1 border"
+                disabled={busy}
+              >
+                Cerrar sesión
+              </button>
+              <button
+                onClick={doUploadAll}
+                className="rounded-lg bg-emerald-600 text-white px-4 py-2 disabled:opacity-50"
+                disabled={busy}
+              >
+                {busy ? 'Subiendo…' : 'Subir seleccionados'}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ==========================================================
 // Cotizador Rapido (independiente del portal de cotizaciones)
 // ==========================================================
