@@ -1131,7 +1131,7 @@ function SettingsModal({ open, onClose, files, endpoint, onUpdated }) {
         {!logged ? (
           <div className="p-4 space-y-3">
             <p className="text-sm text-slate-600">
-              Ingresa la clave de administrador para habilitar la subida de archivos (la validará tu endpoint de Vercel).
+              Ingresa la clave de administrador para habilitar la sesión.
             </p>
             <input
               type="password"
