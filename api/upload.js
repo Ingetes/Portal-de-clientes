@@ -1,6 +1,5 @@
-// /api/upload.js  — Vercel Serverless Function (Node 18+)
-// NOTA: no uses "node-fetch". fetch es global.
-export const config = { runtime: 'nodejs20.x' }; // o 'nodejs18.x'
+// ✅ Opción A: fijar runtime Node.js clásico
+export const config = { runtime: 'nodejs' };
 export default async function handler(req, res) {
   // CORS
   res.setHeader('Access-Control-Allow-Origin', 'https://ingetes.github.io');
