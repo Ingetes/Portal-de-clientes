@@ -6,13 +6,13 @@ const PDFJS_VIEWER = 'https://mozilla.github.io/pdf.js/web/viewer.html';
 
 const BASE = import.meta.env.BASE_URL;
 const DOCS = {
-  siemens: `${BASE}Listaprecios2025.pdf`,
+  siemens:    `${BASE}Listaprecios2025.pdf`,
   innomotics: `${BASE}Listapreciosinnomotics.pdf`,
   inventario: `${BASE}INVENTARIO.xlsx`,
-  promo: `${BASE}inventario-promocion.xlsx`,
-  liner: `${BASE}Siemens%20Liner%20Full%20New.pdf`,
-  chemical: `${BASE}Chemical_Resistance_Chart_202106.pdf`,
-  celdas: `${BASE}manual%20de%20celdas%20y%20MODULOS%20DE%20PESAJE%20RICE%20LAKE%20en%20español.pdf`,
+  promo:      `${BASE}inventario-promocion.xlsx`,
+  liner:      `${BASE}Siemens%20Liner%20Full%20New.pdf`,
+  chemical:   `${BASE}Chemical_Resistance_Chart_202106.pdf`,
+  celdas:     `${BASE}manual%20de%20celdas%20y%20MODULOS%20DE%20PESAJE%20RICE%20LAKE%20en%20español.pdf`,
 };
 // === Archivos editables desde "Ajustes" (coinciden con los que sirves en GH Pages)
 const EDITABLE_FILES = [
@@ -1122,14 +1122,14 @@ function SettingsModal({ open, onClose, files, endpoint, onUpdated }) {
 
   return (
     <div className="fixed inset-0 z-[80] bg-black/50 flex items-center justify-center p-4" role="dialog" aria-modal>
-      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden">
+      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden max-h-[90vh] flex flex-col">
         <div className="flex items-center justify-between p-4 border-b">
           <h3 className="font-semibold">Ajustes · Archivos publicados</h3>
           <button onClick={close} className="rounded-md px-3 py-1 border">Cerrar</button>
         </div>
 
         {!logged ? (
-          <div className="p-4 space-y-3">
+          <div className="p-4 space-y-3 overflow-y-auto">
             <p className="text-sm text-slate-600">
               Ingresa la clave de administrador para habilitar la sesión.
             </p>
@@ -1150,7 +1150,7 @@ function SettingsModal({ open, onClose, files, endpoint, onUpdated }) {
             </div>
           </div>
         ) : (
-          <div className="p-4 space-y-4">
+          <div className="p-4 space-y-4 overflow-y-auto pr-2 grow">
             {rows.map((row, idx) => (
               <div key={row.key} className="border rounded-xl p-3">
                 <div className="font-medium">{row.label}</div>
