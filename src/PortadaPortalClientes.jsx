@@ -147,10 +147,11 @@ const emit = (type, detail = {}) => {
 // ==========================================================
 export default function PortalDistribuidoresLanding() {
   const [chatOpen, setChatOpen] = useState(false);
-const [route, setRoute] = useState(
+  const [route, setRoute] = useState(
   typeof window !== 'undefined' ? (window.location.hash || '#ingresar') : '#ingresar'
 );
-  
+  // NUEVO: estado para el modal de Ajustes
+  const [settingsOpen, setSettingsOpen] = useState(false);
   // Control de acceso a INGECAP (placeholder, luego se conectará a backend/auth)
   const [hasIngecapAccess, setHasIngecapAccess] = useState(false);
 
@@ -315,7 +316,7 @@ const docsMenu = [
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50">
-      <Header />
+      <Header onOpenSettings={() => setSettingsOpen(true)} />
       {route === '#ingresar' ? (
         <PortalClientesAuth />
       ) : route === '#documentos' ? (
@@ -435,6 +436,18 @@ const docsMenu = [
           </div>
         </div>
       )}
+{/* === Modal de Ajustes (subida con clave) === */}
+<SettingsModal
+  open={settingsOpen}
+  onClose={() => setSettingsOpen(false)}
+  files={EDITABLE_FILES}
+  endpoint={UPLOAD_ENDPOINT}
+  onUpdated={(results) => {
+    // results: [{ key, ok, msg, bust }]
+    // Notificamos a las pantallas para que rompan caché de los archivos cambiados
+    emit('portal:filesUpdated', { results });
+  }}
+/>
       <Footer />
     </div>
   );
@@ -443,7 +456,7 @@ const docsMenu = [
 // ==========================================================
 // Header
 // ==========================================================
-function Header() {
+function Header({ onOpenSettings }) {
   return (
     <header className="w-full sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-white/70 border-b border-slate-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
@@ -454,12 +467,24 @@ function Header() {
             <p className="text-sm font-medium text-slate-800">Fidelizacion - Cotizaciones - Listas de Precios</p>
           </div>
         </div>
-        <nav className="hidden md:flex items-center gap-6 text-sm">
-          <a className="text-slate-600 hover:text-emerald-700" href="#proposito">Próposito</a>
-          <a className="text-slate-600 hover:text-emerald-700" href="#beneficios">Beneficios</a>
-          <a className="text-slate-600 hover:text-emerald-700" href="#como-empezar">Cómo empezar</a>
-          <a className="text-slate-600 hover:text-emerald-700" href="#herramientas">Herramientas</a>
-          <a className="text-slate-600 hover:text-emerald-700" href="#stats">Estadisticas</a>
+
+        {/* NAV + Botón de Ajustes */}
+        <nav className="hidden md:flex items-center gap-3 text-sm">
+          <a className="text-slate-600 hover:text-emerald-700 px-2" href="#proposito">Próposito</a>
+          <a className="text-slate-600 hover:text-emerald-700 px-2" href="#beneficios">Beneficios</a>
+          <a className="text-slate-600 hover:text-emerald-700 px-2" href="#como-empezar">Cómo empezar</a>
+          <a className="text-slate-600 hover:text-emerald-700 px-2" href="#herramientas">Herramientas</a>
+          <a className="text-slate-600 hover:text-emerald-700 px-2" href="#stats">Estadisticas</a>
+
+          {/* === BOTÓN AJUSTES (igual UX al portal de cotizaciones) === */}
+          <button
+            type="button"
+            onClick={onOpenSettings}
+            className="ml-2 rounded-xl bg-white text-slate-700 font-semibold ring-1 ring-inset ring-slate-300 hover:bg-slate-50 px-3 py-1.5"
+            title="Ajustes (cambiar PDFs/XLSX publicados)"
+          >
+            ⚙️ Ajustes
+          </button>
         </nav>
       </div>
     </header>
@@ -857,6 +882,31 @@ const downloadAllZip = async () => {
     window.addEventListener('portal:openPreview', onOpen);
     return () => window.removeEventListener('portal:openPreview', onOpen);
   }, []);
+
+// Al final de DocumentosScreen(), antes del return, agrega:
+React.useEffect(() => {
+  const onFilesUpdated = (e) => {
+    const { results = [] } = e.detail || {};
+    if (!Array.isArray(results) || results.length === 0) return;
+
+    // Para cada archivo OK, agregamos ?v=timestamp a su href
+    setItems(prev => prev.map(it => {
+      const hit = results.find(r => r.ok && r.key === it.key && r.bust);
+      if (!hit) return it;
+
+      // Limpia query previa y aplica bust nuevo
+      try {
+        const u = new URL(it.href, window.location.origin);
+        u.search = hit.bust; // e.g. "?v=1699999999999"
+        return { ...it, href: u.pathname + u.search };
+      } catch {
+        return { ...it, href: it.href + hit.bust };
+      }
+    }));
+  };
+  window.addEventListener('portal:filesUpdated', onFilesUpdated);
+  return () => window.removeEventListener('portal:filesUpdated', onFilesUpdated);
+}, []);
 
   return (
     <section id="documentos" className="min-h-[70vh] border-t border-slate-100 bg-white">
@@ -1625,6 +1675,33 @@ const downloadFile = (url, suggestedName) => {
       setTimeout(() => setCopied(false), 1500);
     } catch {}
   };
+
+// Mapa de bust por clave editable
+const [bustMap, setBustMap] = React.useState({});
+
+// Escucha actualizaciones desde Ajustes
+React.useEffect(() => {
+  const onFilesUpdated = (e) => {
+    const { results = [] } = e.detail || {};
+    const next = { ...bustMap };
+    results.filter(r => r.ok && r.bust && r.key).forEach(r => { next[r.key] = r.bust; });
+    setBustMap(next);
+  };
+  window.addEventListener('portal:filesUpdated', onFilesUpdated);
+  return () => window.removeEventListener('portal:filesUpdated', onFilesUpdated);
+}, [bustMap]);
+
+// Helper para aplicar bust por key
+const withBust = (key, url) => {
+  const q = bustMap[key];
+  if (!q) return url;
+  try { const u = new URL(url, window.location.origin); u.search = q; return u.pathname + u.search; }
+  catch { return url + q; }
+};
+
+// …y en el array "tools", donde uses DOCS.liner / DOCS.chemical / DOCS.celdas:
+actions: [{ label: 'Abrir documento', href: withBust('liner', DOCS.liner), openInModal: true }]
+// idem para 'chemical' y 'celdas'
 
   // IMPORTANTE: usa DOCS/BASE (nada de rutas absolutas tipo "/herramientas/...").
   const tools = [
