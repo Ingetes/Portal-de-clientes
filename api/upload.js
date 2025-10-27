@@ -11,7 +11,12 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ ok: false, msg: 'Use POST' });
   }
-
+// GET ?debug=1 -> muestra qué envs están presentes (true/false)
+if (req.method === 'GET' && req.query?.debug === '1') {
+  const keys = ['GH_TOKEN3','GH_OWNER3','GH_REPO3','GH_BRANCH3','ADMIN_KEY_CLIENTES'];
+  const present = Object.fromEntries(keys.map(k => [k, Boolean(process.env[k])]));
+  return res.status(200).json({ ok: true, present, runtime: 'node', note: 'solo booleans; no muestra valores' });
+}
   try {
     // Verificación rápida de envs
     const missing = ['GH_TOKEN3','GH_OWNER3','GH_REPO3','GH_BRANCH3','ADMIN_KEY_CLIENTES']
