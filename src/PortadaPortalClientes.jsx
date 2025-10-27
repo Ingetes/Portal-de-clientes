@@ -469,7 +469,7 @@ function Header({ onOpenSettings }) {
         </div>
 
         {/* NAV + Botón de Ajustes */}
-        <nav className="hidden md:flex items-center gap-3 text-sm">
+        <nav className="flex items-center gap-3 text-sm overflow-x-auto md:overflow-visible whitespace-nowrap">
           <a className="text-slate-600 hover:text-emerald-700 px-2" href="#proposito">Próposito</a>
           <a className="text-slate-600 hover:text-emerald-700 px-2" href="#beneficios">Beneficios</a>
           <a className="text-slate-600 hover:text-emerald-700 px-2" href="#como-empezar">Cómo empezar</a>
@@ -918,7 +918,7 @@ React.useEffect(() => {
               Descarga las listas de precios y archivos de inventario. Puedes previsualizar PDFs y buscar referencias.
             </p>
           </div>
-          <a href="#home" className="hidden md:inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">← Volver</a>
+          <a href="#home" className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">← Volver</a>
         </div>
 
         <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -1778,7 +1778,7 @@ actions: [{ label: 'Abrir documento', href: withBust('liner', DOCS.liner), openI
             <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">Herramientas comerciales para los canales</h1>
             <p className="mt-2 text-slate-700 max-w-2xl">Accede a utilidades tecnicas y de seleccion que agilizan tu preingenieria y cotizacion.</p>
           </div>
-          <a href="#home" className="hidden md:inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">← Volver</a>
+          <a href="#home" className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">← Volver</a>
         </div>
 
         <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -1876,7 +1876,7 @@ function StatsScreen() {
             <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">Estadisticas de uso (local)</h1>
             <p className="mt-2 text-slate-700 max-w-2xl">Resumen simple basado en <code>localStorage</code>. Ideal para validar adopcion antes de conectar a backend.</p>
           </div>
-          <a href="#home" className="hidden md:inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">← Volver</a>
+          <a href="#home" className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">← Volver</a>
         </div>
 
         <div className="mt-8 overflow-x-auto">
