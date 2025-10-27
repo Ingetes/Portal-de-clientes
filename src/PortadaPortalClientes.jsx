@@ -16,13 +16,13 @@ const DOCS = {
 };
 // === Archivos editables desde "Ajustes" (coinciden con los que sirves en GH Pages)
 const EDITABLE_FILES = [
-  { key: 'siemens',    label: 'Lista de precios Siemens (PDF)',     path: 'Listaprecios2025.pdf',                                  url: `${import.meta.env.BASE_URL}Listaprecios2025.pdf` },
-  { key: 'innomotics', label: 'Lista de precios Innomotics (PDF)',  path: 'Listapreciosinnomotics.pdf',                            url: `${import.meta.env.BASE_URL}Listapreciosinnomotics.pdf` },
-  { key: 'inventario', label: 'Inventario INGETES (XLSX)',          path: 'INVENTARIO.xlsx',                                       url: `${import.meta.env.BASE_URL}INVENTARIO.xlsx` },
-  { key: 'promo',      label: 'Inventario en Promoción (XLSX)',     path: 'inventario-promocion.xlsx',                             url: `${import.meta.env.BASE_URL}inventario-promocion.xlsx` },
-  { key: 'liner',      label: 'Siemens Liner (PDF)',                path: 'Siemens%20Liner%20Full%20New.pdf',                      url: `${import.meta.env.BASE_URL}Siemens%20Liner%20Full%20New.pdf` },
-  { key: 'chemical',   label: 'Chemical Resistance Chart (PDF)',    path: 'Chemical_Resistance_Chart_202106.pdf',                  url: `${import.meta.env.BASE_URL}Chemical_Resistance_Chart_202106.pdf` },
-  { key: 'celdas',     label: 'Guía celdas de carga (PDF)',         path: 'manual%20de%20celdas%20y%20MODULOS%20DE%20PESAJE%20RICE%20LAKE%20en%20español.pdf', url: `${import.meta.env.BASE_URL}manual%20de%20celdas%20y%20MODULOS%20DE%20PESAJE%20RICE%20LAKE%20en%20español.pdf` },
+  { key: 'siemens',    label: 'Lista de precios Siemens (PDF)',     path: 'public/Listaprecios2025.pdf',                                  url: `${import.meta.env.BASE_URL}Listaprecios2025.pdf` },
+  { key: 'innomotics', label: 'Lista de precios Innomotics (PDF)',  path: 'public/Listapreciosinnomotics.pdf',                            url: `${import.meta.env.BASE_URL}Listapreciosinnomotics.pdf` },
+  { key: 'inventario', label: 'Inventario INGETES (XLSX)',          path: 'public/INVENTARIO.xlsx',                                       url: `${import.meta.env.BASE_URL}INVENTARIO.xlsx` },
+  { key: 'promo',      label: 'Inventario en Promoción (XLSX)',     path: 'public/inventario-promocion.xlsx',                             url: `${import.meta.env.BASE_URL}inventario-promocion.xlsx` },
+  { key: 'liner',      label: 'Siemens Liner (PDF)',                path: 'public/Siemens%20Liner%20Full%20New.pdf',                      url: `${import.meta.env.BASE_URL}Siemens%20Liner%20Full%20New.pdf` },
+  { key: 'chemical',   label: 'Chemical Resistance Chart (PDF)',    path: 'public/Chemical_Resistance_Chart_202106.pdf',                  url: `${import.meta.env.BASE_URL}Chemical_Resistance_Chart_202106.pdf` },
+  { key: 'celdas',     label: 'Guía celdas de carga (PDF)',         path: 'public/manual%20de%20celdas%20y%20MODULOS%20DE%20PESAJE%20RICE%20LAKE%20en%20español.pdf', url: `${import.meta.env.BASE_URL}manual%20de%20celdas%20y%20MODULOS%20DE%20PESAJE%20RICE%20LAKE%20en%20español.pdf` },
 ];
 
 // === ENDPOINT del repo de Vercel que hará el commit al repositorio CORRESPONDIENTE
