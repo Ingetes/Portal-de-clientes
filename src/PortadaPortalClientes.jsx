@@ -468,24 +468,37 @@ function Header({ onOpenSettings }) {
           </div>
         </div>
 
-        {/* NAV + Botón de Ajustes */}
-        <nav className="flex items-center gap-3 text-sm overflow-x-auto md:overflow-visible whitespace-nowrap">
-          <a className="text-slate-600 hover:text-emerald-700 px-2" href="#proposito">Próposito</a>
-          <a className="text-slate-600 hover:text-emerald-700 px-2" href="#beneficios">Beneficios</a>
-          <a className="text-slate-600 hover:text-emerald-700 px-2" href="#como-empezar">Cómo empezar</a>
-          <a className="text-slate-600 hover:text-emerald-700 px-2" href="#herramientas">Herramientas</a>
-          <a className="text-slate-600 hover:text-emerald-700 px-2" href="#stats">Estadisticas</a>
+{/* NAV + Botones principales */}
+<nav className="flex items-center gap-3 text-sm overflow-x-auto md:overflow-visible whitespace-nowrap">
+  {/* Botón Inicio */}
+  <a
+    className="text-slate-600 hover:text-emerald-700 px-3 py-1.5 font-semibold"
+    href="#home"
+  >
+    Inicio
+  </a>
 
-          {/* === BOTÓN AJUSTES (igual UX al portal de cotizaciones) === */}
-          <button
-            type="button"
-            onClick={onOpenSettings}
-            className="ml-2 rounded-xl bg-white text-slate-700 font-semibold ring-1 ring-inset ring-slate-300 hover:bg-slate-50 px-3 py-1.5"
-            title="Ajustes (cambiar PDFs/XLSX publicados)"
-          >
-            ⚙️ Ajustes
-          </button>
-        </nav>
+  {/* Botón Cerrar sesión */}
+  <button
+    onClick={() => {
+      localStorage.clear(); // limpia sesión local
+      window.location.href = 'https://ingetes.github.io/Portal-de-clientes/#ingresar';
+    }}
+    className="text-slate-600 hover:text-red-700 px-3 py-1.5 font-semibold"
+  >
+    Cerrar sesión
+  </button>
+
+  {/* Botón Ajustes */}
+  <button
+    type="button"
+    onClick={onOpenSettings}
+    className="ml-2 rounded-xl bg-white text-slate-700 font-semibold ring-1 ring-inset ring-slate-300 hover:bg-slate-50 px-3 py-1.5"
+    title="Ajustes (cambiar PDFs/XLSX publicados)"
+  >
+    ⚙️ Ajustes
+  </button>
+</nav>
       </div>
     </header>
   );
