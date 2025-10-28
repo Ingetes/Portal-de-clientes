@@ -691,12 +691,12 @@ function MarcasAliadasScreen() {
   // Si subes logos, colócalos en /public/brands/ con estos nombres.
   // Si no existen, se muestra el nombre como chip.
   const BRANDS = [
-    { name: 'Siemens',       logo: `${BASE}brands/siemens.svg`,       href: 'https://www.siemens.com/' },
-    { name: 'Innomotics',    logo: `${BASE}brands/innomotics.svg`,    href: 'https://www.innomotics.com/' },
-    { name: 'Rice Lake',     logo: `${BASE}brands/ricelake.svg`,      href: 'https://www.ricelake.com/' },
-    { name: 'Dini Argeo',    logo: `${BASE}brands/diniargeo.svg`,     href: 'https://www.diniargeo.com/es/catalogo' },
-    { name: 'Conveyor Components Company', logo: `${BASE}brands/conveyorcomponents.svg`, href: 'https://www.conveyorcomponents.com/catalog' },
-    { name: 'Ecom',          logo: `${BASE}brands/ecom.svg`,          href: 'https://www.ecom.de/en/products/' },
+    { name: 'Siemens',       logo: `${BASE}Siemens.svg`,       href: 'https://www.siemens.com/' },
+    { name: 'Innomotics',    logo: `${BASE}innomotics.svg`,    href: 'https://www.innomotics.com/' },
+    { name: 'Rice Lake',     logo: `${BASE}ricelake.png`,      href: 'https://www.ricelake.com/' },
+    { name: 'Dini Argeo',    logo: `${BASE}diniargeo.png`,     href: 'https://www.diniargeo.com/es/catalogo' },
+    { name: 'Conveyor Components Company', logo: `${BASE}conveyorcomponents.svg`, href: 'https://www.conveyorcomponents.com/catalog' },
+    { name: 'Ecom',          logo: `${BASE}ecom.png`,          href: 'https://www.ecom.de/en/products/' },
   ];
 
   return (
