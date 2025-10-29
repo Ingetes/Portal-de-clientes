@@ -541,13 +541,62 @@ function Header({ onOpenSettings }) {
 }
 
 const COMERCIALES = {
-  PCR:{ nombre:"PABLO CESAR RODRIGUEZ", cargo:"Gerente", email:"pcr@ingetes.com", telefono:"310-570-2228", office:"BOGOTÁ" },
-  CPR:{ nombre:"CLAUDIA PATRICIA RODRIGUEZ", cargo:"Ingeniera Comercial", email:"crodriguez@ingetes.com", telefono:"310-342-3006", office:"BOGOTÁ" },
-  JSG:{ nombre:"JUAN SEBASTIAN GARZON", cargo:"Director Comercial", email:"jgarzon@ingetes.com", telefono:"311-898-2684", office:"BOGOTÁ" },
-  JSO:{ nombre:"JHOAN SEBASTIAN ORTIZ", cargo:"Ingeniero Comercial - Especialista en automatización y pesaje", email:"sortiz@ingetes.com.co", telefono:"312-451-9098", office:"BOGOTÁ" },
-  KAC:{ nombre:"KAREN ARIANA CARRILLO", cargo:"Ingeniera Comercial", email:"kcarrillo@ingetes.com.co", telefono:"312-326-3066", office:"BOGOTÁ" },
-  LNM:{ nombre:"LIZETH MARTINEZ", cargo:"Ingeniera Comercial", email:"lmartinez@ingetes.com.co", telefono:"311-810-5540 - 317-381-0421", office:"BOGOTÁ" },
-  HBR:{ nombre:"HERNAN ROLDAN", cargo:"Ingeniero Comercial", email:"hbroldan@ingetes.com.co", telefono:"314-336-8795", office:"BOGOTÁ" }
+  JSG:{ 
+    nombre:"JUAN SEBASTIAN GARZON", 
+    cargo:"Director Comercial", 
+    email:"jgarzon@ingetes.com", 
+    telefono:"311-898-2684", 
+    office:"BOGOTÁ",
+    especialidad:"Especialista en soluciones para industria de lácteos"
+  },
+  PCR:{ 
+    nombre:"PABLO CESAR RODRIGUEZ", 
+    cargo:"Gerente", 
+    email:"pcr@ingetes.com", 
+    telefono:"311-810-5540", 
+    office:"BOGOTÁ",
+    especialidad:"Especialista en soluciones de analítica de gases · Especialista en pesaje dinámico"
+  },
+  HBR:{  
+    nombre:"HERNAN ROLDAN", 
+    cargo:"Ingeniero Comercial", 
+    email:"hbroldan@ingetes.com.co",  
+    telefono:"314-336-8795", 
+    office:"BOGOTÁ",
+    especialidad:"Especialista en soluciones de transformación digital"
+  },
+  KAC:{  
+    nombre:"KAREN ARIANA CARRILLO", 
+    cargo:"Ingeniera Comercial", 
+    email:"kcarrillo@ingetes.com.co",  
+    telefono:"312-326-3066", 
+    office:"BOGOTÁ",
+    especialidad:"Especialista en soluciones de medición de caudal · Instrumentista"
+  },
+  LNM:{  
+    nombre:"LIZETH MARTINEZ", 
+    cargo:"Ingeniera Comercial", 
+    email:"lmartinez@ingetes.com.co",  
+    telefono:"311-810-5540 - 317-381-0421", 
+    office:"BOGOTÁ",
+    especialidad:"Especialista en diseño e implementación de CCM's"
+  },
+  CPR:{ 
+    nombre:"CLAUDIA PATRICIA RODRIGUEZ", 
+    cargo:"Ingeniera Comercial", 
+    email:"crodriguez@ingetes.com", 
+    telefono:"310-342-3006", 
+    office:"BOGOTÁ",
+    especialidad:"Especialista en diseño e implementación de SCADAs"
+  },
+  JSO:{  
+    nombre:"JHOAN SEBASTIAN ORTIZ", 
+    cargo:"Ingeniero Comercial · Especialista en automatización y pesaje", 
+    email:"sortiz@ingetes.com.co",  
+    telefono:"312-451-9098", 
+    office:"BOGOTÁ",
+    especialidad:"Especialista en soluciones de automatización y pesaje industrial"
+  }
 };
 
 // ==========================================================
@@ -682,6 +731,9 @@ function ComercialesScreen() {
             <div key={i} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
               <h3 className="text-lg font-bold text-slate-900">{p.nombre}</h3>
               <p className="text-sm text-emerald-700 mt-1">{p.cargo}</p>
+              {p.especialidad && (
+                <p className="text-sm text-slate-600 mt-1 italic">{p.especialidad}</p>
+              )}
               <p className="text-sm text-slate-600 mt-2">📍 {p.office}</p>
               <p className="text-sm text-slate-600 mt-1">📞 {p.telefono}</p>
               <p className="text-sm text-slate-600 mt-1">
