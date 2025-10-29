@@ -633,18 +633,16 @@ function Landing({ setChatOpen, chatOpen }) {
       
         {/* Marca de agua grande con opacidad */}
         <img
-          src={`${import.meta.env.BASE_URL}ingetes.jpg`} // <-- coloca aquí tu imagen de fondo, puede ser PNG transparente
+          src={`${import.meta.env.BASE_URL}ingetes.jpg?v=hero1`}            // ← marca de agua fondo
           alt="Marca de agua INGETES"
-          className="absolute inset-0 w-full h-full object-cover opacity-[0.07] pointer-events-none"
+          className="absolute inset-0 w-full h-full object-cover opacity-[0.12] pointer-events-none"
         />
-      
-        {/* Logo central difuminado para pantallas grandes */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <img
-            src={`${import.meta.env.BASE_URL}ingetes.jpg`} // logo principal
-            alt="Logo INGETES"
-            className="w-[480px] max-w-[80vw] opacity-[0.1] drop-shadow-[0_0_30px_rgba(16,185,129,0.3)]"
-          />
+        
+        <img
+          src={`${import.meta.env.BASE_URL}ingetes.jpg?v=hero1`}            // ← logo grande difuminado
+          alt="Logo INGETES"
+          className="w-[480px] max-w-[80vw] opacity-[0.18] drop-shadow-[0_0_30px_rgba(16,185,129,0.25)]"
+        />
         </div>
       </div>
 
