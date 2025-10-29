@@ -29,8 +29,8 @@ const EDITABLE_FILES = [
 // (cámbialo por tu URL real)
 const UPLOAD_ENDPOINT = 'https://portal-de-clientes.vercel.app/api/upload';
 
-// === GitHub repo info (ajústalo si tu rama NO es main)
-const REPO = { owner: 'ingetes', repo: 'Portal-de-clientes', branch: 'main' };
+// === GitHub repo info (main y gh-pages)
+const REPO = { owner: 'ingetes', repo: 'Portal-de-clientes', main: 'main', pages: 'gh-pages' };
 
 // saca el "path" del archivo dentro del repo a partir de la URL pública
 function pathFromUrl(u) {
@@ -49,17 +49,24 @@ function pathFromUrl(u) {
 }
 
 // consulta la fecha del último commit que tocó ese archivo
-async function githubLastCommitDate(path) {
-  if (!path) return null;
-  const q = `https://api.github.com/repos/${REPO.owner}/${REPO.repo}/commits` +
-            `?path=${encodeURIComponent(path)}&per_page=1&sha=${REPO.branch}`;
-  try {
-    const r = await fetch(q, { headers: { 'Accept': 'application/vnd.github+json' } });
+async function githubLastCommitDate(pathPublic) {
+  // 1) Intento en MAIN con la ruta /public/archivo.ext
+  const qMain = `https://api.github.com/repos/${REPO.owner}/${REPO.repo}/commits?path=${encodeURIComponent(pathPublic)}&per_page=1&sha=${REPO.main}`;
+
+  // 2) Intento en GH-PAGES con la ruta en RAÍZ (sin "public/")
+  const rootPath = pathPublic.replace(/^public\//, '');
+  const qPages = `https://api.github.com/repos/${REPO.owner}/${REPO.repo}/commits?path=${encodeURIComponent(rootPath)}&per_page=1&sha=${REPO.pages}`;
+
+  async function firstDate(url) {
+    const r = await fetch(url, { headers: { 'Accept': 'application/vnd.github+json' } });
     if (!r.ok) return null;
     const arr = await r.json().catch(() => []);
     const iso = arr?.[0]?.commit?.committer?.date || arr?.[0]?.commit?.author?.date;
     return iso ? new Date(iso) : null;
-  } catch { return null; }
+  }
+
+  // Prioridad: si hay commit en MAIN lo tomamos; si no, probamos GH-PAGES
+  return (await firstDate(qMain)) || (await firstDate(qPages));
 }
 
 // Único helper para construir el src del visor (PDF.js o nativo)
@@ -791,60 +798,11 @@ const [items, setItems] = React.useState([
 
 // Actualiza fecha y tamaño al montar
 React.useEffect(() => {
-  async function fetchFileMeta(url) {
-    // 1) tamaño + posible Last-Modified del CDN
-    let size = null;
-    let headerDate = null;
-    try {
-      const res = await fetch(url, { method: 'HEAD' });
-      if (res.ok) {
-        const s = res.headers.get('content-length');
-        size = s ? Number(s) : null;
-        const lm = res.headers.get('last-modified');
-        headerDate = lm ? new Date(lm) : null;
-      }
-    } catch { /* no-op */ }
-
-    // 2) fecha real desde GitHub (último commit) si:
-    //    - no hay Last-Modified, o
-    //    - el CDN nos dio "hoy" (muy cercano a ahora), típico de GitHub Pages
-    let date = headerDate;
-    const tooFresh =
-      date && Math.abs(Date.now() - date.getTime()) < 18 * 60 * 60 * 1000; // 18 h
-    if (!date || tooFresh) {
-      const path = pathFromUrl(url);
-      const ghDate = await githubLastCommitDate(path);
-      if (ghDate) date = ghDate;
-    }
-
-    return { date, size };
-  }
-
-  async function refreshMeta() {
-    const updated = await Promise.all(
-      items.map(async (it) => {
-        const meta = await fetchFileMeta(it.href);
-        const last = meta.date
-          ? meta.date.toLocaleDateString('es-CO', { year: 'numeric', month: 'short', day: 'numeric' })
-          : '—';
-        const size = meta.size
-          ? `${(meta.size / 1024 / 1024).toFixed(2)} MB`
-          : '—';
-
-        // “Nuevo” la primera vez que el usuario lo ve en este navegador
-        const prev = localStorage.getItem(`docmeta:${it.key}`);
-        const badge = prev ? 'Actualizado' : 'Nuevo';
-        localStorage.setItem(`docmeta:${it.key}`, last);
-
-        return { ...it, updated: last, size, badge };
-      })
-    );
-    setItems(updated);
-  }
-
+  async function fetchFileMeta(url) { /* …(igual que está)… */ }
+  async function refreshMeta() { /* …(igual que está)… */ }
   refreshMeta();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, []);
+// 🔽 añade esta dependencia para que se ejecute al cambiar cualquier href
+}, [items.map(it => it.href).join('|')]);
 
   const fileNameFromUrl = (url, fallback = 'documento') => {
     try {
