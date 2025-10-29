@@ -626,25 +626,26 @@ function Landing({ setChatOpen, chatOpen }) {
     <>
       {/* Hero */}
       <section className="relative overflow-hidden">
-      {/* Fondo corporativo con marca de agua */}
-      <div className="absolute inset-0 -z-10 overflow-hidden">
-        {/* Gradiente suave verde institucional */}
-        <div className="absolute inset-0 bg-gradient-to-b from-emerald-50 via-white to-slate-50" />
+      <section className="relative overflow-hidden">
+        {/* Fondo corporativo con marca de agua */}
+        <div className="absolute inset-0 -z-10 overflow-hidden grid place-items-center">
+          {/* Gradiente suave verde institucional */}
+          <div className="absolute inset-0 bg-gradient-to-b from-emerald-50 via-white to-slate-50" />
       
-        {/* Marca de agua grande con opacidad */}
-        <img
-          src={`${import.meta.env.BASE_URL}ingetes.jpg?v=hero1`}            // ← marca de agua fondo
-          alt="Marca de agua INGETES"
-          className="absolute inset-0 w-full h-full object-cover opacity-[0.12] pointer-events-none"
-        />
-        
-        <img
-          src={`${import.meta.env.BASE_URL}ingetes.jpg?v=hero1`}            // ← logo grande difuminado
-          alt="Logo INGETES"
-          className="w-[480px] max-w-[80vw] opacity-[0.18] drop-shadow-[0_0_30px_rgba(16,185,129,0.25)]"
-        />
+          {/* Marca de agua fondo */}
+          <img
+            src={`${import.meta.env.BASE_URL}ingetes.jpg?v=hero1`}
+            alt="Marca de agua INGETES"
+            className="absolute inset-0 w-full h-full object-cover opacity-[0.12] pointer-events-none select-none"
+          />
+      
+          {/* Logo grande difuminado al centro */}
+          <img
+            src={`${import.meta.env.BASE_URL}ingetes.jpg?v=hero1`}
+            alt="Logo INGETES"
+            className="w-[480px] max-w-[80vw] opacity-[0.18] drop-shadow-[0_0_30px_rgba(16,185,129,0.25)] pointer-events-none select-none"
+          />
         </div>
-      </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 grid lg:grid-cols-2 gap-10 items-center">
           <div>
