@@ -626,22 +626,33 @@ function Landing({ setChatOpen, chatOpen }) {
     <>
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 -z-10">
-          <svg viewBox="0 0 1200 600" className="w-full h-full opacity-10">
-            <defs>
-              <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stopColor="#10b981" />
-                <stop offset="100%" stopColor="#065f46" />
-              </linearGradient>
-            </defs>
-            <circle cx="200" cy="100" r="200" fill="url(#g)" />
-            <circle cx="1000" cy="500" r="240" fill="url(#g)" />
-          </svg>
+      {/* Fondo corporativo con marca de agua */}
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+        {/* Gradiente suave verde institucional */}
+        <div className="absolute inset-0 bg-gradient-to-b from-emerald-50 via-white to-slate-50" />
+      
+        {/* Marca de agua grande con opacidad */}
+        <img
+          src={`${import.meta.env.BASE_URL}ingetes.jpg`} // <-- coloca aquí tu imagen de fondo, puede ser PNG transparente
+          alt="Marca de agua INGETES"
+          className="absolute inset-0 w-full h-full object-cover opacity-[0.07] pointer-events-none"
+        />
+      
+        {/* Logo central difuminado para pantallas grandes */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <img
+            src={`${import.meta.env.BASE_URL}ingetes.jpg`} // logo principal
+            alt="Logo INGETES"
+            className="w-[480px] max-w-[80vw] opacity-[0.1] drop-shadow-[0_0_30px_rgba(16,185,129,0.3)]"
+          />
         </div>
+      </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 grid lg:grid-cols-2 gap-10 items-center">
           <div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900">Portal de Canales INGETES</h1>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-emerald-700 drop-shadow-sm">
+              <span className="text-slate-900">Portal de Canales</span> INGETES
+            </h1>
             <p className="mt-4 text-lg text-slate-700" id="proposito">Este portal es un espacio exclusivo para clientes que mantienen una relación comercial con INGETES. Aquí encontrarás documentación que facilita la elaboración de ofertas, herramientas para la selección de equipos y el diseño de tus proyectos, un cotizador para crear propuestas rápidas a tus clientes y acceso a privilegios exclusivos para miembros de INGECAP.</p>
             </div>
           <div className="relative">
