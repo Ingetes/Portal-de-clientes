@@ -1165,8 +1165,22 @@ React.useEffect(() => {
                       Usar visor pdf.js
                     </label>
                   )}
-                <button onClick={() => downloadFile(preview.item.href, fileNameFromUrl(preview.item.href))} className="rounded-xl bg-slate-900 px-3 py-2 text-white text-sm font-semibold hover:bg-black">Descargar</button>
-                <button onClick={() => setPreview(null)} className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold hover:bg-slate-50">Cerrar</button>
+                  {/* Mostrar botón Descargar solo si NO es Inventario INGETES */}
+                  {preview.item.key !== 'inventario' && (
+                    <button
+                      onClick={() => downloadFile(preview.item.href, fileNameFromUrl(preview.item.href))}
+                      className="rounded-xl bg-slate-900 px-3 py-2 text-white text-sm font-semibold hover:bg-black"
+                    >
+                      Descargar
+                    </button>
+                  )}
+                  
+                  <button
+                    onClick={() => setPreview(null)}
+                    className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold hover:bg-slate-50"
+                  >
+                    Cerrar
+                  </button>
               </div>
             </div>
             <div className="h-[75vh]">
