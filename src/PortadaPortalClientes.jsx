@@ -38,9 +38,11 @@ function pathFromUrl(u) {
     const base = import.meta.env.BASE_URL; // p.ej. /Portal-de-clientes/
     const url  = new URL(u, window.location.origin);
     const root = new URL(base, window.location.origin);
-    // /Portal-de-clientes/Listaprecios2025.pdf  ->  Listaprecios2025.pdf
+    // /Portal-de-clientes/Listaprecios2025.pdf  ->  public/Listaprecios2025.pdf
     let p = url.pathname.replace(root.pathname, '');
-    return decodeURIComponent(p);
+    p = decodeURIComponent(p);
+    if (!p.startsWith('public/')) p = 'public/' + p;
+    return p;
   } catch {
     return '';
   }
@@ -690,14 +692,17 @@ function MarcasAliadasScreen() {
 
   // Si subes logos, colócalos en /public/brands/ con estos nombres.
   // Si no existen, se muestra el nombre como chip.
-  const BRANDS = [
-    { name: 'Siemens',       logo: `${BASE}Siemens.svg`,       href: 'https://www.siemens.com/' },
-    { name: 'Innomotics',    logo: `${BASE}innomotics.svg`,    href: 'https://www.innomotics.com/' },
-    { name: 'Rice Lake',     logo: `${BASE}ricelake.png`,      href: 'https://www.ricelake.com/' },
-    { name: 'Dini Argeo',    logo: `${BASE}diniargeo.png`,     href: 'https://www.diniargeo.com/es/catalogo' },
-    { name: 'Conveyor Components Company', logo: `${BASE}conveyorcomponents.svg`, href: 'https://www.conveyorcomponents.com/catalog' },
-    { name: 'Ecom',          logo: `${BASE}ecom.png`,          href: 'https://www.ecom.de/en/products/' },
-  ];
+const BRANDS = [
+  { name: 'Siemens',       logo: `${BASE}Siemens.svg`,       href: 'https://mall.industry.siemens.com/goos/WelcomePage.aspx?language=es&regionUrl=/co' },
+  { name: 'Innomotics',    logo: `${BASE}innomotics.svg`,    href: 'https://www.innomotics.com/' }, // si tienes link de catálogo específico, cámbialo aquí
+  { name: 'Rice Lake',     logo: `${BASE}ricelake.png`,      href: 'https://www.ricelake.com/' },   // idem
+  { name: 'Dini Argeo',    logo: `${BASE}diniargeo.png`,     href: 'https://dealer.diniargeo.es/' },
+  { name: 'Conveyor Components Company', logo: `${BASE}conveyorcomponents.svg`, href: 'https://www.conveyorcomponents.com/catalog' },
+  { name: 'Ecom (analizadores de gas)',  logo: `${BASE}ecom.png`, href: 'https://spanish.ecomusa.com/ecom-product-range/' },
+  { name: 'ASM Sensors',   logo: `${BASE}asm.png`,           href: 'https://www.asm-sensor.com/en/' },
+  { name: 'Neptronic',     logo: `${BASE}neptronic.png`,     href: 'https://www.neptronic.com/' },
+  { name: 'INOR Transmitter', logo: `${BASE}inor.png`,       href: 'https://inor.com/' }
+];
 
   return (
     <section id="marcas" className="min-h-[70vh] border-t border-slate-100 bg-white">
@@ -1979,16 +1984,43 @@ function StatsScreen() {
 function Footer() {
   return (
     <footer className="bg-slate-900 text-slate-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid md:grid-cols-2 gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid md:grid-cols-3 gap-8">
+        {/* Columna 1: Empresa */}
         <div>
           <p className="text-sm uppercase tracking-widest text-slate-400">INGETES S.A.S.</p>
-          <p className="mt-2 text-sm text-slate-300">Soluciones de automatización industrial. Bogotá, Colombia.</p>
+          <p className="mt-2 text-sm text-slate-300">
+            Carrera 16 No. 148 - 19<br/>
+            Bogotá - Colombia
+          </p>
+          <p className="mt-2 text-sm text-slate-300">
+            PBX: (57)+1 259 3679<br/>
+            (57) + 311 8105540
+          </p>
         </div>
-        <div className="md:text-right text-sm text-slate-300">
-          <p>Soporte: <a href="mailto:soporte@ingetes.com" className="underline underline-offset-4">soporte@ingetes.com</a></p>
-          <p className="mt-1">Comercial: <a href="mailto:jgarzon@ingetes.com" className="underline underline-offset-4">jgarzon@ingetes.com</a></p>
+
+        {/* Columna 2: Contactos */}
+        <div className="text-sm text-slate-300">
+          <p className="font-semibold text-slate-200">Contactos</p>
+          <p className="mt-2">
+            Facturación: <a href="mailto:achamorro@ingetes.com" className="underline underline-offset-4">Ayda Chamorro &lt;achamorro@ingetes.com&gt;</a>
+          </p>
+          <p className="mt-1">
+            Soporte: <a href="mailto:jgarzon@ingetes.com" className="underline underline-offset-4">Juan Sebastián Garzón &lt;jgarzon@ingetes.com&gt;</a>
+          </p>
+        </div>
+
+        {/* Columna 3: Acciones rápidas */}
+        <div className="md:text-right text-sm">
+          <a
+            href="#home"
+            className="inline-block rounded-xl bg-emerald-600 px-4 py-2 font-semibold hover:bg-emerald-700"
+          >
+            Ir al inicio
+          </a>
+          <p className="mt-3 text-slate-400">© {new Date().getFullYear()} INGETES S.A.S.</p>
         </div>
       </div>
     </footer>
   );
 }
+
