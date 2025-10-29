@@ -591,11 +591,11 @@ const COMERCIALES = {
   },
   JSO:{  
     nombre:"JHOAN SEBASTIAN ORTIZ", 
-    cargo:"Ingeniero Comercial · Especialista en automatización y pesaje", 
+    cargo:"Ingeniero Comercial", 
     email:"sortiz@ingetes.com.co",  
     telefono:"312-451-9098", 
     office:"BOGOTÁ",
-    especialidad:"Especialista en soluciones de automatización y pesaje industrial"
+    especialidad:"Especialista en automatización y pesaje"
   }
 };
 
