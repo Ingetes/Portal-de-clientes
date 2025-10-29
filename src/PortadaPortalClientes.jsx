@@ -62,6 +62,23 @@ async function githubLastCommitDate(pathPublic) {
   }
 }
 
+// Devuelve última fecha de commit y si hay historial previo (>=2 commits para ese path)
+async function githubCommitMeta(pathPublic) {
+  const q = `https://api.github.com/repos/${REPO.owner}/${REPO.repo}/commits?path=${encodeURIComponent(pathPublic)}&sha=${REPO.main}&per_page=2`;
+  try {
+    const r = await fetch(q, { headers: { 'Accept': 'application/vnd.github+json' }, cache: 'no-store' });
+    if (!r.ok) return { lastDate: null, hasPrevious: false };
+    const arr = await r.json().catch(() => []);
+    const iso = arr?.[0]?.commit?.committer?.date || arr?.[0]?.commit?.author?.date;
+    return {
+      lastDate: iso ? new Date(iso) : null,
+      hasPrevious: (Array.isArray(arr) && arr.length > 1) // hay commits anteriores a este
+    };
+  } catch {
+    return { lastDate: null, hasPrevious: false };
+  }
+}
+
 // Único helper para construir el src del visor (PDF.js o nativo)
 function buildViewerSrc(href, q = '', usePdf = true) {
   // Asegurar URL ABSOLUTA del PDF (importante cuando el visor está en otro dominio)
@@ -804,43 +821,52 @@ const [items, setItems] = React.useState([
 
 // Actualiza fecha/tamaño y badge usando HEAD y/o último commit en GH
 React.useEffect(() => {
-  async function fetchFileMeta(url) {
-    const encoded = encodeURI((url || '').split('#')[0]);
-    let updated = '—';
-    let size    = '—';
-    let badge   = '';
+async function fetchFileMeta(url) {
+  const encoded = encodeURI((url || '').split('#')[0]);
 
-    // 1) Intento HEAD directo al archivo publicado (GitHub Pages expone Last-Modified y Content-Length)
-    try {
-      const r = await fetch(encoded, { method: 'HEAD', cache: 'no-store' });
-      if (r.ok) {
-        const lm  = r.headers.get('last-modified');
-        const len = r.headers.get('content-length');
-        if (len) size = bytesToSize(len);
-        if (lm) {
-          const d = new Date(lm);
-          updated = formatDateES(d);
-          const days = (Date.now() - d.getTime()) / 86400000;
-          badge = days <= 3 ? 'Nuevo' : (days <= 14 ? 'Actualizado' : '');
-        }
-      }
-    } catch {}
+  // Valores por defecto
+  let updated = '—';
+  let size    = '—';
+  let badge   = '';
 
-    // 2) Si no hubo Last-Modified, usamos la fecha del ÚLTIMO COMMIT que tocó ese path
-    if (updated === '—') {
-      try {
-        const pathPublic = pathFromUrl(url); // ej: public/INVENTARIO.xlsx
-        const d = await githubLastCommitDate(pathPublic); // usa el REPO definido arriba
-        if (d) {
-          updated = formatDateES(d);
-          const days = (Date.now() - d.getTime()) / 86400000;
-          badge = days <= 3 ? 'Nuevo' : (days <= 14 ? 'Actualizado' : '');
-        }
-      } catch {}
+  // --- (A) Fecha: SIEMPRE preferimos GitHub (último commit del archivo) ---
+  let lastDate = null;
+  let hasPrevious = false;
+  try {
+    const pathPublic = pathFromUrl(url);               // ej. public/INVENTARIO.xlsx
+    const meta = await githubCommitMeta(pathPublic);   // { lastDate, hasPrevious }
+    lastDate = meta.lastDate;
+    hasPrevious = meta.hasPrevious;
+  } catch {}
+
+  // --- (B) Tamaño: lo tomamos por HEAD a la URL publicada (solo para Content-Length) ---
+  try {
+    // cache-bust para que Pages no sirva un HEAD viejo
+    const bust = (encoded.includes('?') ? '&' : '?') + 'v=' + Date.now();
+    const r = await fetch(encoded + bust, { method: 'HEAD', cache: 'no-store' });
+    if (r.ok) {
+      const len = r.headers.get('content-length');
+      if (len) size = bytesToSize(len);
     }
+  } catch {}
 
-    return { updated, size, badge };
+  // --- (C) Formateo de fecha + regla del badge ---
+  if (lastDate) {
+    updated = formatDateES(lastDate);
+    const days = (Date.now() - lastDate.getTime()) / 86400000;
+
+    // Regla:
+    // - Si NO hay commit previo -> es un archivo nuevo (primer commit)  => "Nuevo" si <= 14 días
+    // - Si SÍ hay historial previo -> fue modificado                     => "Actualizado" si <= 14 días
+    if (days <= 14) {
+      badge = hasPrevious ? 'Actualizado' : 'Nuevo';
+    } else {
+      badge = '';
+    }
   }
+
+  return { updated, size, badge };
+}
 
   async function refreshMeta() {
     const next = await Promise.all(
