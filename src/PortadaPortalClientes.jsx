@@ -751,7 +751,7 @@ function ComercialesScreen() {
               className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow"
             >
               {/* Imagen / Fallback */}
-              <div className="relative -mx-2 -mt-2 mb-4 h-40 rounded-2xl overflow-hidden bg-gradient-to-br from-emerald-50 to-slate-50">
+              <div className="relative -mx-2 -mt-2 mb-4 aspect-square rounded-2xl overflow-hidden bg-white shadow-sm ring-1 ring-slate-200">
                 <img
                   src={p.foto}
                   alt={p.nombre}
