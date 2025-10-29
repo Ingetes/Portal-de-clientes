@@ -540,6 +540,18 @@ function Header({ onOpenSettings }) {
   );
 }
 
+// Fotos de comerciales (en /public/comerciales/)
+const IMG_BASE = `${import.meta.env.BASE_URL}comerciales/`;
+const COM_FOTOS = {
+  JSG: 'Sebastian.png',
+  PCR: 'Pablo.png',
+  KAC: 'Karen.png',
+  LNM: 'Lizeth.png',
+  HBR: 'hernan.png',   // tal como la subiste
+  CPR: 'Claudia.png',
+  JSO: 'Jhoan.png',
+};
+
 const COMERCIALES = {
   JSG:{ 
     nombre:"JUAN SEBASTIAN GARZON", 
@@ -547,15 +559,17 @@ const COMERCIALES = {
     email:"jgarzon@ingetes.com", 
     telefono:"311-898-2684", 
     office:"BOGOTÁ",
-    especialidad:"Especialista en soluciones para industria de lácteos"
+    especialidad:"Especialista en soluciones para industria de lácteos",
+    foto: IMG_BASE + COM_FOTOS.JSG
   },
   PCR:{ 
     nombre:"PABLO CESAR RODRIGUEZ", 
     cargo:"Gerente", 
     email:"pcr@ingetes.com", 
-    telefono:"311-810-5540", 
+    telefono:"311-810-5540",  // ← actualizado
     office:"BOGOTÁ",
-    especialidad:"Especialista en soluciones de analítica de gases · Especialista en pesaje dinámico"
+    especialidad:"Especialista en soluciones de analítica de gases · Especialista en pesaje dinámico",
+    foto: IMG_BASE + COM_FOTOS.PCR
   },
   HBR:{  
     nombre:"HERNAN ROLDAN", 
@@ -563,7 +577,8 @@ const COMERCIALES = {
     email:"hbroldan@ingetes.com.co",  
     telefono:"314-336-8795", 
     office:"BOGOTÁ",
-    especialidad:"Especialista en soluciones de transformación digital"
+    especialidad:"Especialista en soluciones de transformación digital",
+    foto: IMG_BASE + COM_FOTOS.HBR
   },
   KAC:{  
     nombre:"KAREN ARIANA CARRILLO", 
@@ -571,7 +586,8 @@ const COMERCIALES = {
     email:"kcarrillo@ingetes.com.co",  
     telefono:"312-326-3066", 
     office:"BOGOTÁ",
-    especialidad:"Especialista en soluciones de medición de caudal · Instrumentista"
+    especialidad:"Especialista en soluciones de medición de caudal · Instrumentista",
+    foto: IMG_BASE + COM_FOTOS.KAC
   },
   LNM:{  
     nombre:"LIZETH MARTINEZ", 
@@ -579,7 +595,8 @@ const COMERCIALES = {
     email:"lmartinez@ingetes.com.co",  
     telefono:"311-810-5540 - 317-381-0421", 
     office:"BOGOTÁ",
-    especialidad:"Especialista en diseño e implementación de CCM's"
+    especialidad:"Especialista en diseño e implementación de CCM's",
+    foto: IMG_BASE + COM_FOTOS.LNM
   },
   CPR:{ 
     nombre:"CLAUDIA PATRICIA RODRIGUEZ", 
@@ -587,7 +604,8 @@ const COMERCIALES = {
     email:"crodriguez@ingetes.com", 
     telefono:"310-342-3006", 
     office:"BOGOTÁ",
-    especialidad:"Especialista en diseño e implementación de SCADAs"
+    especialidad:"Especialista en diseño e implementación de SCADAs",
+    foto: IMG_BASE + COM_FOTOS.CPR
   },
   JSO:{  
     nombre:"JHOAN SEBASTIAN ORTIZ", 
@@ -595,7 +613,8 @@ const COMERCIALES = {
     email:"sortiz@ingetes.com.co",  
     telefono:"312-451-9098", 
     office:"BOGOTÁ",
-    especialidad:"Especialista en automatización y pesaje"
+    especialidad:"Especialista en automatización y pesaje",
+    foto: IMG_BASE + COM_FOTOS.JSO
   }
 };
 
@@ -725,10 +744,33 @@ function ComercialesScreen() {
           </div>
           <a href="#home" className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">← Volver</a>
         </div>
-
         <div className="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {data.map((p, i) => (
-            <div key={i} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div
+              key={i}
+              className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow"
+            >
+              {/* Imagen / Fallback */}
+              <div className="relative -mx-2 -mt-2 mb-4 h-40 rounded-2xl overflow-hidden bg-gradient-to-br from-emerald-50 to-slate-50">
+                <img
+                  src={p.foto}
+                  alt={p.nombre}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    const next = e.currentTarget.nextElementSibling;
+                    if (next) next.classList.remove('hidden');
+                  }}
+                />
+                {/* Fallback con iniciales */}
+                <div className="hidden absolute inset-0 flex items-center justify-center">
+                  <span className="text-4xl font-extrabold text-emerald-700/90">
+                    {p.nombre.split(' ').slice(0,2).map(n=>n[0]).join('')}
+                  </span>
+                </div>
+              </div>
+        
+              {/* Texto */}
               <h3 className="text-lg font-bold text-slate-900">{p.nombre}</h3>
               <p className="text-sm text-emerald-700 mt-1">{p.cargo}</p>
               {p.especialidad && (
