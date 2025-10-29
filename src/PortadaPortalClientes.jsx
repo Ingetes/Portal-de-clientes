@@ -229,14 +229,14 @@ const docsMenu = [
       { label: 'Abrir', href: 'https://mall.industry.siemens.com/spice/cloudcm/dashboard?caller=SPC', external: true }
     ]},
     { title: 'Compatibilidad de liner', actions: [
-      { label: 'Abrir documento', href: DOCS.liner, modal: true }
+      { label: 'Vista previa', href: DOCS.liner, modal: true }
     ]},
     { title: 'Tabla de compatibilidad de materiales', actions: [
       { label: 'Abrir', href: 'https://www.coleparmer.com/chemical-resistance', external: true },
-      { label: 'Abrir documento', href: DOCS.chemical, modal: true }
+      { label: 'Vista previa', href: DOCS.chemical, modal: true }
     ]},
     { title: 'Guía de selección de celdas de carga', actions: [
-      { label: 'Abrir documento', href: DOCS.celdas, modal: true }
+      { label: 'Vista previa', href: DOCS.celdas, modal: true }
     ]}
   ];
   // Tests rápidos
@@ -1112,7 +1112,7 @@ React.useEffect(() => {
 {(isPdf(item.href) || isExcel(item.href)) && !item.locked && (
   <button onClick={() => openPreview(item)}
     className="rounded-xl px-4 py-2 font-semibold bg-white text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50">
-    Ver detalles
+    Vista previa
   </button>
 )}
               </div>
@@ -1846,7 +1846,7 @@ const withBust = (key, url) => {
 };
 
 // …y en el array "tools", donde uses DOCS.liner / DOCS.chemical / DOCS.celdas:
-actions: [{ label: 'Abrir documento', href: withBust('liner', DOCS.liner), openInModal: true }]
+actions: [{ label: 'Vista previa', href: withBust('liner', DOCS.liner), openInModal: true }]
 // idem para 'chemical' y 'celdas'
 
   // IMPORTANTE: usa DOCS/BASE (nada de rutas absolutas tipo "/herramientas/...").
@@ -1881,7 +1881,7 @@ actions: [{ label: 'Abrir documento', href: withBust('liner', DOCS.liner), openI
       desc: 'Guia para elegir liner adecuado segun fluido y condiciones.',
       badge: 'Referencia',
       actions: [
-        { label: 'Abrir documento', href: DOCS.liner, openInModal: true }
+        { label: 'Vista previa', href: DOCS.liner, openInModal: true }
       ]
     },
     {
@@ -1890,7 +1890,7 @@ actions: [{ label: 'Abrir documento', href: withBust('liner', DOCS.liner), openI
       badge: 'Referencia',
       actions: [
         { label: 'Abrir',           href: 'https://www.coleparmer.com/chemical-resistance' },
-        { label: 'Abrir documento', href: DOCS.chemical, openInModal: true }
+        { label: 'Vista previa', href: DOCS.chemical, openInModal: true }
       ]
     },
     {
@@ -1898,7 +1898,7 @@ actions: [{ label: 'Abrir documento', href: withBust('liner', DOCS.liner), openI
       desc: 'Criterios de seleccion para celdas de carga por aplicacion.',
       badge: 'Guia',
       actions: [
-        { label: 'Abrir documento', href: DOCS.celdas, openInModal: true }
+        { label: 'Vista previa', href: DOCS.celdas, openInModal: true }
       ]
     }
   ];
