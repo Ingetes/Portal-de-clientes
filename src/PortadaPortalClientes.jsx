@@ -943,8 +943,8 @@ const openPreview = (item, q = '') => {
 
   if (isExcel(href)) {
     const src = buildOfficeViewerSrc(href);
-    setTerm(''); // Office viewer no soporta búsqueda en hash
-    setPreview({ item: { ...item, href }, src });
+    setTerm('');
+    setPreview({ item: { ...item, href, key: item.key }, src });
     setCopied(false);
     return;
   }
@@ -1148,29 +1148,27 @@ React.useEffect(() => {
                 <h3 className="text-lg font-bold text-slate-900">{preview.item.title}</h3>
                 <p className="text-xs text-slate-500">{preview.item.updated} • {preview.item.size}</p>
               </div>
-
+              
               <div className="flex items-center gap-2">
                 {/* Checkbox pdf.js -> recalcula el src al vuelo */}
-{isPdf(preview.item.href) && (
-  <label className="hidden md:inline-flex items-center gap-2 mr-3 text-xs text-slate-600 cursor-pointer select-none">
-    <input
-      type="checkbox"
-      checked={usePdfJs}
-      onChange={(e) => {
-        const v = e.target.checked;
-        setUsePdfJs(v);
-        setPreview(p => p ? ({ ...p, src: buildViewerSrc(p.item.href, term, v) }) : p);
-      }}
-    />
-    Usar visor pdf.js
-  </label>
-)}
-
+                  {isPdf(preview.item.href) && (
+                    <label className="hidden md:inline-flex items-center gap-2 mr-3 text-xs text-slate-600 cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={usePdfJs}
+                        onChange={(e) => {
+                          const v = e.target.checked;
+                          setUsePdfJs(v);
+                          setPreview(p => p ? ({ ...p, src: buildViewerSrc(p.item.href, term, v) }) : p);
+                        }}
+                      />
+                      Usar visor pdf.js
+                    </label>
+                  )}
                 <button onClick={() => downloadFile(preview.item.href, fileNameFromUrl(preview.item.href))} className="rounded-xl bg-slate-900 px-3 py-2 text-white text-sm font-semibold hover:bg-black">Descargar</button>
                 <button onClick={() => setPreview(null)} className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold hover:bg-slate-50">Cerrar</button>
               </div>
             </div>
-
             <div className="h-[75vh]">
               <iframe title="Visor PDF" src={preview.src} className="w-full h-full" />
             </div>
@@ -1985,22 +1983,38 @@ actions: [{ label: 'Vista previa', href: withBust('liner', DOCS.liner), openInMo
                 <p className="text-xs text-slate-500">Visor interno • Herramientas</p>
               </div>
               <div className="flex items-center gap-2">
-{isPdf(preview.item.href) && (
-  <label className="hidden md:inline-flex items-center gap-2 mr-3 text-xs text-slate-600 cursor-pointer select-none">
-    <input
-      type="checkbox"
-      checked={usePdfJs}
-      onChange={(e) => {
-        const v = e.target.checked;
-        setUsePdfJs(v);
-        setPreview(p => p ? ({ ...p, src: buildViewerSrc(p.item.href, term, v) }) : p);
-      }}
-    />
-    Usar visor pdf.js
-  </label>
-)}
-                <button onClick={() => downloadFile(preview.item.href, fileNameFromUrl(preview.item.href))} className="rounded-xl bg-slate-900 px-3 py-2 text-white text-sm font-semibold hover:bg-black">Descargar</button>
-                <button onClick={() => setPreview(null)} className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold hover:bg-slate-50">Cerrar</button>
+                {/* Mostrar checkbox solo para PDFs */}
+                {isPdf(preview.item.href) && (
+                  <label className="hidden md:inline-flex items-center gap-2 mr-3 text-xs text-slate-600 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={usePdfJs}
+                      onChange={(e) => {
+                        const v = e.target.checked;
+                        setUsePdfJs(v);
+                        setPreview(p => p ? ({ ...p, src: buildViewerSrc(p.item.href, term, v) }) : p);
+                      }}
+                    />
+                    Usar visor pdf.js
+                  </label>
+                )}
+              
+                {/* Mostrar botón Descargar solo si NO es Inventario INGETES */}
+                {preview.item.key !== 'inventario' && (
+                  <button
+                    onClick={() => downloadFile(preview.item.href, fileNameFromUrl(preview.item.href))}
+                    className="rounded-xl bg-slate-900 px-3 py-2 text-white text-sm font-semibold hover:bg-black"
+                  >
+                    Descargar
+                  </button>
+                )}
+              
+                <button
+                  onClick={() => setPreview(null)}
+                  className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold hover:bg-slate-50"
+                >
+                  Cerrar
+                </button>
               </div>
             </div>
             <div className="h-[75vh]">
