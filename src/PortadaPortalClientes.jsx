@@ -2002,10 +2002,10 @@ function Footer() {
         <div className="text-sm text-slate-300">
           <p className="font-semibold text-slate-200">Contactos</p>
           <p className="mt-2">
-            Facturación: <a href="mailto:achamorro@ingetes.com" className="underline underline-offset-4">Ayda Chamorro &lt;achamorro@ingetes.com&gt;</a>
+            Facturación: <a href="mailto:achamorro@ingetes.com" className="underline underline-offset-4">achamorro@ingetes.com;</a>
           </p>
           <p className="mt-1">
-            Soporte: <a href="mailto:jgarzon@ingetes.com" className="underline underline-offset-4">Juan Sebastián Garzón &lt;jgarzon@ingetes.com&gt;</a>
+            Soporte: <a href="mailto:jgarzon@ingetes.com" className="underline underline-offset-4">jgarzon@ingetes.com;</a>
           </p>
         </div>
 
