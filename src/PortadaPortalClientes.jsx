@@ -50,23 +50,16 @@ function pathFromUrl(u) {
 
 // consulta la fecha del último commit que tocó ese archivo
 async function githubLastCommitDate(pathPublic) {
-  // 1) Intento en MAIN con la ruta /public/archivo.ext
-  const qMain = `https://api.github.com/repos/${REPO.owner}/${REPO.repo}/commits?path=${encodeURIComponent(pathPublic)}&per_page=1&sha=${REPO.main}`;
-
-  // 2) Intento en GH-PAGES con la ruta en RAÍZ (sin "public/")
-  const rootPath = pathPublic.replace(/^public\//, '');
-  const qPages = `https://api.github.com/repos/${REPO.owner}/${REPO.repo}/commits?path=${encodeURIComponent(rootPath)}&per_page=1&sha=${REPO.pages}`;
-
-  async function firstDate(url) {
-    const r = await fetch(url, { headers: { 'Accept': 'application/vnd.github+json' } });
+  const q = `https://api.github.com/repos/${REPO.owner}/${REPO.repo}/commits?path=${encodeURIComponent(pathPublic)}&per_page=1&sha=${REPO.main}`;
+  try {
+    const r = await fetch(q, { headers: { 'Accept': 'application/vnd.github+json' } });
     if (!r.ok) return null;
     const arr = await r.json().catch(() => []);
     const iso = arr?.[0]?.commit?.committer?.date || arr?.[0]?.commit?.author?.date;
     return iso ? new Date(iso) : null;
+  } catch {
+    return null;
   }
-
-  // Prioridad: si hay commit en MAIN lo tomamos; si no, probamos GH-PAGES
-  return (await firstDate(qMain)) || (await firstDate(qPages));
 }
 
 // Único helper para construir el src del visor (PDF.js o nativo)
