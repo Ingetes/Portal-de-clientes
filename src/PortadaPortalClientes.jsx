@@ -751,21 +751,37 @@ function ComercialesScreen() {
               className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow"
             >
               {/* Imagen / Fallback */}
-              <div className="relative -mx-2 -mt-2 mb-4 h-68 rounded-2xl overflow-hidden bg-gradient-to-br from-emerald-50 to-slate-50">
-                <img
-                  src={p.foto}
-                  alt={p.nombre}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                    const next = e.currentTarget.nextElementSibling;
-                    if (next) next.classList.remove('hidden');
-                  }}
-                />
-                {/* Fallback con iniciales */}
-                <div className="hidden absolute inset-0 flex items-center justify-center">
-                  <span className="text-4xl font-extrabold text-emerald-700/90">
-                    {p.nombre.split(' ').slice(0,2).map(n=>n[0]).join('')}
+              <div className="relative -mx-2 -mt-2 mb-4 h-[273px] rounded-2xl overflow-hidden bg-gradient-to-br from-emerald-50 to-slate-50">
+                {/* Imagen, solo si hay ruta */}
+                {p.foto && (
+                  <img
+                    src={p.foto}
+                    alt={p.nombre}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      // si falla, elimina la imagen y muestra el fallback
+                      const parent = e.currentTarget.parentElement;
+                      e.currentTarget.remove();
+                      const fb = parent?.querySelector('[data-fallback]');
+                      if (fb) fb.classList.remove('hidden');
+                    }}
+                  />
+                )}
+              
+                {/* Fallback SIEMPRE renderizado: si hay foto inicia hidden; si no hay foto, visible */}
+                <div
+                  data-fallback
+                  className={p.foto
+                    ? "hidden absolute inset-0 flex items-center justify-center"
+                    : "absolute inset-0 flex items-center justify-center"}
+                >
+                  <span className="text-5xl font-extrabold text-emerald-700/90">
+                    {p.nombre
+                      .split(' ')
+                      .filter(Boolean)
+                      .slice(0, 2)
+                      .map(n => n[0])
+                      .join('')}
                   </span>
                 </div>
               </div>
