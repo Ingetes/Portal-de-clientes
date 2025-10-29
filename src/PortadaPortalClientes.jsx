@@ -695,7 +695,7 @@ function MarcasAliadasScreen() {
 const BRANDS = [
   { name: 'Siemens',       logo: `${BASE}Siemens.svg`,       href: 'https://mall.industry.siemens.com/goos/WelcomePage.aspx?language=es&regionUrl=/co' },
   { name: 'Innomotics',    logo: `${BASE}innomotics.svg`,    href: 'https://www.innomotics.com/' }, // si tienes link de catálogo específico, cámbialo aquí
-  { name: 'Rice Lake',     logo: `${BASE}ricelake.png`,      href: 'https://www.ricelake.com/' },   // idem
+  { name: 'Rice Lake',     logo: `${BASE}ricelake.webp`,      href: 'https://www.ricelake.com/' },   // idem
   { name: 'Dini Argeo',    logo: `${BASE}diniargeo.png`,     href: 'https://dealer.diniargeo.es/' },
   { name: 'Conveyor Components Company', logo: `${BASE}CCC.png`, href: 'https://www.conveyorcomponents.com/catalog' },
   { name: 'Ecom',          logo: `${BASE}ecom.png`, href: 'https://spanish.ecomusa.com/ecom-product-range/' },
