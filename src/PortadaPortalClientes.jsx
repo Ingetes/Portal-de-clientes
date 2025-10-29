@@ -1097,29 +1097,41 @@ React.useEffect(() => {
               </dl>
 
               <div className="mt-5 flex gap-3">
-                <button
-                  onClick={() => {
-                    if (item.locked) { window.location.hash = '#ingecap'; alert('Inventario en Promoción.'); return; }
-                    downloadFile(item.href);
-                  }}
-                  className={`rounded-xl px-4 py-2 font-semibold ${item.locked ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-emerald-600 text-white hover:bg-emerald-700'}`}
-                  disabled={item.locked}
-                >
-                  Descargar
-                </button>
-
-                {/* Solo PDFs muestran “Ver detalles” */}
-{(isPdf(item.href) || isExcel(item.href)) && !item.locked && (
-  <button onClick={() => openPreview(item)}
-    className="rounded-xl px-4 py-2 font-semibold bg-white text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50">
-    Vista previa
-  </button>
-)}
+                {/* Mostrar botón Descargar solo si NO es Inventario INGETES */}
+                {item.key !== 'inventario' && (
+                  <button
+                    onClick={() => {
+                      if (item.locked) { 
+                        window.location.hash = '#ingecap'; 
+                        alert('Inventario en Promoción.'); 
+                        return; 
+                      }
+                      downloadFile(item.href);
+                    }}
+                    className={`rounded-xl px-4 py-2 font-semibold ${
+                      item.locked
+                        ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                        : 'bg-emerald-600 text-white hover:bg-emerald-700'
+                    }`}
+                    disabled={item.locked}
+                  >
+                    Descargar
+                  </button>
+                )}
+              
+                {/* Mostrar botón Vista previa para PDFs o Excel */}
+                {(isPdf(item.href) || isExcel(item.href)) && !item.locked && (
+                  <button
+                    onClick={() => openPreview(item)}
+                    className="rounded-xl px-4 py-2 font-semibold bg-white text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50"
+                  >
+                    Vista previa
+                  </button>
+                )}
               </div>
             </article>
           ))}
         </div>
-
         <div className="mt-8 flex items-center justify-between">
           <button onClick={downloadAllZip} className="inline-flex items-center rounded-xl bg-slate-900 px-4 py-2 text-white font-semibold hover:bg-black">
             Descargar todo (.zip)
