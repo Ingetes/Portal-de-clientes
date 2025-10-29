@@ -2119,12 +2119,6 @@ function Footer() {
 
         {/* Columna 3: Acciones rápidas */}
         <div className="md:text-right text-sm">
-          <a
-            href="#home"
-            className="inline-block rounded-xl bg-emerald-600 px-4 py-2 font-semibold hover:bg-emerald-700"
-          >
-            Ir al inicio
-          </a>
           <p className="mt-3 text-slate-400">© {new Date().getFullYear()} INGETES S.A.S.</p>
         </div>
       </div>
