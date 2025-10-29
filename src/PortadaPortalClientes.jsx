@@ -700,7 +700,7 @@ const BRANDS = [
   { name: 'Conveyor Components Company', logo: `${BASE}CCC.svg`, href: 'https://www.conveyorcomponents.com/catalog' },
   { name: 'Ecom',          logo: `${BASE}ecom.png`, href: 'https://spanish.ecomusa.com/ecom-product-range/' },
   { name: 'ASM Sensors',   logo: `${BASE}ASM.png`,           href: 'https://www.asm-sensor.com/en/' },
-  { name: 'Neptronic',     logo: `${BASE}NEP.png`,           href: 'https://www.neptronic.com/' },
+  { name: 'Neptronic',     logo: `${BASE}NEP.svg`,           href: 'https://www.neptronic.com/' },
   { name: 'INOR Transmitter', logo: `${BASE}inor.png`,       href: 'https://inor.com/' }
 ];
 
