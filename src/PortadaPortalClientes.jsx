@@ -858,7 +858,7 @@ async function fetchFileMeta(url) {
     // Regla:
     // - Si NO hay commit previo -> es un archivo nuevo (primer commit)  => "Nuevo" si <= 14 días
     // - Si SÍ hay historial previo -> fue modificado                     => "Actualizado" si <= 14 días
-    if (days <= 14) {
+    if (days <= 1000) {
       badge = hasPrevious ? 'Actualizado' : 'Nuevo';
     } else {
       badge = '';
