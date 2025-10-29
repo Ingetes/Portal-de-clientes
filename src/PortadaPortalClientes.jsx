@@ -790,6 +790,14 @@ function DocumentosScreen() {
   const isPdf   = (u) => /\.pdf($|[?#])/i.test(u);
   const isExcel = (u) => /\.(xlsx?|csv)($|[?#])/i.test(u);
 
+// URL absoluta (necesaria para el visor de Office)
+const toAbsolute = (u) => {
+  try { return new URL(u, window.location.origin).href; } catch { return u; }
+};
+// Visor online de Office para .xlsx/.xls/.csv
+const buildOfficeViewerSrc = (u) =>
+  `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(toAbsolute(u))}`;
+
 // === Documentos ===
 const [items, setItems] = React.useState([
   {
@@ -915,27 +923,35 @@ const downloadFile = (url, suggestedName) => {
   a.remove();
 };
 
-  // Abrir modal (siempre que sea PDF), con o sin pdf.js
+// Abrir modal (PDF con pdf.js o Excel con Office Viewer)
 const openPreview = (item, q = '') => {
-  // Romper caché (usa Date.now para forzar nueva URL cada vez que se sube)
+  // Romper caché para refrescar si acabas de subir el archivo
   let href = item.href;
   try {
     const u = new URL(item.href, window.location.origin);
-    if (!u.search.includes('v=')) {
-      u.search = `?v=${Date.now()}`;
-    }
+    if (!u.search.includes('v=')) u.search = `?v=${Date.now()}`;
     href = u.pathname + u.search;
   } catch {}
 
-  if (!isPdf(href)) {
-    alert('Este archivo no puede previsualizarse. Se descargará.');
-    downloadFile(href);
+  if (isPdf(href)) {
+    const src = buildViewerSrc(href, q || term, usePdfJs);
+    if (q) setTerm(q); else setTerm('');
+    setPreview({ item: { ...item, href }, src });
+    setCopied(false);
     return;
   }
-  const src = buildViewerSrc(href, q || term, usePdfJs);
-  if (q) setTerm(q); else setTerm('');
-  setPreview({ item: { ...item, href }, src });
-  setCopied(false);
+
+  if (isExcel(href)) {
+    const src = buildOfficeViewerSrc(href);
+    setTerm(''); // Office viewer no soporta búsqueda en hash
+    setPreview({ item: { ...item, href }, src });
+    setCopied(false);
+    return;
+  }
+
+  // Otros tipos: descargar
+  alert('Este archivo no puede previsualizarse. Se descargará.');
+  downloadFile(href);
 };
 
   // Ejecutar búsqueda en el visor actual
@@ -1093,14 +1109,12 @@ React.useEffect(() => {
                 </button>
 
                 {/* Solo PDFs muestran “Ver detalles” */}
-                {isPdf(item.href) && !item.locked && (
-                  <button
-                    onClick={() => openPreview(item)}
-                    className="rounded-xl px-4 py-2 font-semibold bg-white text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50"
-                  >
-                    Ver detalles
-                  </button>
-                )}
+{(isPdf(item.href) || isExcel(item.href)) && !item.locked && (
+  <button onClick={() => openPreview(item)}
+    className="rounded-xl px-4 py-2 font-semibold bg-white text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50">
+    Ver detalles
+  </button>
+)}
               </div>
             </article>
           ))}
@@ -1125,19 +1139,21 @@ React.useEffect(() => {
 
               <div className="flex items-center gap-2">
                 {/* Checkbox pdf.js -> recalcula el src al vuelo */}
-                  <label className="hidden md:inline-flex items-center gap-2 mr-3 text-xs text-slate-600 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      checked={usePdfJs}
-                      onChange={(e) => {
-                        const v = e.target.checked;
-                        setUsePdfJs(v);
-                        // ← recalcula el src DEL MISMO PDF al vuelo
-                        setPreview(p => p ? ({ ...p, src: buildViewerSrc(p.item.href, term, v) }) : p);
-                      }}
-                    />
-                    Usar visor pdf.js
-                  </label>
+{isPdf(preview.item.href) && (
+  <label className="hidden md:inline-flex items-center gap-2 mr-3 text-xs text-slate-600 cursor-pointer select-none">
+    <input
+      type="checkbox"
+      checked={usePdfJs}
+      onChange={(e) => {
+        const v = e.target.checked;
+        setUsePdfJs(v);
+        setPreview(p => p ? ({ ...p, src: buildViewerSrc(p.item.href, term, v) }) : p);
+      }}
+    />
+    Usar visor pdf.js
+  </label>
+)}
+
                 <button onClick={() => downloadFile(preview.item.href, fileNameFromUrl(preview.item.href))} className="rounded-xl bg-slate-900 px-3 py-2 text-white text-sm font-semibold hover:bg-black">Descargar</button>
                 <button onClick={() => setPreview(null)} className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold hover:bg-slate-50">Cerrar</button>
               </div>
@@ -1957,18 +1973,20 @@ actions: [{ label: 'Abrir documento', href: withBust('liner', DOCS.liner), openI
                 <p className="text-xs text-slate-500">Visor interno • Herramientas</p>
               </div>
               <div className="flex items-center gap-2">
-                <label className="hidden md:flex items-center gap-2 mr-3 text-xs text-slate-600">
-                  <input
-                    type="checkbox"
-                    checked={usePdfJs}
-                    onChange={(e) => {
-                      const v = e.target.checked;
-                      setUsePdfJs(v);
-                      setPreview(p => p ? ({ ...p, src: buildViewerSrc(p.item.href, term, v) }) : p);
-                    }}
-                  />
-                  Usar visor pdf.js
-                </label>
+{isPdf(preview.item.href) && (
+  <label className="hidden md:inline-flex items-center gap-2 mr-3 text-xs text-slate-600 cursor-pointer select-none">
+    <input
+      type="checkbox"
+      checked={usePdfJs}
+      onChange={(e) => {
+        const v = e.target.checked;
+        setUsePdfJs(v);
+        setPreview(p => p ? ({ ...p, src: buildViewerSrc(p.item.href, term, v) }) : p);
+      }}
+    />
+    Usar visor pdf.js
+  </label>
+)}
                 <button onClick={() => downloadFile(preview.item.href, fileNameFromUrl(preview.item.href))} className="rounded-xl bg-slate-900 px-3 py-2 text-white text-sm font-semibold hover:bg-black">Descargar</button>
                 <button onClick={() => setPreview(null)} className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold hover:bg-slate-50">Cerrar</button>
               </div>
