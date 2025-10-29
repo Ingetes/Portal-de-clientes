@@ -540,8 +540,8 @@ function Header({ onOpenSettings }) {
   );
 }
 
-// Fotos de comerciales (en /public/comerciales/)
-const IMG_BASE = `${import.meta.env.BASE_URL}comerciales/`;
+// Fotos de comerciales (en /public/)
+const IMG_BASE = `${import.meta.env.BASE_URL}`;
 const COM_FOTOS = {
   JSG: 'Sebastian.png',
   PCR: 'Pablo.png',
