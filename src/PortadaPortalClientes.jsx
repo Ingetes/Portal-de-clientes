@@ -886,17 +886,27 @@ const downloadFile = (url, suggestedName) => {
 };
 
   // Abrir modal (siempre que sea PDF), con o sin pdf.js
-  const openPreview = (item, q = '') => {
-    if (!isPdf(item.href)) {
-      alert('Este archivo no puede previsualizarse. Se descargará.');
-      downloadFile(item.href);
-      return;
+const openPreview = (item, q = '') => {
+  // Romper caché (usa Date.now para forzar nueva URL cada vez que se sube)
+  let href = item.href;
+  try {
+    const u = new URL(item.href, window.location.origin);
+    if (!u.search.includes('v=')) {
+      u.search = `?v=${Date.now()}`;
     }
-    const src = buildViewerSrc(item.href, q || term, usePdfJs);
-    if (q) setTerm(q); else setTerm('');
-    setPreview({ item, src });
-    setCopied(false);
-  };
+    href = u.pathname + u.search;
+  } catch {}
+
+  if (!isPdf(href)) {
+    alert('Este archivo no puede previsualizarse. Se descargará.');
+    downloadFile(href);
+    return;
+  }
+  const src = buildViewerSrc(href, q || term, usePdfJs);
+  if (q) setTerm(q); else setTerm('');
+  setPreview({ item: { ...item, href }, src });
+  setCopied(false);
+};
 
   // Ejecutar búsqueda en el visor actual
   const applySearch = () => {
