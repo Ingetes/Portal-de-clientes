@@ -755,7 +755,7 @@ function ComercialesScreen() {
                 <img
                   src={p.foto}
                   alt={p.nombre}
-                  className="w-full h-full object-contain p-2"
+                  className="w-full h-full object-cover"
                   onError={(e) => {
                     e.currentTarget.style.display = 'none';
                     const next = e.currentTarget.nextElementSibling;
