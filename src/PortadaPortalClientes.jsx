@@ -824,24 +824,29 @@ React.useEffect(() => {
 async function fetchFileMeta(url) {
   const encoded = encodeURI((url || '').split('#')[0]);
 
-  // Valores por defecto
   let updated = '—';
-  let size    = '—';
-  let badge   = '';
+  let size = '—';
+  let badge = '';
 
-  // --- (A) Fecha: SIEMPRE preferimos GitHub (último commit del archivo) ---
+  // --- (A) Consultar commits desde GitHub ---
   let lastDate = null;
-  let hasPrevious = false;
+  let message = '';
   try {
-    const pathPublic = pathFromUrl(url);               // ej. public/INVENTARIO.xlsx
-    const meta = await githubCommitMeta(pathPublic);   // { lastDate, hasPrevious }
-    lastDate = meta.lastDate;
-    hasPrevious = meta.hasPrevious;
+    const pathPublic = pathFromUrl(url);
+    const q = `https://api.github.com/repos/${REPO.owner}/${REPO.repo}/commits?path=${encodeURIComponent(pathPublic)}&sha=${REPO.main}&per_page=2`;
+    const r = await fetch(q, { headers: { 'Accept': 'application/vnd.github+json' }, cache: 'no-store' });
+    if (r.ok) {
+      const arr = await r.json().catch(() => []);
+      if (arr?.length) {
+        const c = arr[0];
+        lastDate = new Date(c.commit.committer.date);
+        message = (c.commit.message || '').toLowerCase();
+      }
+    }
   } catch {}
 
-  // --- (B) Tamaño: lo tomamos por HEAD a la URL publicada (solo para Content-Length) ---
+  // --- (B) Tamaño ---
   try {
-    // cache-bust para que Pages no sirva un HEAD viejo
     const bust = (encoded.includes('?') ? '&' : '?') + 'v=' + Date.now();
     const r = await fetch(encoded + bust, { method: 'HEAD', cache: 'no-store' });
     if (r.ok) {
@@ -850,16 +855,15 @@ async function fetchFileMeta(url) {
     }
   } catch {}
 
-  // --- (C) Formateo de fecha + regla del badge ---
+  // --- (C) Determinar estado y fecha ---
   if (lastDate) {
     updated = formatDateES(lastDate);
-    const days = (Date.now() - lastDate.getTime()) / 86400000;
 
-    // Regla:
-    // - Si NO hay commit previo -> es un archivo nuevo (primer commit)  => "Nuevo" si <= 14 días
-    // - Si SÍ hay historial previo -> fue modificado                     => "Actualizado" si <= 14 días
-    if (days <= 1000) {
-      badge = hasPrevious ? 'Actualizado' : 'Nuevo';
+    // Determinar badge según mensaje del commit
+    if (message.includes('add files via upload')) {
+      badge = 'Nuevo';
+    } else if (message.includes('update')) {
+      badge = 'Actualizado';
     } else {
       badge = '';
     }
