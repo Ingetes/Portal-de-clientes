@@ -626,7 +626,6 @@ function Landing({ setChatOpen, chatOpen }) {
     <>
       {/* Hero */}
       <section className="relative overflow-hidden">
-      <section className="relative overflow-hidden">
         {/* Fondo corporativo con marca de agua */}
         <div className="absolute inset-0 -z-10 overflow-hidden grid place-items-center">
           {/* Gradiente suave verde institucional */}
