@@ -91,6 +91,19 @@ function buildViewerSrc(href, q = '', usePdf = true) {
   return `${base}${hash}`;
 }
 
+// Formatos útiles
+function formatDateES(d) {
+  if (!d) return '—';
+  return d.toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+function bytesToSize(b) {
+  const n = Number(b || 0);
+  if (!Number.isFinite(n) || n <= 0) return '—';
+  const u = ['B','KB','MB','GB','TB'];
+  const i = Math.min(Math.floor(Math.log(n)/Math.log(1024)), u.length-1);
+  return `${(n/Math.pow(1024,i)).toFixed(i ? 2 : 0)} ${u[i]}`;
+}
+
 // helpers de UI para estilos consistentes
 const ui = {
   label: "block text-xs text-slate-600 mb-1",
@@ -789,12 +802,58 @@ const [items, setItems] = React.useState([
   },
 ]);
 
-// Actualiza fecha y tamaño al montar
+// Actualiza fecha/tamaño y badge usando HEAD y/o último commit en GH
 React.useEffect(() => {
-  async function fetchFileMeta(url) { /* …(igual que está)… */ }
-  async function refreshMeta() { /* …(igual que está)… */ }
+  async function fetchFileMeta(url) {
+    const encoded = encodeURI((url || '').split('#')[0]);
+    let updated = '—';
+    let size    = '—';
+    let badge   = '';
+
+    // 1) Intento HEAD directo al archivo publicado (GitHub Pages expone Last-Modified y Content-Length)
+    try {
+      const r = await fetch(encoded, { method: 'HEAD', cache: 'no-store' });
+      if (r.ok) {
+        const lm  = r.headers.get('last-modified');
+        const len = r.headers.get('content-length');
+        if (len) size = bytesToSize(len);
+        if (lm) {
+          const d = new Date(lm);
+          updated = formatDateES(d);
+          const days = (Date.now() - d.getTime()) / 86400000;
+          badge = days <= 3 ? 'Nuevo' : (days <= 14 ? 'Actualizado' : '');
+        }
+      }
+    } catch {}
+
+    // 2) Si no hubo Last-Modified, usamos la fecha del ÚLTIMO COMMIT que tocó ese path
+    if (updated === '—') {
+      try {
+        const pathPublic = pathFromUrl(url); // ej: public/INVENTARIO.xlsx
+        const d = await githubLastCommitDate(pathPublic); // usa el REPO definido arriba
+        if (d) {
+          updated = formatDateES(d);
+          const days = (Date.now() - d.getTime()) / 86400000;
+          badge = days <= 3 ? 'Nuevo' : (days <= 14 ? 'Actualizado' : '');
+        }
+      } catch {}
+    }
+
+    return { updated, size, badge };
+  }
+
+  async function refreshMeta() {
+    const next = await Promise.all(
+      items.map(async it => {
+        const meta = await fetchFileMeta(it.href);
+        return { ...it, ...meta };
+      })
+    );
+    setItems(next);
+  }
+
   refreshMeta();
-// 🔽 añade esta dependencia para que se ejecute al cambiar cualquier href
+  // Importante: al subir desde "Ajustes", cambiamos ?v=timestamp -> esto dispara el efecto
 }, [items.map(it => it.href).join('|')]);
 
   const fileNameFromUrl = (url, fallback = 'documento') => {
