@@ -359,6 +359,12 @@ const docsMenu = [
     filter: 'grayscale(20%)',
   }}
 />
+{/* Marca lateral flotante */}
+<img
+  src={`${import.meta.env.BASE_URL}ingetes.jpg`}
+  alt="Logo INGETES"
+  className="fixed top-1/2 right-0 w-24 opacity-20 translate-y-[-50%] pointer-events-none select-none"
+/>
       <Header onOpenSettings={() => setSettingsOpen(true)} />
 {route === '#marcas' ? (
   <MarcasAliadasScreen />
@@ -505,9 +511,11 @@ const docsMenu = [
 // ==========================================================
 function Header({ onOpenSettings }) {
   return (
-    {/* Franja corporativa superior */}
-    <div className="w-full h-2 bg-emerald-700" />
-    <header className="w-full sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-white/70 border-b border-slate-100">
+    <>
+      {/* Franja corporativa superior */}
+      <div className="w-full h-2 bg-emerald-700" />
+
+      <header className="w-full sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-white/70 border-b border-slate-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <img src={logoIngetes} alt="INGETES" className="h-10 w-auto" />
@@ -549,7 +557,8 @@ function Header({ onOpenSettings }) {
   </button>
 </nav>
       </div>
-    </header>
+      </header>
+    </>
   );
 }
 
