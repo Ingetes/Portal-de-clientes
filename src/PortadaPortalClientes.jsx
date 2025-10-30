@@ -666,8 +666,8 @@ function Landing({ setChatOpen, chatOpen }) {
         {/* Fondo corporativo con marca de agua */}
         <div
           className="absolute inset-0 pointer-events-none select-none"
-          style={{/*
-            backgroundImage: `url(${import.meta.env.BASE_URL}ingetes.jpg)`,
+          style={{
+            /*backgroundImage: `url(${import.meta.env.BASE_URL}ingetes.jpg)`,*/
             backgroundRepeat: 'no-repeat',
             // centra un poco más abajo para que no choque con el menú
             backgroundPosition: 'center 6rem',
@@ -676,7 +676,7 @@ function Landing({ setChatOpen, chatOpen }) {
             // visibilidad cómoda
             opacity: 0.22,
             filter: 'grayscale(10%)',
-          */ }}
+           }}
         />
         {/* Capa muy suave para contraste (opcional) */}
         <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-white/40 via-white/10 to-slate-50/60" />
