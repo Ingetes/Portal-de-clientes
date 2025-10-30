@@ -630,7 +630,7 @@ function Landing({ setChatOpen, chatOpen }) {
         <div
           className="absolute inset-0 pointer-events-none select-none"
           style={{
-            backgroundImage: `url(${import.meta.env.BASE_URL}ingetes.png)`,
+            backgroundImage: `url(${import.meta.env.BASE_URL}ingetes.jpg)`,
             backgroundRepeat: 'no-repeat',
             // centra un poco más abajo para que no choque con el menú
             backgroundPosition: 'center 6rem',
