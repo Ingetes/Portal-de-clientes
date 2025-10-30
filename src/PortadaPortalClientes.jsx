@@ -359,15 +359,17 @@ useEffect(() => {
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50">
 
 {/* Fondo institucional global animado (marca de agua INGETES en toda la app) */}
+{/* Fondo institucional global animado (marca de agua INGETES en toda la app) */}
 <div
-  className="absolute top-0 left-0 w-full h-full -z-10 opacity-10 pointer-events-none select-none transition-all duration-500 ease-out"
+  className="absolute top-0 left-0 w-full -z-10 opacity-10 pointer-events-none select-none"
   style={{
+    height: `${document.body.scrollHeight}px`, // 🔹 cubre toda la página
     backgroundImage: `url(${import.meta.env.BASE_URL}ingetes.jpg)`,
     backgroundRepeat: "no-repeat",
-    backgroundAttachment: "scroll",
-    backgroundPosition: `center ${scrollY * 0.2}px`,
-    backgroundSize: "900px",
+    backgroundPosition: `center ${scrollY * 0.3}px`,
+    backgroundSize: "contain",
     filter: "grayscale(20%)",
+    transition: "background-position 0.2s ease-out",
   }}
 />
 
