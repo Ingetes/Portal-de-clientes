@@ -347,28 +347,26 @@ const docsMenu = [
     handleCommand(txt);
   };
 
-// justo arriba del return (dentro del mismo componente)
 const [scrollY, setScrollY] = useState(0);
 useEffect(() => {
-  const onScroll = () => setScrollY(window.scrollY);
-  window.addEventListener("scroll", onScroll);
-  return () => window.removeEventListener("scroll", onScroll);
+  const handleScroll = () => setScrollY(window.scrollY);
+  window.addEventListener("scroll", handleScroll);
+  return () => window.removeEventListener("scroll", handleScroll);
 }, []);
   
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50">
 
-{/* Fondo institucional global animado (marca de agua INGETES en toda la app) */}
+{/* Fondo institucional global con movimiento */}
 <div
-  className="absolute top-0 left-0 w-full -z-10 pointer-events-none select-none"
+  className="fixed inset-0 -z-10 pointer-events-none select-none"
   style={{
-    height: `${document.body.scrollHeight}px`, // cubre toda la página
     backgroundImage: `url(${import.meta.env.BASE_URL}ingetes.jpg)`,
     backgroundRepeat: 'no-repeat',
-    backgroundSize: '900px auto',
-    backgroundPosition: `center ${scrollY * 0.4}px`, // efecto parallax real
-    opacity: 0.18,
-    filter: 'grayscale(10%)',
+    backgroundSize: 'contain',
+    backgroundPosition: `center ${scrollY * 0.25}px`, // movimiento vertical
+    opacity: 0.12,
+    filter: 'grayscale(15%)',
     transition: 'background-position 0.15s ease-out',
   }}
 />
