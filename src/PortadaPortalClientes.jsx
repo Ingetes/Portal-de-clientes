@@ -628,22 +628,16 @@ function Landing({ setChatOpen, chatOpen }) {
       <section className="relative overflow-hidden">
         {/* Fondo corporativo con marca de agua */}
         <div className="absolute inset-0 -z-10 overflow-hidden grid place-items-center">
-          {/* Marca de agua fondo */}
+          {/* Fondo degradado leve, debajo de todo */}
+          <div className="absolute inset-0 bg-gradient-to-b from-white via-white/60 to-emerald-50/40" />
+        
+          {/* Imagen de marca de agua (centrada y visible) */}
           <img
             src={`${import.meta.env.BASE_URL}ingetes.jpg?v=hero1`}
             alt="Marca de agua INGETES"
-            className="absolute inset-0 w-full h-full object-cover opacity-[0.12] pointer-events-none select-none"
-          />
-          {/* Gradiente suave verde institucional */}
-          <div className="absolute inset-0 bg-gradient-to-b from-emerald-50 via-white to-slate-50" />
-          {/* Logo grande difuminado al centro */}
-          <img
-            src={`${import.meta.env.BASE_URL}ingetes.jpg?v=hero1`}
-            alt="Logo INGETES"
-            className="w-[480px] max-w-[80vw] opacity-[0.18] drop-shadow-[0_0_30px_rgba(16,185,129,0.25)] pointer-events-none select-none"
+            className="w-[700px] max-w-[90vw] object-contain opacity-[0.08] pointer-events-none select-none"
           />
         </div>
-
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 grid lg:grid-cols-2 gap-10 items-center">
           <div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-emerald-700 drop-shadow-sm">
