@@ -864,7 +864,7 @@ function IngecapScreen({ hasAccess, setHasAccess }) {
         <div className="flex items-start justify-between gap-4">
           <div>
             <img src={logoIngecap} alt="INGECAP" className="h-10 w-auto" />
-            <h1 className="text-2xl md:text-3xl font-extrabold text-emerald-700">>INGECAP</h1>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-emerald-700">INGECAP</h1>
             <p className="mt-1 text-sm font-semibold text-emerald-700">Centro de experiencia e innovación</p>
             <p className="mt-2 text-slate-700 max-w-2xl">Bienvenido a la membresía de <strong>INGECAP</strong>. Desde aquí podrás acceder a servicios exclusivos que potencian tus proyectos y ventas. Esta sección se mostrará completa únicamente a usuarios con acceso habilitado.</p>
           </div>
@@ -1801,7 +1801,7 @@ return (
 {/* Marca de agua INGETES para todo el cotizador */}
 <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center opacity-10">
   <img
-    src={marcaIngetes}
+    src={logoIngetes}
     alt="Marca INGETES"
     className="w-[900px] max-w-[80vw] object-contain"
   />
