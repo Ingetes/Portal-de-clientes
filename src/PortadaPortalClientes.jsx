@@ -360,15 +360,17 @@ useEffect(() => {
 
 {/* Fondo institucional global animado (marca de agua INGETES en toda la app) */}
 <div
-  className="fixed inset-0 -z-10 opacity-10 pointer-events-none select-none transition-all duration-300"
+  className="absolute top-0 left-0 w-full h-full -z-10 opacity-10 pointer-events-none select-none transition-all duration-500 ease-out"
   style={{
     backgroundImage: `url(${import.meta.env.BASE_URL}ingetes.jpg)`,
     backgroundRepeat: "no-repeat",
-    backgroundPosition: `center ${50 + scrollY * 0.15}px`,
+    backgroundAttachment: "scroll",
+    backgroundPosition: `center ${scrollY * 0.2}px`,
     backgroundSize: "900px",
     filter: "grayscale(20%)",
   }}
 />
+
 
 {/* Marca lateral flotante */}
 <img
