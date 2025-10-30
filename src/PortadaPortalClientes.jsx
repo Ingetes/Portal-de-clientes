@@ -359,20 +359,22 @@ useEffect(() => {
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50">
 
 {/* Fondo institucional global animado (marca de agua INGETES en toda la app) */}
-{/* Fondo institucional global animado (marca de agua INGETES en toda la app) */}
-<div
-  className="absolute top-0 left-0 w-full -z-10 opacity-10 pointer-events-none select-none"
-  style={{
-    height: `${document.body.scrollHeight}px`, // 🔹 cubre toda la página
-    backgroundImage: `url(${import.meta.env.BASE_URL}ingetes.jpg)`,
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: `center ${scrollY * 0.3}px`,
-    backgroundSize: "contain",
-    filter: "grayscale(20%)",
-    transition: "background-position 0.2s ease-out",
-  }}
-/>
-
+<div className="fixed inset-0 -z-10 pointer-events-none select-none" aria-hidden>
+  <img
+    src={`${import.meta.env.BASE_URL}ingetes.jpg`}
+    alt=""
+    style={{
+      position: 'fixed',
+      top: '50%',
+      left: '50%',
+      transform: `translate(-50%, calc(-50% + ${scrollY * 0.22}px))`, // parallax (ajusta 0.22 a tu gusto)
+      width: 'min(900px, 80vw)',
+      opacity: 0.16,
+      filter: 'grayscale(20%)',
+      transition: 'transform 0.12s ease-out',
+    }}
+  />
+</div>
 
 {/* Marca lateral flotante */}
 <img
@@ -727,7 +729,7 @@ function Landing({ setChatOpen, chatOpen }) {
       </section>
 
 {/* Como empezar */}
-<section id="como-empezar" className="border-t border-slate-100 bg-white">
+<section id="como-empezar" className="border-t border-slate-100 bg-transparent">
   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid md:grid-cols-3 gap-6">
     {[
       { title: '1. Ingresar a INGECAP', desc: 'Centro de experiencia e innovación.', cta: 'Ingresar', href: '#ingecap' /* , locked: true */ },
