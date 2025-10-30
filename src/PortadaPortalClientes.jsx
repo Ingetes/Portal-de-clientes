@@ -359,22 +359,20 @@ useEffect(() => {
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50">
 
 {/* Fondo institucional global animado (marca de agua INGETES en toda la app) */}
-<div className="fixed inset-0 -z-10 pointer-events-none select-none" aria-hidden>
-  <img
-    src={`${import.meta.env.BASE_URL}ingetes.jpg`}
-    alt=""
-    style={{
-      position: 'fixed',
-      top: '50%',
-      left: '50%',
-      transform: `translate(-50%, calc(-50% + ${scrollY * 0.22}px))`, // parallax (ajusta 0.22 a tu gusto)
-      width: 'min(900px, 80vw)',
-      opacity: 0.16,
-      filter: 'grayscale(20%)',
-      transition: 'transform 0.12s ease-out',
-    }}
-  />
-</div>
+<div
+  className="fixed inset-0 -z-10 pointer-events-none select-none"
+  style={{
+    backgroundImage: `url(${import.meta.env.BASE_URL}ingetes.jpg)`,
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'min(1000px, 85vw)',
+    // mueve verticalmente con el scroll (parallax)
+    backgroundPosition: `center calc(22vh + ${scrollY * 0.35}px)`,
+    // fija al viewport para que siga visible en toda la página
+    backgroundAttachment: 'fixed',
+    opacity: 0.18,
+    filter: 'grayscale(15%)'
+  }}
+/>
 
 {/* Marca lateral flotante */}
 <img
@@ -664,11 +662,11 @@ function Landing({ setChatOpen, chatOpen }) {
   return (
     <>
       {/* Hero */}
-      <section className="relative overflow-hidden">
+      <section className="relative">  {/* sin overflow-hidden para no recortar el parallax */}
         {/* Fondo corporativo con marca de agua */}
         <div
           className="absolute inset-0 pointer-events-none select-none"
-          style={{
+          style={{/*
             backgroundImage: `url(${import.meta.env.BASE_URL}ingetes.jpg)`,
             backgroundRepeat: 'no-repeat',
             // centra un poco más abajo para que no choque con el menú
@@ -678,7 +676,7 @@ function Landing({ setChatOpen, chatOpen }) {
             // visibilidad cómoda
             opacity: 0.22,
             filter: 'grayscale(10%)',
-          }}
+          */ }}
         />
         {/* Capa muy suave para contraste (opcional) */}
         <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-white/40 via-white/10 to-slate-50/60" />
