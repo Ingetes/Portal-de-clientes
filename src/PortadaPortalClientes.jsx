@@ -348,6 +348,17 @@ const docsMenu = [
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50">
+{/* Fondo institucional global (marca de agua INGETES en toda la app) */}
+<div
+  className="fixed inset-0 -z-10 opacity-10 pointer-events-none select-none"
+  style={{
+    backgroundImage: `url(${import.meta.env.BASE_URL}ingetes.jpg)`,
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'center center',
+    backgroundSize: '900px',
+    filter: 'grayscale(20%)',
+  }}
+/>
       <Header onOpenSettings={() => setSettingsOpen(true)} />
 {route === '#marcas' ? (
   <MarcasAliadasScreen />
@@ -494,6 +505,8 @@ const docsMenu = [
 // ==========================================================
 function Header({ onOpenSettings }) {
   return (
+    {/* Franja corporativa superior */}
+    <div className="w-full h-2 bg-emerald-700" />
     <header className="w-full sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-white/70 border-b border-slate-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -746,7 +759,7 @@ function ComercialesScreen() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">Equipo Comercial INGETES</h1>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-emerald-700">Equipo Comercial INGETES</h1>
             <p className="mt-2 text-slate-700 max-w-2xl">Conoce a nuestro equipo de ingeniería y ventas, su especialización y datos de contacto directo.</p>
           </div>
           <a href="#home" className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">← Volver</a>
@@ -834,7 +847,7 @@ function IngecapScreen({ hasAccess, setHasAccess }) {
         <div className="flex items-start justify-between gap-4">
           <div>
             <img src={logoIngecap} alt="INGECAP" className="h-10 w-auto" />
-            <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">INGECAP</h1>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-emerald-700">>INGECAP</h1>
             <p className="mt-1 text-sm font-semibold text-emerald-700">Centro de experiencia e innovación</p>
             <p className="mt-2 text-slate-700 max-w-2xl">Bienvenido a la membresía de <strong>INGECAP</strong>. Desde aquí podrás acceder a servicios exclusivos que potencian tus proyectos y ventas. Esta sección se mostrará completa únicamente a usuarios con acceso habilitado.</p>
           </div>
@@ -900,7 +913,7 @@ const BRANDS = [
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">Marcas aliadas</h1>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-emerald-700">Marcas aliadas</h1>
             <p className="mt-2 text-slate-700 max-w-2xl">
               Estas son algunas de las marcas que comercializa INGETES. Haz clic para conocer más.
             </p>
@@ -1220,7 +1233,7 @@ React.useEffect(() => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">Documentos & Listas de Precios</h1>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-emerald-700">Documentos & Listas de Precios</h1>
             <p className="mt-2 text-slate-700 max-w-2xl">
               Descarga las listas de precios y archivos de inventario. Puedes previsualizar PDFs y buscar referencias.
             </p>
@@ -1742,7 +1755,7 @@ return (
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">Cotizador Rápido</h1>
+          <h1 className="text-2xl md:text-3xl font-extrabold text-emerald-700">Cotizador Rápido</h1>
           <p className="mt-2 text-slate-700 max-w-2xl">
             Calcula precio de venta con descuento, factor de utilidad y envío.
             Puedes <strong>agregar</strong> varias referencias a un bloque acumulado y copiarlo.
@@ -2106,7 +2119,7 @@ actions: [{ label: 'Vista previa', href: withBust('liner', DOCS.liner), openInMo
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">Herramientas comerciales para los canales</h1>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-emerald-700">Herramientas comerciales para los canales</h1>
             <p className="mt-2 text-slate-700 max-w-2xl">Accede a utilidades tecnicas y de seleccion que agilizan tu preingenieria y cotizacion.</p>
           </div>
           <a href="#home" className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">← Volver</a>
@@ -2222,7 +2235,7 @@ function StatsScreen() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">Estadisticas de uso (local)</h1>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-emerald-700">Estadisticas de uso (local)</h1>
             <p className="mt-2 text-slate-700 max-w-2xl">Resumen simple basado en <code>localStorage</code>. Ideal para validar adopcion antes de conectar a backend.</p>
           </div>
           <a href="#home" className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">← Volver</a>
@@ -2252,7 +2265,12 @@ function StatsScreen() {
 // ==========================================================
 function Footer() {
   return (
-    <footer className="bg-slate-900 text-slate-100">
+    <footer className="relative bg-gradient-to-r from-emerald-800 to-emerald-600 text-slate-100 overflow-hidden">
+  <img
+    src={`${import.meta.env.BASE_URL}ingetes.jpg`}
+    alt="Marca de agua INGETES"
+    className="absolute right-10 bottom-10 w-40 opacity-10 pointer-events-none select-none"
+  />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid md:grid-cols-3 gap-8">
         {/* Columna 1: Empresa */}
         <div>
