@@ -1589,6 +1589,7 @@ function CotizadorRapidoScreen() {
   const [preview, setPreview] = useState("");        // acumulado
   const [lockPreview, setLockPreview] = useState(false);
   const [copyMsg, setCopyMsg] = useState("");
+  const [loadingDesc, setLoadingDesc] = useState(false);
 const openMall = (e) => {
   e.preventDefault();
   const q = (ref || '').trim().toUpperCase();
@@ -1755,25 +1756,42 @@ Disponibilidad: ${availability}${notesPart}`;
     setPreview(""); setLockPreview(false);
   };
 
-  const fetchMallDescription = async () => {
-    const q = ref.trim().toUpperCase();
-    if (!q) { alert("Escribe una referencia (MLFB) primero."); return; }
-    try {
-      const url = `${API_BASE}/api/industry-mall?mlfb=${encodeURIComponent(q)}`;
-      const r = await fetch(url, { method: 'GET' });
-      const j = await r.json().catch(()=>({}));
-      if (!r.ok) { alert(`No se pudo consultar (${r.status}). Abre el Industry Mall y copia manualmente.`); return; }
-      const d = (j && j.description || '').trim();
-      setDesc(d ? cleanDesc(d) : `Referencia: ${q}. Ver ficha: ${j.source || 'N/A'}`);
-    } catch (e) {
-      alert("Error consultando la API. Revisa el backend.");
-      // opcional: console.error(e);
+const fetchMallDescription = async () => {
+  const q = ref.trim().toUpperCase();
+  if (!q) { alert("Escribe una referencia (MLFB) primero."); return; }
+
+  setLoadingDesc(true);
+  try {
+    const url = `${API_BASE}/api/industry-mall?mlfb=${encodeURIComponent(q)}`;
+    const r = await fetch(url, { method: 'GET' });
+    const j = await r.json().catch(()=>({}));
+    if (!r.ok) {
+      alert(`No se pudo consultar (${r.status}). Abre el Industry Mall y copia manualmente.`);
+      return;
     }
-  };
+    const d = (j && j.description || '').trim();
+    setDesc(d ? cleanDesc(d) : `Referencia: ${q}. Ver ficha: ${j.source || 'N/A'}`);
+  } catch (e) {
+    alert("Error consultando la API. Revisa el backend.");
+  } finally {
+    setLoadingDesc(false);
+  }
+};
 
   // ----- UI (misma estética del portal) -----
 return (
-  <section id="cotizador" className="min-h-[70vh] border-t border-slate-100 bg-white">
+<section
+  id="cotizador"
+  className="relative min-h-[70vh] border-t border-slate-100 bg-white"
+>
+{/* Marca de agua INGETES para todo el cotizador */}
+<div className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center opacity-10">
+  <img
+    src={marcaIngetes}
+    alt="Marca INGETES"
+    className="w-[900px] max-w-[80vw] object-contain"
+  />
+</div>
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
@@ -1804,19 +1822,28 @@ return (
             placeholder="6ES7131-6BH01-0BA0"
           />
 <div className="flex gap-2 mt-2">
-  <button
-    onClick={openMall}
-    className="inline-flex items-center gap-2 rounded-xl border border-emerald-600 text-emerald-700 hover:bg-emerald-50 font-semibold px-3 py-2 text-sm"
-  >
-    🔎 Industry Mall ↗
-  </button>
-
-  <button
-    onClick={fetchMallDescription}
-    className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-2 text-sm"
-  >
-    ✨ Traer descripción
-  </button>
+<button
+  onClick={fetchMallDescription}
+  disabled={loadingDesc}
+  aria-busy={loadingDesc}
+  className={
+    "inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-2 text-sm " +
+    (loadingDesc ? "opacity-60 cursor-wait" : "")
+  }
+>
+  {loadingDesc ? (
+    <>
+      {/* Spinner */}
+      <span
+        className="inline-block h-4 w-4 rounded-full border-2 border-white border-r-transparent animate-spin"
+        aria-hidden
+      />
+      Consultando…
+    </>
+  ) : (
+    <>✨ Traer descripción</>
+  )}
+</button>
 </div>
         </div>
 
