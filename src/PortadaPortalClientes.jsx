@@ -347,30 +347,30 @@ const docsMenu = [
     handleCommand(txt);
   };
 
-const [scrollY, setScrollY] = useState(0);
-useEffect(() => {
+const [scrollY, setScrollY] = React.useState(0);
+
+React.useEffect(() => {
   const onScroll = () => setScrollY(window.scrollY);
-  window.addEventListener('scroll', onScroll);
-  return () => window.removeEventListener('scroll', onScroll);
+  window.addEventListener("scroll", onScroll);
+  return () => window.removeEventListener("scroll", onScroll);
 }, []);
-  
+
 return (
-  <div className="relative min-h-screen bg-transparent">
-{/* Fondo institucional global animado */}
-<div
-  className="fixed inset-0 -z-10 pointer-events-none select-none flex items-center justify-center"
-  style={{
-    // mueve sutilmente la imagen con el scroll
-    transform: `translateY(${scrollY * 0.2}px)`,
-  }}
->
-  <img
-    src={`${import.meta.env.BASE_URL}ingetes.jpg`}
-    alt="Marca INGETES"
-    className="max-w-[90vw] w-[1100px] opacity-15 grayscale object-contain"
-    style={{ filter: 'grayscale(15%)' }}
-  />
-</div>
+  <section className="relative overflow-hidden min-h-screen">
+    {/* === Fondo de marca de agua que se mueve con el scroll === */}
+    <div
+      className="fixed inset-0 -z-10 pointer-events-none select-none flex items-center justify-center"
+      style={{
+        transform: `translateY(${scrollY * 0.2}px)`,
+        transition: 'transform 0.1s linear',
+      }}
+    >
+      <img
+        src={`${import.meta.env.BASE_URL}228b95fe-3317-40cc-ba8e-133a3b2a245a.png`} // 👈 tu imagen de marca de agua
+        alt="Marca de agua INGETES"
+        className="w-[1000px] max-w-[90vw] opacity-10 object-contain"
+      />
+    </div>
 
 {/* Marca lateral flotante */}
 <img
