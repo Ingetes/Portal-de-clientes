@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 const logoIngetes = `${import.meta.env.BASE_URL}ingetes.jpg`;
 const logoIngecap = `${import.meta.env.BASE_URL}ingecap.jpg`;
+const marcaIngetes = `${import.meta.env.BASE_URL}ingetes.png`;
 const PDFJS_VIEWER = 'https://mozilla.github.io/pdf.js/web/viewer.html';
 
 const BASE = import.meta.env.BASE_URL;
@@ -1251,8 +1252,21 @@ React.useEffect(() => {
         </div>
 
         <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {items.map((item, i) => (
-            <article key={i} className="relative rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
+{items.map((item, i) => (
+  <article
+    key={i}
+    className="relative rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+  >
+    {/* Marca de agua de INGETES */}
+    <img
+      src={marcaIngetes}
+      alt="Marca INGETES"
+      className="absolute inset-0 w-full h-full object-contain opacity-10 pointer-events-none select-none"
+      style={{
+        mixBlendMode: 'multiply',
+        transform: 'scale(1.3)',
+      }}
+    />
               {item.locked && (
                 <div className="absolute inset-0 rounded-3xl bg-white/60 backdrop-blur-sm flex items-center justify-center z-10">
                   <div className="text-center">
