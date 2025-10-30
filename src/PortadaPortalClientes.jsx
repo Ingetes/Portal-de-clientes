@@ -349,27 +349,28 @@ const docsMenu = [
 
 const [scrollY, setScrollY] = useState(0);
 useEffect(() => {
-  const handleScroll = () => setScrollY(window.scrollY);
-  window.addEventListener("scroll", handleScroll);
-  return () => window.removeEventListener("scroll", handleScroll);
+  const onScroll = () => setScrollY(window.scrollY);
+  window.addEventListener('scroll', onScroll);
+  return () => window.removeEventListener('scroll', onScroll);
 }, []);
   
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-slate-50">
-
-{/* Fondo institucional global con movimiento */}
+return (
+  <div className="relative min-h-screen bg-transparent">
+{/* Fondo institucional global animado */}
 <div
-  className="fixed inset-0 z-0 pointer-events-none select-none"
+  className="fixed inset-0 -z-10 pointer-events-none select-none flex items-center justify-center"
   style={{
-    backgroundImage: `url(${import.meta.env.BASE_URL}ingetes.jpg)`,
-    backgroundRepeat: 'no-repeat',
-    backgroundSize: 'min(1100px, 85vw)',      // grande pero responsivo
-    backgroundPosition: `center calc(30% + ${scrollY * 0.25}px)`,
-    opacity: 0.14,                             // un toque más visible
-    filter: 'grayscale(15%)',
-    transition: 'background-position 0.12s ease-out',
+    // mueve sutilmente la imagen con el scroll
+    transform: `translateY(${scrollY * 0.2}px)`,
   }}
-/>
+>
+  <img
+    src={`${import.meta.env.BASE_URL}ingetes.jpg`}
+    alt="Marca INGETES"
+    className="max-w-[90vw] w-[1100px] opacity-15 grayscale object-contain"
+    style={{ filter: 'grayscale(15%)' }}
+  />
+</div>
 
 {/* Marca lateral flotante */}
 <img
