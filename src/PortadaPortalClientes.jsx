@@ -776,17 +776,17 @@ function ComercialesScreen() {
         </div>
         <div className="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {data.map((p, i) => (
-            <div
-              key={i}
-              className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow"
-              {/* Marca de agua de INGETES */}
-              <img
-                src={marcaIngetes}
-                alt="Marca INGETES"
-                className="absolute inset-0 w-full h-full object-contain opacity-10 pointer-events-none select-none"
-                style={{ mixBlendMode: 'multiply', transform: 'scale(1.35)' }}
-              />
-            >
+<div
+  key={i}
+  className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow"
+>
+  {/* Marca de agua de INGETES */}
+  <img
+    src={marcaIngetes}
+    alt="Marca INGETES"
+    className="absolute inset-0 w-full h-full object-contain opacity-10 pointer-events-none select-none"
+    style={{ mixBlendMode: 'multiply', transform: 'scale(1.35)' }}
+  />
               {/* Imagen / Fallback */}
               <div className="relative -mx-2 -mt-2 mb-4 h-[273px] rounded-2xl overflow-hidden bg-gradient-to-br from-emerald-50 to-slate-50">
                 {/* Imagen, solo si hay ruta */}
