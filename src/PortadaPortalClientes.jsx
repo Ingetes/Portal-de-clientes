@@ -716,7 +716,10 @@ function Landing({ setChatOpen, chatOpen }) {
 <section id="como-empezar" className="border-t border-slate-100 bg-white">
   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid md:grid-cols-3 gap-6">
     {[
-      { title: '1. Ingresar a INGECAP', desc: 'Centro de experiencia e innovación.', cta: 'Ingresar', href: '#ingecap', locked: true },
+  {/* Bloqueado */}
+      {/* title: '1. Ingresar a INGECAP', desc: 'Centro de experiencia e innovación.', cta: 'Ingresar', href: '#ingecap' /* , locked: true */ /*},
+  {/* Sin bloquear */}
+      { title: '1. Ingresar a INGECAP', desc: 'Centro de experiencia e innovación.', cta: 'Ingresar', href: '#ingecap' , locked: true },
       { title: '2. Descarga listas y documentos', desc: 'Encuentra listas de precios Siemens, plantillas y guías de cotización.', cta: 'Ir a documentos', href: '#documentos' },
       { title: '3. Herramientas comerciales para los canales', desc: 'Accede a utilidades de selección, compatibilidad y configuradores.', cta: 'Abrir herramientas', href: '#herramientas' },
       { title: '4. Cotizador Rápido', desc: 'Crea cotizaciones sencillas, aplica descuentos e impuestos, y exporta.', cta: 'Ingresar', href: '#cotizador' },
@@ -778,7 +781,14 @@ function ComercialesScreen() {
           {data.map((p, i) => (
             <div
               key={i}
-              className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow"
+              className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow"
+              {/* Marca de agua de INGETES */}
+              <img
+                src={marcaIngetes}
+                alt="Marca INGETES"
+                className="absolute inset-0 w-full h-full object-contain opacity-10 pointer-events-none select-none"
+                style={{ mixBlendMode: 'multiply', transform: 'scale(1.35)' }}
+              />
             >
               {/* Imagen / Fallback */}
               <div className="relative -mx-2 -mt-2 mb-4 h-[273px] rounded-2xl overflow-hidden bg-gradient-to-br from-emerald-50 to-slate-50">
@@ -938,9 +948,16 @@ const BRANDS = [
               href={b.href}
               target="_blank"
               rel="noopener"
-              className="group relative rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow flex items-center justify-center"
+              className="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow flex items-center justify-center"
               title={b.name}
             >
+            {/* Marca de agua de INGETES */}
+              <img
+                src={marcaIngetes}
+                alt="Marca INGETES"
+                className="absolute inset-0 w-full h-full object-contain opacity-10 pointer-events-none select-none"
+                style={{ mixBlendMode: 'multiply', transform: 'scale(1.35)' }}
+              />
               {/* Logo (si existe). Si falla, ocultamos la imagen y mostramos el chip */}
               <img
                 src={b.logo}
