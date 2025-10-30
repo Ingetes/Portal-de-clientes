@@ -2150,7 +2150,18 @@ actions: [{ label: 'Vista previa', href: withBust('liner', DOCS.liner), openInMo
 
         <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {tools.map((t, i) => (
-            <article key={i} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
+            <article key={i} className="relative rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+                >
+              {/* Marca de agua de INGETES */}
+              <img
+                src={marcaIngetes}
+                alt="Marca INGETES"
+                className="absolute inset-0 w-full h-full object-contain opacity-10 pointer-events-none select-none"
+                style={{
+                  mixBlendMode: 'multiply',
+                  transform: 'scale(1.3)',
+                }}
+              />
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-bold text-slate-900">{t.title}</h3>
                 <span className="text-xs px-2 py-1 rounded-full bg-slate-50 text-slate-700 border border-slate-200">{t.badge}</span>
