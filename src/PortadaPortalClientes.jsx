@@ -347,19 +347,29 @@ const docsMenu = [
     handleCommand(txt);
   };
 
+// justo arriba del return (dentro del mismo componente)
+const [scrollY, setScrollY] = useState(0);
+useEffect(() => {
+  const onScroll = () => setScrollY(window.scrollY);
+  window.addEventListener("scroll", onScroll);
+  return () => window.removeEventListener("scroll", onScroll);
+}, []);
+  
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50">
-{/* Fondo institucional global (marca de agua INGETES en toda la app) */}
+
+{/* Fondo institucional global animado (marca de agua INGETES en toda la app) */}
 <div
-  className="fixed inset-0 -z-10 opacity-10 pointer-events-none select-none"
+  className="fixed inset-0 -z-10 opacity-10 pointer-events-none select-none transition-all duration-300"
   style={{
     backgroundImage: `url(${import.meta.env.BASE_URL}ingetes.jpg)`,
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center center',
-    backgroundSize: '900px',
-    filter: 'grayscale(20%)',
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: `center ${50 + scrollY * 0.15}px`,
+    backgroundSize: "900px",
+    filter: "grayscale(20%)",
   }}
 />
+
 {/* Marca lateral flotante */}
 <img
   src={`${import.meta.env.BASE_URL}ingetes.jpg`}
