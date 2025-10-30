@@ -360,17 +360,16 @@ useEffect(() => {
 
 {/* Fondo institucional global animado (marca de agua INGETES en toda la app) */}
 <div
-  className="fixed inset-0 -z-10 pointer-events-none select-none"
+  className="absolute top-0 left-0 w-full -z-10 pointer-events-none select-none"
   style={{
+    height: `${document.body.scrollHeight}px`, // cubre toda la página
     backgroundImage: `url(${import.meta.env.BASE_URL}ingetes.jpg)`,
     backgroundRepeat: 'no-repeat',
-    backgroundSize: 'min(1000px, 85vw)',
-    // mueve verticalmente con el scroll (parallax)
-    backgroundPosition: `center calc(22vh + ${scrollY * 0.35}px)`,
-    // fija al viewport para que siga visible en toda la página
-    backgroundAttachment: 'fixed',
+    backgroundSize: '900px auto',
+    backgroundPosition: `center ${scrollY * 0.4}px`, // efecto parallax real
     opacity: 0.18,
-    filter: 'grayscale(15%)'
+    filter: 'grayscale(10%)',
+    transition: 'background-position 0.15s ease-out',
   }}
 />
 
