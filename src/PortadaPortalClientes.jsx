@@ -347,30 +347,30 @@ const docsMenu = [
     handleCommand(txt);
   };
 
+// Estado del scroll (ya está en tu archivo)
 const [scrollY, setScrollY] = React.useState(0);
-
 React.useEffect(() => {
   const onScroll = () => setScrollY(window.scrollY);
   window.addEventListener("scroll", onScroll);
   return () => window.removeEventListener("scroll", onScroll);
 }, []);
 
-return (
-  <section className="relative overflow-hidden min-h-screen">
-    {/* === Fondo de marca de agua que se mueve con el scroll === */}
-    <div
-      className="fixed inset-0 -z-10 pointer-events-none select-none flex items-center justify-center"
-      style={{
-        transform: `translateY(${scrollY * 0.2}px)`,
-        transition: 'transform 0.1s linear',
-      }}
-    >
-      <img
-        src={`${import.meta.env.BASE_URL}228b95fe-3317-40cc-ba8e-133a3b2a245a.png`} // 👈 tu imagen de marca de agua
-        alt="Marca de agua INGETES"
-        className="w-[1000px] max-w-[90vw] opacity-10 object-contain"
-      />
-    </div>
+// Dentro del return principal de PortalDistribuidoresLanding()
+<section className="relative overflow-hidden min-h-screen">
+  {/* Fondo marca de agua en toda la pantalla con efecto parallax */}
+  <div
+    className="fixed inset-0 -z-10 pointer-events-none select-none flex items-center justify-center"
+    style={{
+      transform: `translateY(${scrollY * 0.2}px)`,
+      transition: 'transform 0.1s linear',
+    }}
+  >
+    <img
+      src={logoIngetes}              // 👈 usa tu constante
+      alt="Marca de agua INGETES"
+      className="w-[1000px] max-w-[90vw] opacity-10 object-contain"
+    />
+  </div>
 
 {/* Marca lateral flotante */}
 <img
@@ -2128,10 +2128,6 @@ const withBust = (key, url) => {
   catch { return url + q; }
 };
 
-// …y en el array "tools", donde uses DOCS.liner / DOCS.chemical / DOCS.celdas:
-actions: [{ label: 'Vista previa', href: withBust('liner', DOCS.liner), openInModal: true }]
-// idem para 'chemical' y 'celdas'
-
   // IMPORTANTE: usa DOCS/BASE (nada de rutas absolutas tipo "/herramientas/...").
   const tools = [
     {
@@ -2160,30 +2156,30 @@ actions: [{ label: 'Vista previa', href: withBust('liner', DOCS.liner), openInMo
       ]
     },
     {
-      title: 'Compatibilidad de liner',
-      desc: 'Guia para elegir liner adecuado segun fluido y condiciones.',
-      badge: 'Referencia',
-      actions: [
-        { label: 'Vista previa', href: DOCS.liner, openInModal: true }
-      ]
-    },
-    {
-      title: 'Tabla de compatibilidad de materiales',
-      desc: 'Consulta rapida para compatibilidades quimicas y de proceso.',
-      badge: 'Referencia',
-      actions: [
-        { label: 'Abrir',           href: 'https://www.coleparmer.com/chemical-resistance' },
-        { label: 'Vista previa', href: DOCS.chemical, openInModal: true }
-      ]
-    },
-    {
-      title: 'Guia de seleccion de celdas de carga',
-      desc: 'Criterios de seleccion para celdas de carga por aplicacion.',
-      badge: 'Guia',
-      actions: [
-        { label: 'Vista previa', href: DOCS.celdas, openInModal: true }
-      ]
-    }
+  title: 'Compatibilidad de liner',
+  desc: 'Guia para elegir liner adecuado segun fluido y condiciones.',
+  badge: 'Referencia',
+  actions: [
+    { label: 'Vista previa', href: withBust('liner', DOCS.liner), openInModal: true }
+  ]
+},
+{
+  title: 'Tabla de compatibilidad de materiales',
+  desc: 'Consulta rapida para compatibilidades quimicas y de proceso.',
+  badge: 'Referencia',
+  actions: [
+    { label: 'Abrir', href: 'https://www.coleparmer.com/chemical-resistance' },
+    { label: 'Vista previa', href: withBust('chemical', DOCS.chemical), openInModal: true }
+  ]
+},
+{
+  title: 'Guia de seleccion de celdas de carga',
+  desc: 'Criterios de seleccion para celdas de carga por aplicacion.',
+  badge: 'Guia',
+  actions: [
+    { label: 'Vista previa', href: withBust('celdas', DOCS.celdas), openInModal: true }
+  ]
+}
   ];
 
   // Desde el chatbot
