@@ -347,71 +347,70 @@ const docsMenu = [
     handleCommand(txt);
   };
 
-// Estado del scroll (ya está en tu archivo)
-const [scrollY, setScrollY] = React.useState(0);
-React.useEffect(() => {
+// justo arriba del return (dentro del mismo componente)
+const [scrollY, setScrollY] = useState(0);
+useEffect(() => {
   const onScroll = () => setScrollY(window.scrollY);
   window.addEventListener("scroll", onScroll);
   return () => window.removeEventListener("scroll", onScroll);
 }, []);
+  
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-white to-slate-50">
 
-// Dentro del return principal de PortalDistribuidoresLanding()
-return (
-  <>
-    <section className="relative overflow-hidden min-h-screen">
-      {/* Fondo marca de agua en toda la pantalla con efecto parallax */}
-      <div
-        className="fixed inset-0 -z-10 pointer-events-none select-none flex items-center justify-center"
-        style={{
-          transform: `translateY(${scrollY * 0.2}px)`,
-          transition: 'transform 0.1s linear',
-        }}
-      >
-        <img
-          src={logoIngetes} // usa tu constante: const logoIngetes = `${import.meta.env.BASE_URL}ingetes.jpg`;
-          alt="Marca de agua INGETES"
-          className="w-[1000px] max-w-[90vw] opacity-10 object-contain"
-        />
-      </div>
+{/* Fondo institucional global animado (marca de agua INGETES en toda la app) */}
+<div className="fixed inset-0 -z-10 pointer-events-none select-none" aria-hidden>
+  <img
+    src={`${import.meta.env.BASE_URL}ingetes.jpg`}
+    alt=""
+    style={{
+      position: 'fixed',
+      top: '50%',
+      left: '50%',
+      transform: `translate(-50%, calc(-50% + ${scrollY * 0.22}px))`, // parallax (ajusta 0.22 a tu gusto)
+      width: 'min(900px, 80vw)',
+      opacity: 0.16,
+      filter: 'grayscale(20%)',
+      transition: 'transform 0.12s ease-out',
+    }}
+  />
+</div>
 
-      {/* Marca lateral flotante (opcional) */}
-      <img
-        src={logoIngetes}
-        alt="Logo INGETES"
-        className="fixed top-1/2 right-0 w-24 opacity-20 translate-y-[-50%] pointer-events-none select-none"
-      />
-
+{/* Marca lateral flotante */}
+<img
+  src={`${import.meta.env.BASE_URL}ingetes.jpg`}
+  alt="Logo INGETES"
+  className="fixed top-1/2 right-0 w-24 opacity-20 translate-y-[-50%] pointer-events-none select-none"
+/>
       <Header onOpenSettings={() => setSettingsOpen(true)} />
+{route === '#marcas' ? (
+  <MarcasAliadasScreen />
+) : route === '#comerciales' ? (
+  <ComercialesScreen />
+) : route === '#ingresar' ? (
+  <PortalClientesAuth />
+) : route === '#documentos' ? (
+  <DocumentosScreen />
+) : route === '#herramientas' ? (
+  <HerramientasScreen />
+) : route === '#cotizador' ? (
+  <CotizadorRapidoScreen />
+) : route === '#ingecap' ? (
+  <IngecapScreen hasAccess={hasIngecapAccess} setHasAccess={setHasIngecapAccess} />
+) : route === '#stats' ? (
+  <StatsScreen />
+) : (
+  <Landing setChatOpen={setChatOpen} chatOpen={chatOpen} />
+)}
 
-      <div className="relative z-10">
-        {route === '#marcas' ? (
-          <MarcasAliadasScreen />
-        ) : route === '#comerciales' ? (
-          <ComercialesScreen />
-        ) : route === '#ingresar' ? (
-          <PortalClientesAuth />
-        ) : route === '#documentos' ? (
-          <DocumentosScreen />
-        ) : route === '#herramientas' ? (
-          <HerramientasScreen />
-        ) : route === '#cotizador' ? (
-          <CotizadorRapidoScreen />
-        ) : route === '#ingecap' ? (
-          <IngecapScreen hasAccess={hasIngecapAccess} setHasAccess={setHasIngecapAccess} />
-        ) : route === '#stats' ? (
-          <StatsScreen />
-        ) : (
-          <Landing setChatOpen={setChatOpen} chatOpen={chatOpen} />
-        )}
-
-        {/* Botón flotante del Asistente */}
-        <button
-          onClick={() => setChatOpen(v => !v)}
-          className="fixed bottom-6 right-6 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-lg px-5 py-3"
-          aria-label="Abrir asistente virtual"
-        >
-          {chatOpen ? 'Cerrar Asistente' : 'Asistente'}
-        </button>
+      {/* Botón flotante del Asistente */}
+      <button
+        onClick={() => setChatOpen(v => !v)}
+        className="fixed bottom-6 right-6 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-lg px-5 py-3"
+        aria-label="Abrir asistente virtual"
+      >
+        {chatOpen ? 'Cerrar Asistente' : 'Asistente'}
+      </button>
 
       {/* Panel del Chatbot con comandos */}
       {chatOpen && (
@@ -506,21 +505,23 @@ return (
             <button onClick={onSend} className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2">Enviar</button>
           </div>
         </div>
-        )}
-      </div>
-    </section>
-
-    {/* Modal de Ajustes y Footer van fuera de la sección */}
-    <SettingsModal
-      open={settingsOpen}
-      onClose={() => setSettingsOpen(false)}
-      files={EDITABLE_FILES}
-      endpoint={UPLOAD_ENDPOINT}
-      onUpdated={(results) => emit('portal:filesUpdated', { results })}
-    />
-    <Footer />
-  </>
-);
+      )}
+{/* === Modal de Ajustes (subida con clave) === */}
+<SettingsModal
+  open={settingsOpen}
+  onClose={() => setSettingsOpen(false)}
+  files={EDITABLE_FILES}
+  endpoint={UPLOAD_ENDPOINT}
+  onUpdated={(results) => {
+    // results: [{ key, ok, msg, bust }]
+    // Notificamos a las pantallas para que rompan caché de los archivos cambiados
+    emit('portal:filesUpdated', { results });
+  }}
+/>
+      <Footer />
+    </div>
+  );
+}
 
 // ==========================================================
 // Header
@@ -663,12 +664,12 @@ function Landing({ setChatOpen, chatOpen }) {
   return (
     <>
       {/* Hero */}
-      <section className="relative">  {/* sin overflow-hidden para no recortar el parallax */}
+      <section className="relative overflow-hidden">
         {/* Fondo corporativo con marca de agua */}
         <div
           className="absolute inset-0 pointer-events-none select-none"
           style={{
-            /*backgroundImage: `url(${import.meta.env.BASE_URL}ingetes.jpg)`,*/
+            backgroundImage: `url(${import.meta.env.BASE_URL}ingetes.jpg)`,
             backgroundRepeat: 'no-repeat',
             // centra un poco más abajo para que no choque con el menú
             backgroundPosition: 'center 6rem',
@@ -677,7 +678,7 @@ function Landing({ setChatOpen, chatOpen }) {
             // visibilidad cómoda
             opacity: 0.22,
             filter: 'grayscale(10%)',
-           }}
+          }}
         />
         {/* Capa muy suave para contraste (opcional) */}
         <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-white/40 via-white/10 to-slate-50/60" />
@@ -780,7 +781,7 @@ function Landing({ setChatOpen, chatOpen }) {
 function ComercialesScreen() {
   const data = Object.values(COMERCIALES);
   return (
-<section id="comerciales" className="relative min-h-[70vh] border-t border-slate-100 bg-transparent">
+<section id="comerciales" className="relative min-h-[70vh] border-t border-slate-100 bg-white">
   {/* Marca de agua INGETES para toda la sección */}
   <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center opacity-10">
     <img
@@ -875,7 +876,7 @@ function IngecapScreen({ hasAccess, setHasAccess }) {
   const goHome = () => window.location.hash = '#home';
 
   return (
-    <section id="ingecap" className="min-h-[70vh] border-t border-slate-100 bg-transparent">
+    <section id="ingecap" className="min-h-[70vh] border-t border-slate-100 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -1269,7 +1270,7 @@ React.useEffect(() => {
 }, []);
 
   return (
-    <section id="documentos" className="min-h-[70vh] border-t border-slate-100 bg-transparent">
+    <section id="documentos" className="min-h-[70vh] border-t border-slate-100 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -1812,7 +1813,7 @@ const fetchMallDescription = async () => {
 return (
 <section
   id="cotizador"
-  className="relative min-h-[70vh] border-t border-slate-100 bg-transparent"
+  className="relative min-h-[70vh] border-t border-slate-100 bg-white"
 >
 {/* Marca de agua INGETES para todo el cotizador */}
 <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center opacity-10">
@@ -2129,6 +2130,10 @@ const withBust = (key, url) => {
   catch { return url + q; }
 };
 
+// …y en el array "tools", donde uses DOCS.liner / DOCS.chemical / DOCS.celdas:
+actions: [{ label: 'Vista previa', href: withBust('liner', DOCS.liner), openInModal: true }]
+// idem para 'chemical' y 'celdas'
+
   // IMPORTANTE: usa DOCS/BASE (nada de rutas absolutas tipo "/herramientas/...").
   const tools = [
     {
@@ -2157,30 +2162,30 @@ const withBust = (key, url) => {
       ]
     },
     {
-  title: 'Compatibilidad de liner',
-  desc: 'Guia para elegir liner adecuado segun fluido y condiciones.',
-  badge: 'Referencia',
-  actions: [
-    { label: 'Vista previa', href: withBust('liner', DOCS.liner), openInModal: true }
-  ]
-},
-{
-  title: 'Tabla de compatibilidad de materiales',
-  desc: 'Consulta rapida para compatibilidades quimicas y de proceso.',
-  badge: 'Referencia',
-  actions: [
-    { label: 'Abrir', href: 'https://www.coleparmer.com/chemical-resistance' },
-    { label: 'Vista previa', href: withBust('chemical', DOCS.chemical), openInModal: true }
-  ]
-},
-{
-  title: 'Guia de seleccion de celdas de carga',
-  desc: 'Criterios de seleccion para celdas de carga por aplicacion.',
-  badge: 'Guia',
-  actions: [
-    { label: 'Vista previa', href: withBust('celdas', DOCS.celdas), openInModal: true }
-  ]
-}
+      title: 'Compatibilidad de liner',
+      desc: 'Guia para elegir liner adecuado segun fluido y condiciones.',
+      badge: 'Referencia',
+      actions: [
+        { label: 'Vista previa', href: DOCS.liner, openInModal: true }
+      ]
+    },
+    {
+      title: 'Tabla de compatibilidad de materiales',
+      desc: 'Consulta rapida para compatibilidades quimicas y de proceso.',
+      badge: 'Referencia',
+      actions: [
+        { label: 'Abrir',           href: 'https://www.coleparmer.com/chemical-resistance' },
+        { label: 'Vista previa', href: DOCS.chemical, openInModal: true }
+      ]
+    },
+    {
+      title: 'Guia de seleccion de celdas de carga',
+      desc: 'Criterios de seleccion para celdas de carga por aplicacion.',
+      badge: 'Guia',
+      actions: [
+        { label: 'Vista previa', href: DOCS.celdas, openInModal: true }
+      ]
+    }
   ];
 
   // Desde el chatbot
@@ -2197,7 +2202,7 @@ const withBust = (key, url) => {
   }, [usePdfJs]);
 
   return (
-    <section id="herramientas" className="min-h-[70vh] border-t border-slate-100 bg-transparent">
+    <section id="herramientas" className="min-h-[70vh] border-t border-slate-100 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -2324,7 +2329,7 @@ function StatsScreen() {
   }, []);
 
   return (
-    <section id="stats" className="min-h-[70vh] border-t border-slate-100 bg-transparent">
+    <section id="stats" className="min-h-[70vh] border-t border-slate-100 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -2397,4 +2402,3 @@ function Footer() {
     </footer>
   );
 }
-
