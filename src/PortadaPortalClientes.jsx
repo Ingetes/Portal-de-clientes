@@ -359,15 +359,15 @@ useEffect(() => {
 
 {/* Fondo institucional global con movimiento */}
 <div
-  className="fixed inset-0 -z-10 pointer-events-none select-none"
+  className="fixed inset-0 z-0 pointer-events-none select-none"
   style={{
     backgroundImage: `url(${import.meta.env.BASE_URL}ingetes.jpg)`,
     backgroundRepeat: 'no-repeat',
-    backgroundSize: 'contain',
-    backgroundPosition: `center ${scrollY * 0.25}px`, // movimiento vertical
-    opacity: 0.12,
+    backgroundSize: 'min(1100px, 85vw)',      // grande pero responsivo
+    backgroundPosition: `center calc(30% + ${scrollY * 0.25}px)`,
+    opacity: 0.14,                             // un toque más visible
     filter: 'grayscale(15%)',
-    transition: 'background-position 0.15s ease-out',
+    transition: 'background-position 0.12s ease-out',
   }}
 />
 
@@ -377,7 +377,9 @@ useEffect(() => {
   alt="Logo INGETES"
   className="fixed top-1/2 right-0 w-24 opacity-20 translate-y-[-50%] pointer-events-none select-none"
 />
-      <Header onOpenSettings={() => setSettingsOpen(true)} />
+      
+<Header onOpenSettings={() => setSettingsOpen(true)} />
+<div className="relative z-10">    {/* 👈 nuevo envoltorio */}
 {route === '#marcas' ? (
   <MarcasAliadasScreen />
 ) : route === '#comerciales' ? (
@@ -776,7 +778,7 @@ function Landing({ setChatOpen, chatOpen }) {
 function ComercialesScreen() {
   const data = Object.values(COMERCIALES);
   return (
-<section id="comerciales" className="relative min-h-[70vh] border-t border-slate-100 bg-white">
+<section id="comerciales" className="relative min-h-[70vh] border-t border-slate-100 bg-transparent">
   {/* Marca de agua INGETES para toda la sección */}
   <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center opacity-10">
     <img
@@ -871,7 +873,7 @@ function IngecapScreen({ hasAccess, setHasAccess }) {
   const goHome = () => window.location.hash = '#home';
 
   return (
-    <section id="ingecap" className="min-h-[70vh] border-t border-slate-100 bg-white">
+    <section id="ingecap" className="min-h-[70vh] border-t border-slate-100 bg-transparent">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -1265,7 +1267,7 @@ React.useEffect(() => {
 }, []);
 
   return (
-    <section id="documentos" className="min-h-[70vh] border-t border-slate-100 bg-white">
+    <section id="documentos" className="min-h-[70vh] border-t border-slate-100 bg-transparent">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -1808,7 +1810,7 @@ const fetchMallDescription = async () => {
 return (
 <section
   id="cotizador"
-  className="relative min-h-[70vh] border-t border-slate-100 bg-white"
+  className="relative min-h-[70vh] border-t border-slate-100 bg-transparent"
 >
 {/* Marca de agua INGETES para todo el cotizador */}
 <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center opacity-10">
@@ -2197,7 +2199,7 @@ actions: [{ label: 'Vista previa', href: withBust('liner', DOCS.liner), openInMo
   }, [usePdfJs]);
 
   return (
-    <section id="herramientas" className="min-h-[70vh] border-t border-slate-100 bg-white">
+    <section id="herramientas" className="min-h-[70vh] border-t border-slate-100 bg-transparent">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -2324,7 +2326,7 @@ function StatsScreen() {
   }, []);
 
   return (
-    <section id="stats" className="min-h-[70vh] border-t border-slate-100 bg-white">
+    <section id="stats" className="min-h-[70vh] border-t border-slate-100 bg-transparent">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-start justify-between gap-4">
           <div>
