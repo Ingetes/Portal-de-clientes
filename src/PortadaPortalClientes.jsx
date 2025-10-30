@@ -1783,6 +1783,7 @@ return (
 <section
   id="cotizador"
   className="relative min-h-[70vh] border-t border-slate-100 bg-white"
+>
 {/* Marca de agua INGETES para todo el cotizador */}
 <div className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center opacity-10">
   <img
@@ -1791,7 +1792,6 @@ return (
     className="w-[900px] max-w-[80vw] object-contain"
   />
 </div>
->
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
