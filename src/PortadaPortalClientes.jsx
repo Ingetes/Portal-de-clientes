@@ -628,16 +628,14 @@ function Landing({ setChatOpen, chatOpen }) {
       <section className="relative overflow-hidden">
         {/* Fondo corporativo con marca de agua */}
         <div className="absolute inset-0 -z-10 overflow-hidden grid place-items-center">
-          {/* Gradiente suave verde institucional */}
-          <div className="absolute inset-0 bg-gradient-to-b from-emerald-50 via-white to-slate-50" />
-      
           {/* Marca de agua fondo */}
           <img
             src={`${import.meta.env.BASE_URL}ingetes.jpg?v=hero1`}
             alt="Marca de agua INGETES"
             className="absolute inset-0 w-full h-full object-cover opacity-[0.12] pointer-events-none select-none"
           />
-      
+          {/* Gradiente suave verde institucional */}
+          <div className="absolute inset-0 bg-gradient-to-b from-emerald-50 via-white to-slate-50" />
           {/* Logo grande difuminado al centro */}
           <img
             src={`${import.meta.env.BASE_URL}ingetes.jpg?v=hero1`}
