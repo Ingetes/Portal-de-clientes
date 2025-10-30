@@ -768,12 +768,6 @@ function ComercialesScreen() {
 <section id="comerciales" className="min-h-[70vh] border-t border-slate-100 bg-transparent relative z-10">
   {/* Marca de agua INGETES para toda la sección */}
   <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center opacity-10">
-    <img
-      src={logoIngetes}
-      alt="Marca INGETES"
-      className="w-[900px] max-w-[80vw] object-contain"
-    />
-  </div>
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -949,13 +943,6 @@ const BRANDS = [
               className="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow flex items-center justify-center"
               title={b.name}
             >
-            {/* Marca de agua de INGETES */}
-              <img
-                src={marcaIngetes}
-                alt="Marca INGETES"
-                className="absolute inset-0 w-full h-full object-contain opacity-10 pointer-events-none select-none"
-                style={{ mixBlendMode: 'multiply', transform: 'scale(1.35)' }}
-              />
               {/* Logo (si existe). Si falla, ocultamos la imagen y mostramos el chip */}
               <img
                 src={b.logo}
@@ -1272,16 +1259,6 @@ React.useEffect(() => {
     key={i}
     className="relative rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow overflow-hidden"
   >
-    {/* Marca de agua de INGETES */}
-    <img
-      src={marcaIngetes}
-      alt="Marca INGETES"
-      className="absolute inset-0 w-full h-full object-contain opacity-10 pointer-events-none select-none"
-      style={{
-        mixBlendMode: 'multiply',
-        transform: 'scale(1.3)',
-      }}
-    />
               {item.locked && (
                 <div className="absolute inset-0 rounded-3xl bg-white/60 backdrop-blur-sm flex items-center justify-center z-10">
                   <div className="text-center">
@@ -1801,12 +1778,6 @@ return (
 >
 {/* Marca de agua INGETES para todo el cotizador */}
 <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center opacity-10">
-  <img
-    src={logoIngetes}
-    alt="Marca INGETES"
-    className="w-[900px] max-w-[80vw] object-contain"
-  />
-</div>
 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
@@ -2200,16 +2171,6 @@ actions: [{ label: 'Vista previa', href: withBust('liner', DOCS.liner), openInMo
           {tools.map((t, i) => (
             <article key={i} className="relative rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow overflow-hidden"
                 >
-              {/* Marca de agua de INGETES */}
-              <img
-                src={marcaIngetes}
-                alt="Marca INGETES"
-                className="absolute inset-0 w-full h-full object-contain opacity-10 pointer-events-none select-none"
-                style={{
-                  mixBlendMode: 'multiply',
-                  transform: 'scale(1.3)',
-                }}
-              />
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-bold text-slate-900">{t.title}</h3>
                 <span className="text-xs px-2 py-1 rounded-full bg-slate-50 text-slate-700 border border-slate-200">{t.badge}</span>
