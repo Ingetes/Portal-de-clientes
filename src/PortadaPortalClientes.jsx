@@ -347,31 +347,33 @@ const docsMenu = [
     handleCommand(txt);
   };
 
-// justo arriba del return (dentro del mismo componente)
+// justo encima del return ya tienes estos estados; mantenlos:
 const [scrollY, setScrollY] = useState(0);
 useEffect(() => {
-  const onScroll = () => setScrollY(window.scrollY);
-  window.addEventListener("scroll", onScroll);
+  const onScroll = () => setScrollY(window.scrollY || window.pageYOffset || 0);
+  window.addEventListener("scroll", onScroll, { passive: true });
   return () => window.removeEventListener("scroll", onScroll);
 }, []);
   
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-slate-50">
+<div className="relative min-h-screen bg-transparent">
 
-{/* Fondo institucional global animado (marca de agua INGETES en toda la app) */}
-<div className="fixed inset-0 -z-10 pointer-events-none select-none" aria-hidden>
+{/* Fondo institucional global (marca de agua INGETES en toda la app) */}
+<div className="fixed inset-0 z-0 pointer-events-none select-none" aria-hidden>
   <img
     src={`${import.meta.env.BASE_URL}ingetes.jpg`}
+    onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}ingetes.png`; }}
     alt=""
     style={{
       position: 'fixed',
       top: '50%',
       left: '50%',
-      transform: `translate(-50%, calc(-50% + ${scrollY * 0.22}px))`, // parallax (ajusta 0.22 a tu gusto)
-      width: 'min(900px, 80vw)',
+      transform: `translate(-50%, calc(-50% + ${scrollY * 0.25}px))`, // parallax: 0.25 = suavidad
+      width: 'min(980px, 82vw)',
       opacity: 0.16,
       filter: 'grayscale(20%)',
-      transition: 'transform 0.12s ease-out',
+      transition: 'transform 0.10s ease-out',
+      willChange: 'transform',
     }}
   />
 </div>
@@ -665,24 +667,6 @@ function Landing({ setChatOpen, chatOpen }) {
     <>
       {/* Hero */}
       <section className="relative overflow-hidden">
-        {/* Fondo corporativo con marca de agua */}
-        <div
-          className="absolute inset-0 pointer-events-none select-none"
-          style={{
-            backgroundImage: `url(${import.meta.env.BASE_URL}ingetes.jpg)`,
-            backgroundRepeat: 'no-repeat',
-            // centra un poco más abajo para que no choque con el menú
-            backgroundPosition: 'center 6rem',
-            // tamaño grande pero responsivo
-            backgroundSize: 'min(900px, 80vw)',
-            // visibilidad cómoda
-            opacity: 0.22,
-            filter: 'grayscale(10%)',
-          }}
-        />
-        {/* Capa muy suave para contraste (opcional) */}
-        <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-white/40 via-white/10 to-slate-50/60" />
-
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 grid lg:grid-cols-2 gap-10 items-center">
           <div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-emerald-700 drop-shadow-sm">
@@ -781,7 +765,7 @@ function Landing({ setChatOpen, chatOpen }) {
 function ComercialesScreen() {
   const data = Object.values(COMERCIALES);
   return (
-<section id="comerciales" className="relative min-h-[70vh] border-t border-slate-100 bg-white">
+<section id="comerciales" className="min-h-[70vh] border-t border-slate-100 bg-transparent relative z-10">
   {/* Marca de agua INGETES para toda la sección */}
   <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center opacity-10">
     <img
@@ -876,7 +860,7 @@ function IngecapScreen({ hasAccess, setHasAccess }) {
   const goHome = () => window.location.hash = '#home';
 
   return (
-    <section id="ingecap" className="min-h-[70vh] border-t border-slate-100 bg-white">
+    <section id="ingecap" className="min-h-[70vh] border-t border-slate-100 bg-transparent relative z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -943,7 +927,7 @@ const BRANDS = [
 ];
 
   return (
-    <section id="marcas" className="min-h-[70vh] border-t border-slate-100 bg-white">
+    <section id="marcas" className="min-h-[70vh] border-t border-slate-100 bg-transparent relative z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -1270,7 +1254,7 @@ React.useEffect(() => {
 }, []);
 
   return (
-    <section id="documentos" className="min-h-[70vh] border-t border-slate-100 bg-white">
+    <section id="documentos" className="min-h-[70vh] border-t border-slate-100 bg-transparent relative z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -1813,7 +1797,7 @@ const fetchMallDescription = async () => {
 return (
 <section
   id="cotizador"
-  className="relative min-h-[70vh] border-t border-slate-100 bg-white"
+  className="relative min-h-[70vh] border-t border-slate-100 bg-transparent z-10"
 >
 {/* Marca de agua INGETES para todo el cotizador */}
 <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center opacity-10">
@@ -2202,7 +2186,7 @@ actions: [{ label: 'Vista previa', href: withBust('liner', DOCS.liner), openInMo
   }, [usePdfJs]);
 
   return (
-    <section id="herramientas" className="min-h-[70vh] border-t border-slate-100 bg-white">
+    <section id="herramientas" className="min-h-[70vh] border-t border-slate-100 bg-transparent relative z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -2329,7 +2313,7 @@ function StatsScreen() {
   }, []);
 
   return (
-    <section id="stats" className="min-h-[70vh] border-t border-slate-100 bg-white">
+    <section id="stats" className="min-h-[70vh] border-t border-slate-100 bg-transparent relative z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-start justify-between gap-4">
           <div>
