@@ -356,59 +356,62 @@ React.useEffect(() => {
 }, []);
 
 // Dentro del return principal de PortalDistribuidoresLanding()
-<section className="relative overflow-hidden min-h-screen">
-  {/* Fondo marca de agua en toda la pantalla con efecto parallax */}
-  <div
-    className="fixed inset-0 -z-10 pointer-events-none select-none flex items-center justify-center"
-    style={{
-      transform: `translateY(${scrollY * 0.2}px)`,
-      transition: 'transform 0.1s linear',
-    }}
-  >
-    <img
-      src={logoIngetes}              // 👈 usa tu constante
-      alt="Marca de agua INGETES"
-      className="w-[1000px] max-w-[90vw] opacity-10 object-contain"
-    />
-  </div>
-
-{/* Marca lateral flotante */}
-<img
-  src={`${import.meta.env.BASE_URL}ingetes.jpg`}
-  alt="Logo INGETES"
-  className="fixed top-1/2 right-0 w-24 opacity-20 translate-y-[-50%] pointer-events-none select-none"
-/>
-      
-<Header onOpenSettings={() => setSettingsOpen(true)} />
-<div className="relative z-10">    {/* 👈 nuevo envoltorio */}
-{route === '#marcas' ? (
-  <MarcasAliadasScreen />
-) : route === '#comerciales' ? (
-  <ComercialesScreen />
-) : route === '#ingresar' ? (
-  <PortalClientesAuth />
-) : route === '#documentos' ? (
-  <DocumentosScreen />
-) : route === '#herramientas' ? (
-  <HerramientasScreen />
-) : route === '#cotizador' ? (
-  <CotizadorRapidoScreen />
-) : route === '#ingecap' ? (
-  <IngecapScreen hasAccess={hasIngecapAccess} setHasAccess={setHasIngecapAccess} />
-) : route === '#stats' ? (
-  <StatsScreen />
-) : (
-  <Landing setChatOpen={setChatOpen} chatOpen={chatOpen} />
-)}
-
-      {/* Botón flotante del Asistente */}
-      <button
-        onClick={() => setChatOpen(v => !v)}
-        className="fixed bottom-6 right-6 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-lg px-5 py-3"
-        aria-label="Abrir asistente virtual"
+return (
+  <>
+    <section className="relative overflow-hidden min-h-screen">
+      {/* Fondo marca de agua en toda la pantalla con efecto parallax */}
+      <div
+        className="fixed inset-0 -z-10 pointer-events-none select-none flex items-center justify-center"
+        style={{
+          transform: `translateY(${scrollY * 0.2}px)`,
+          transition: 'transform 0.1s linear',
+        }}
       >
-        {chatOpen ? 'Cerrar Asistente' : 'Asistente'}
-      </button>
+        <img
+          src={logoIngetes} // usa tu constante: const logoIngetes = `${import.meta.env.BASE_URL}ingetes.jpg`;
+          alt="Marca de agua INGETES"
+          className="w-[1000px] max-w-[90vw] opacity-10 object-contain"
+        />
+      </div>
+
+      {/* Marca lateral flotante (opcional) */}
+      <img
+        src={logoIngetes}
+        alt="Logo INGETES"
+        className="fixed top-1/2 right-0 w-24 opacity-20 translate-y-[-50%] pointer-events-none select-none"
+      />
+
+      <Header onOpenSettings={() => setSettingsOpen(true)} />
+
+      <div className="relative z-10">
+        {route === '#marcas' ? (
+          <MarcasAliadasScreen />
+        ) : route === '#comerciales' ? (
+          <ComercialesScreen />
+        ) : route === '#ingresar' ? (
+          <PortalClientesAuth />
+        ) : route === '#documentos' ? (
+          <DocumentosScreen />
+        ) : route === '#herramientas' ? (
+          <HerramientasScreen />
+        ) : route === '#cotizador' ? (
+          <CotizadorRapidoScreen />
+        ) : route === '#ingecap' ? (
+          <IngecapScreen hasAccess={hasIngecapAccess} setHasAccess={setHasIngecapAccess} />
+        ) : route === '#stats' ? (
+          <StatsScreen />
+        ) : (
+          <Landing setChatOpen={setChatOpen} chatOpen={chatOpen} />
+        )}
+
+        {/* Botón flotante del Asistente */}
+        <button
+          onClick={() => setChatOpen(v => !v)}
+          className="fixed bottom-6 right-6 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-lg px-5 py-3"
+          aria-label="Abrir asistente virtual"
+        >
+          {chatOpen ? 'Cerrar Asistente' : 'Asistente'}
+        </button>
 
       {/* Panel del Chatbot con comandos */}
       {chatOpen && (
@@ -503,23 +506,21 @@ React.useEffect(() => {
             <button onClick={onSend} className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2">Enviar</button>
           </div>
         </div>
-      )}
-{/* === Modal de Ajustes (subida con clave) === */}
-<SettingsModal
-  open={settingsOpen}
-  onClose={() => setSettingsOpen(false)}
-  files={EDITABLE_FILES}
-  endpoint={UPLOAD_ENDPOINT}
-  onUpdated={(results) => {
-    // results: [{ key, ok, msg, bust }]
-    // Notificamos a las pantallas para que rompan caché de los archivos cambiados
-    emit('portal:filesUpdated', { results });
-  }}
-/>
-      <Footer />
-    </div>
-  );
-}
+        )}
+      </div>
+    </section>
+
+    {/* Modal de Ajustes y Footer van fuera de la sección */}
+    <SettingsModal
+      open={settingsOpen}
+      onClose={() => setSettingsOpen(false)}
+      files={EDITABLE_FILES}
+      endpoint={UPLOAD_ENDPOINT}
+      onUpdated={(results) => emit('portal:filesUpdated', { results })}
+    />
+    <Footer />
+  </>
+);
 
 // ==========================================================
 // Header
