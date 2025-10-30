@@ -765,8 +765,16 @@ function Landing({ setChatOpen, chatOpen }) {
 function ComercialesScreen() {
   const data = Object.values(COMERCIALES);
   return (
-    <section id="comerciales" className="min-h-[70vh] border-t border-slate-100 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+<section id="comerciales" className="relative min-h-[70vh] border-t border-slate-100 bg-white">
+  {/* Marca de agua INGETES para toda la sección */}
+  <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center opacity-10">
+    <img
+      src={logoIngetes}
+      alt="Marca INGETES"
+      className="w-[900px] max-w-[80vw] object-contain"
+    />
+  </div>
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl md:text-3xl font-extrabold text-emerald-700">Equipo Comercial INGETES</h1>
@@ -780,13 +788,6 @@ function ComercialesScreen() {
   key={i}
   className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow"
 >
-  {/* Marca de agua de INGETES */}
-  <img
-    src={marcaIngetes}
-    alt="Marca INGETES"
-    className="absolute inset-0 w-full h-full object-contain opacity-10 pointer-events-none select-none"
-    style={{ mixBlendMode: 'multiply', transform: 'scale(1.35)' }}
-  />
               {/* Imagen / Fallback */}
               <div className="relative -mx-2 -mt-2 mb-4 h-[273px] rounded-2xl overflow-hidden bg-gradient-to-br from-emerald-50 to-slate-50">
                 {/* Imagen, solo si hay ruta */}
