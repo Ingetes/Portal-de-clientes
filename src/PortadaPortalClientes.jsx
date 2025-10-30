@@ -1783,7 +1783,6 @@ return (
 <section
   id="cotizador"
   className="relative min-h-[70vh] border-t border-slate-100 bg-white"
->
 {/* Marca de agua INGETES para todo el cotizador */}
 <div className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center opacity-10">
   <img
@@ -1792,6 +1791,7 @@ return (
     className="w-[900px] max-w-[80vw] object-contain"
   />
 </div>
+>
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
@@ -1822,6 +1822,12 @@ return (
             placeholder="6ES7131-6BH01-0BA0"
           />
 <div className="flex gap-2 mt-2">
+  <button
+    onClick={openMall}
+    className="inline-flex items-center gap-2 rounded-xl border border-emerald-600 text-emerald-700 hover:bg-emerald-50 font-semibold px-3 py-2 text-sm"
+  >
+    🔎 Industry Mall ↗
+  </button>
 <button
   onClick={fetchMallDescription}
   disabled={loadingDesc}
