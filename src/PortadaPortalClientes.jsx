@@ -381,7 +381,7 @@ useEffect(() => {
       position: 'absolute',
       top: '50%',
       left: '50%',
-      transform: `translate(-50%, calc(-85% + ${scrollY * 0.25}px))`,
+      transform: `translate(-50%, calc(-95% + ${scrollY * 0.25}px))`,
       width: 'min(980px, 82vw)',
       opacity: 0.16,
       filter: 'grayscale(20%)',
