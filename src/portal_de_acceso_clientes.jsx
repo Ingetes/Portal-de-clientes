@@ -1,5 +1,9 @@
 import React, { useMemo, useState } from "react";
 
+// Credenciales únicas permitidas
+const FIXED_EMAIL = "cliente.demo@empresa.com";
+const FIXED_PASSWORD = "Demo1234!";
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_RE = /^[0-9+()\-\s]{7,20}$/;
 const NIT_RE = /^[0-9]{5,12}(-[0-9Xx])?$/; // NIT simple (sin cálculo de dígito verificación)
@@ -96,19 +100,28 @@ function LoginView({ onChangeMode }) {
     setPassword("Demo1234!");
   }, []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const nextErrors = {
-      email: email.trim() ? "" : "Ingresa un correo",
-      password: password.trim() ? "" : "Ingresa tu contraseña",
-    };
-    setErrors(nextErrors);
-    if (nextErrors.email || nextErrors.password) return;
-
-// Guardar sesión activa y redirigir al home
-localStorage.setItem("isLoggedIn", "true");
-window.location.hash = "#home";
+const handleSubmit = (e) => {
+  e.preventDefault();
+  const nextErrors = {
+    email: email.trim() ? "" : "Ingresa un correo",
+    password: password.trim() ? "" : "Ingresa tu contraseña",
   };
+  setErrors(nextErrors);
+  if (nextErrors.email || nextErrors.password) return;
+
+  // Validación estricta: SOLO este usuario/contraseña entran
+  if (
+    email.trim().toLowerCase() !== FIXED_EMAIL.toLowerCase() ||
+    password !== FIXED_PASSWORD
+  ) {
+    alert("Usuario o contraseña no válidos.");
+    return;
+  }
+
+  // Guardar sesión y entrar
+  localStorage.setItem("isLoggedIn", "true");
+  window.location.hash = "#home";
+};
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
@@ -151,7 +164,7 @@ window.location.hash = "#home";
           onClick={() => onChangeMode("forgot")}
           className="text-emerald-700 hover:underline"
         >
-          ¿Olvidaste tu contraseña?
+          /*¿Olvidaste tu contraseña?*/
         </button>
         <button
           type="button"
