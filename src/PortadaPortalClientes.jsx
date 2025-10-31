@@ -372,7 +372,7 @@ useEffect(() => {
 <div className="relative min-h-screen bg-transparent">
 
 {/* Fondo institucional global (marca de agua INGETES solo en el cuerpo, no en header/footer) */}
-<div className="absolute top-[50px] bottom-[180px] left-0 right-0 z-0 pointer-events-none select-none" aria-hidden>
+<div className="absolute top-[100px] bottom-[180px] left-0 right-0 z-0 pointer-events-none select-none" aria-hidden>
   <img
     src={`${import.meta.env.BASE_URL}ingetes.jpg`}
     onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}ingetes.png`; }}
@@ -381,7 +381,7 @@ useEffect(() => {
       position: 'absolute',
       top: '50%',
       left: '50%',
-      transform: `translate(-50%, calc(-50% + ${scrollY * 0.25}px))`,
+      transform: `translate(-50%, calc(-45% + ${scrollY * 0.25}px))`,
       width: 'min(980px, 82vw)',
       opacity: 0.16,
       filter: 'grayscale(20%)',
