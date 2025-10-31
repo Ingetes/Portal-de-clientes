@@ -371,17 +371,17 @@ useEffect(() => {
   return (
 <div className="relative min-h-screen bg-transparent">
 
-{/* Fondo institucional global (marca de agua INGETES en toda la app) */}
-<div className="fixed inset-0 z-0 pointer-events-none select-none" aria-hidden>
+{/* Fondo institucional global (marca de agua INGETES solo en el cuerpo, no en header/footer) */}
+<div className="absolute top-[100px] bottom-[180px] left-0 right-0 z-0 pointer-events-none select-none" aria-hidden>
   <img
     src={`${import.meta.env.BASE_URL}ingetes.jpg`}
     onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}ingetes.png`; }}
-    alt=""
+    alt="Marca de agua INGETES"
     style={{
-      position: 'fixed',
+      position: 'absolute',
       top: '50%',
       left: '50%',
-      transform: `translate(-50%, calc(-50% + ${scrollY * 0.25}px))`, // parallax: 0.25 = suavidad
+      transform: `translate(-50%, calc(-50% + ${scrollY * 0.25}px))`,
       width: 'min(980px, 82vw)',
       opacity: 0.16,
       filter: 'grayscale(20%)',
@@ -2376,7 +2376,7 @@ function StatsScreen() {
 // ==========================================================
 function Footer() {
   return (
-    <footer className="relative bg-gradient-to-r from-emerald-800 to-emerald-600 text-slate-100 overflow-hidden">
+    <footer className="relative bg-gradient-to-r from-[#0a0a0a] to-[#111827] text-slate-100 overflow-hidden">
   <img
     src={`${import.meta.env.BASE_URL}ingetes.jpg`}
     alt="Marca de agua INGETES"
