@@ -1021,7 +1021,8 @@ const [items, setItems] = React.useState([
   {
     key: 'promo',
     title: 'Inventario en Promoción',
-    desc: 'Lotes en promoción con descuentos y fechas límite.',
+    desc: 'Lotes en promoción con descuentos y fechas límite. Los datos de inventario se actualizan semanalmente.
+           Por favor confirma la disponibilidad real con un asesor comercial antes de comprometer fechas de entrega.',
     href: DOCS.promo,
     locked: true,
   },
@@ -1798,6 +1799,11 @@ return (
           <p className="mt-2 text-slate-700 max-w-2xl">
             Calcula precio de venta con descuento, factor de utilidad y envío.
             Puedes <strong>agregar</strong> varias referencias a un bloque acumulado y copiarlo.
+          </p>
+          <p className="mt-4 text-sm text-slate-600 border-l-4 border-amber-400 pl-3">
+            ⚠️ <strong>Nota importante:</strong> Los valores generados por este cotizador son de carácter informativo y pueden variar.
+            INGETES S.A.S. no se hace responsable por errores de digitación o interpretación de precios, descuentos o valores de envío.
+            Se recomienda verificar siempre los valores finales antes de emitir una oferta formal.
           </p>
         </div>
         <a
