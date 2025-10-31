@@ -2101,59 +2101,100 @@ const withBust = (key, url) => {
 actions: [{ label: 'Vista previa', href: withBust('liner', DOCS.liner), openInModal: true }]
 // idem para 'chemical' y 'celdas'
 
-  // IMPORTANTE: usa DOCS/BASE (nada de rutas absolutas tipo "/herramientas/...").
-  const tools = [
-    {
-      title: 'TIA SELECTION TOOL',
-      desc: 'Seleccion de equipos para TIA Portal: CPUs, IOs, comunicaciones y accesorios.',
-      badge: 'Siemens',
-      actions: [
-        { label: 'Descargar software', href: 'https://www.siemens.com/tia-selection-tool-standalone' },
-        { label: 'Abrir en Nube',      href: 'https://www.siemens.com/tstcloud' }
-      ]
-    },
-    {
-      title: 'PIA SELECTION TOOL',
-      desc: 'Seleccion para instrumentacion y analitica de procesos.',
-      badge: 'Siemens',
-      actions: [
-        { label: 'Abrir', href: 'https://www.pia-portal.automation.siemens.com/default.htm' }
-      ]
-    },
-    {
-      title: 'Configurador de variadores y servomotores SIEMENS',
-      desc: 'Configura variadores, motores y servos segun requerimientos.',
-      badge: 'Siemens',
-      actions: [
-        { label: 'Abrir', href: 'https://mall.industry.siemens.com/spice/cloudcm/dashboard?caller=SPC' }
-      ]
-    },
-    {
-      title: 'Compatibilidad de liner',
-      desc: 'Guia para elegir liner adecuado segun fluido y condiciones.',
-      badge: 'Referencia',
-      actions: [
-        { label: 'Vista previa', href: DOCS.liner, openInModal: true }
-      ]
-    },
-    {
-      title: 'Tabla de compatibilidad de materiales',
-      desc: 'Consulta rapida para compatibilidades quimicas y de proceso.',
-      badge: 'Referencia',
-      actions: [
-        { label: 'Abrir',           href: 'https://www.coleparmer.com/chemical-resistance' },
-        { label: 'Vista previa', href: DOCS.chemical, openInModal: true }
-      ]
-    },
-    {
-      title: 'Guia de seleccion de celdas de carga',
-      desc: 'Criterios de seleccion para celdas de carga por aplicacion.',
-      badge: 'Guia',
-      actions: [
-        { label: 'Vista previa', href: DOCS.celdas, openInModal: true }
-      ]
-    }
-  ];
+const tools = [
+  {
+    title: 'TIA SELECTION TOOL',
+    desc: 'Selección de equipos para TIA Portal: CPUs, IOs, comunicaciones y accesorios.',
+    badge: 'Siemens',
+    actions: [
+      { label: 'Descargar software', href: 'https://www.siemens.com/tia-selection-tool-standalone' },
+      { label: 'Abrir en Nube', href: 'https://www.siemens.com/tstcloud' },
+    ],
+  },
+  {
+    title: 'PIA SELECTION TOOL',
+    desc: 'Selección para instrumentación y analítica de procesos.',
+    badge: 'Siemens',
+    actions: [
+      { label: 'Abrir', href: 'https://www.pia-portal.automation.siemens.com/default.htm' },
+    ],
+  },
+  {
+    title: 'Configurador de variadores y servomotores SIEMENS',
+    desc: 'Configura variadores, motores y servos según requerimientos.',
+    badge: 'Siemens',
+    actions: [
+      { label: 'Abrir', href: 'https://mall.industry.siemens.com/spice/cloudcm/dashboard?caller=SPC' },
+    ],
+  },
+  {
+    title: 'Manual de selección de materiales y recubrimientos internos',
+    desc: 'Documento de referencia para elegir el liner adecuado según fluido y condiciones.',
+    badge: 'Referencia',
+    actions: [
+      { label: 'Vista previa', href: DOCS.liner, openInModal: true },
+    ],
+  },
+  {
+    title: 'Tabla de compatibilidad de materiales',
+    desc: 'Consulta rápida para compatibilidades químicas y de proceso.',
+    badge: 'Referencia',
+    actions: [
+      { label: 'Abrir', href: 'https://www.coleparmer.com/chemical-resistance' },
+      { label: 'Vista previa', href: DOCS.chemical, openInModal: true },
+    ],
+  },
+  {
+    title: 'Guía de selección de celdas de carga',
+    desc: 'Criterios de selección para celdas de carga por aplicación.',
+    badge: 'Guía',
+    actions: [
+      { label: 'Vista previa', href: DOCS.celdas, openInModal: true },
+    ],
+  },
+  // --- NUEVAS HERRAMIENTAS AÑADIDAS ---
+  {
+    title: 'Herramientas de selección de fuentes',
+    desc: 'Selector para elegir fuentes de alimentación adecuadas según carga y aplicación.',
+    badge: 'Utilidad',
+    actions: [
+      { label: 'Abrir', href: 'https://mall.industry.siemens.com/tia-selection-tool-standalone' },
+    ],
+  },
+  {
+    title: 'Switch de comunicación',
+    desc: 'Configurador de switches industriales y soluciones de comunicación.',
+    badge: 'Utilidad',
+    actions: [
+      { label: 'Abrir', href: 'https://mall.industry.siemens.com/mall/en/ww/Catalog/Product/6GK5' },
+    ],
+  },
+  {
+    title: 'Configuración de servos',
+    desc: 'Asistente para la parametrización de servomotores y controladores de movimiento.',
+    badge: 'Utilidad',
+    actions: [
+      { label: 'Abrir', href: 'https://mall.industry.siemens.com/spice/cloudcm/dashboard?caller=SPC' },
+    ],
+  },
+  {
+    title: 'Configurador de PC',
+    desc: 'Herramienta para configurar PCs industriales Siemens según requisitos del proyecto.',
+    badge: 'Utilidad',
+    actions: [
+      { label: 'Abrir', href: 'https://mall.industry.siemens.com/mall/en/ww/Catalog/Product/6ES7677' },
+    ],
+  },
+  {
+    title: 'Software de instrumentación',
+    desc: 'Acceso a herramientas y software de instrumentación para configuración y diagnóstico.',
+    badge: 'Software',
+    actions: [
+      { label: 'Abrir', href: 'https://support.industry.siemens.com/' },
+    ],
+  },
+];
+
 
   // Desde el chatbot
   React.useEffect(() => {
