@@ -372,7 +372,7 @@ useEffect(() => {
 <div className="relative min-h-screen bg-transparent">
 
 {/* Fondo institucional global (marca de agua INGETES solo en el cuerpo, no en header/footer) */}
-<div className="absolute top-[100px] bottom-[180px] left-0 right-0 z-0 pointer-events-none select-none" aria-hidden>
+<div className="absolute top-[50px] bottom-[180px] left-0 right-0 z-0 pointer-events-none select-none" aria-hidden>
   <img
     src={`${import.meta.env.BASE_URL}ingetes.jpg`}
     onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}ingetes.png`; }}
