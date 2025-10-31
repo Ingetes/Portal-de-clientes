@@ -158,22 +158,25 @@ const handleSubmit = (e) => {
         {errors.password && <ErrorMsg msg={errors.password} />}
       </Field>
 
-      <div className="flex items-center justify-between text-sm">
-        <button
-          type="button"
-          onClick={() => onChangeMode("forgot")}
-          className="text-emerald-700 hover:underline"
-        >
-          /*¿Olvidaste tu contraseña?*/
-        </button>
-        <button
-          type="button"
-          onClick={() => onChangeMode("signup")}
-          className="text-gray-700 hover:underline"
-        >
-          Solicitar creación de cuenta
-        </button>
-      </div>
+{/*
+<div className="flex items-center justify-between text-sm">
+  <button
+    type="button"
+    onClick={() => onChangeMode("forgot")}
+    className="text-emerald-700 hover:underline"
+  >
+    ¿Olvidaste tu contraseña?
+  </button>
+  <button
+    type="button"
+    onClick={() => onChangeMode("signup")}
+    className="text-gray-700 hover:underline"
+  >
+    Solicitar creación de cuenta
+  </button>
+</div>
+*/}
+
 
       <button
         type="submit"
