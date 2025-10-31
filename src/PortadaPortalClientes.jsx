@@ -1021,8 +1021,7 @@ const [items, setItems] = React.useState([
   {
     key: 'promo',
     title: 'Inventario en Promoción',
-    desc: 'Lotes en promoción con descuentos y fechas límite. ⚠️ Los datos de inventario se actualizan semanalmente.
-           Por favor confirma la disponibilidad real con un asesor comercial antes de comprometer fechas de entrega.',
+    desc: 'Lotes en promoción con descuentos y fechas límite. ⚠️ Los datos de inventario se actualizan semanalmente. Por favor confirma la disponibilidad real con un asesor comercial antes de comprometer fechas de entrega.',
     href: DOCS.promo,
     locked: true,
   },
