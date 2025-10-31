@@ -354,6 +354,19 @@ useEffect(() => {
   window.addEventListener("scroll", onScroll, { passive: true });
   return () => window.removeEventListener("scroll", onScroll);
 }, []);
+
+// Guard de autenticación: si no hay sesión, solo permite #ingresar
+useEffect(() => {
+  const enforce = () => {
+    const ok = localStorage.getItem("isLoggedIn") === "true";
+    const hash = window.location.hash || "#ingresar";
+    if (!ok && hash !== "#ingresar") window.location.hash = "#ingresar";
+    if (ok && hash === "#ingresar") window.location.hash = "#home";
+  };
+  enforce();
+  window.addEventListener("hashchange", enforce);
+  return () => window.removeEventListener("hashchange", enforce);
+}, []);
   
   return (
 <div className="relative min-h-screen bg-transparent">
