@@ -1021,7 +1021,7 @@ const [items, setItems] = React.useState([
           Stock disponible por referencia con fechas de reposición.
         </span>
         <p className="mt-3 text-sm text-slate-600 border-l-4 border-emerald-400 pl-3">
-          📦 <strong>Inventario actualizado semanalmente:</strong> Los datos de inventario se actualizan semanalmente.
+          📦 <strong>Inventario actualizado semanalmente:</strong> Los datos de stock pueden variar sin previo aviso.
           Por favor confirma la disponibilidad real con un asesor comercial antes de comprometer fechas de entrega.
         </p>
       </>
