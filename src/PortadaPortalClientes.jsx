@@ -419,17 +419,17 @@ useEffect(() => {
 )}
 
       {/* Botón flotante del Asistente */}
-      <button
-        onClick={() => setChatOpen(v => !v)}
-        className="fixed bottom-6 right-6 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-lg px-5 py-3"
-        aria-label="Abrir asistente virtual"
-      >
-        {chatOpen ? 'Cerrar Asistente' : 'Asistente'}
-      </button>
+<button
+  onClick={() => setChatOpen(v => !v)}
+  className="fixed bottom-6 right-6 z-[80] pointer-events-auto rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-lg px-5 py-3"
+  aria-label="Abrir asistente virtual"
+>
+  {chatOpen ? 'Cerrar Asistente' : 'Asistente'}
+</button>
 
       {/* Panel del Chatbot con comandos */}
-      {chatOpen && (
-        <div className="fixed bottom-24 right-6 w-[380px] max-w-[92vw] rounded-2xl border border-slate-200 bg-white shadow-2xl overflow-hidden">
+{chatOpen && (
+  <div className="fixed bottom-24 right-6 z-[75] w-[380px] max-w-[92vw] rounded-2xl border border-slate-200 bg-white shadow-2xl overflow-hidden">
           <div className="bg-emerald-600 text-white px-4 py-3 font-semibold flex items-center justify-between">
             <span>Asistente Virtual INGETES</span>
             <div className="flex gap-2 text-xs">
