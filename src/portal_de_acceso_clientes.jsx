@@ -52,6 +52,12 @@ function PasswordMeter({ value }) {
 
 export default function PortalClientesAuth() {
   const [mode, setMode] = useState("login"); // 'login' | 'signup' | 'forgot'
+  const [scrollY, setScrollY] = useState(0);
+  React.useEffect(() => {
+    const onScroll = () => setScrollY(window.scrollY);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
   return (
 <div className="relative min-h-screen bg-transparent flex items-center justify-center p-4">
 
@@ -61,16 +67,14 @@ export default function PortalClientesAuth() {
       src={`${import.meta.env.BASE_URL}ingetes.jpg`}
       onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}ingetes.png`; }}
       alt="Marca de agua INGETES"
+      className="absolute left-1/2 top-1/2 -translate-x-1/2"
       style={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: `translate(-50%, calc(-62% + ${window.scrollY * 0.22}px))`,
-        width: 'min(1300px, 90vw)',
+        transform: `translateY(calc(-50% + ${scrollY * 0.25}px))`,
+        width: "min(1300px, 90vw)",
         opacity: 0.18,
-        filter: 'grayscale(20%)',
-        transition: 'transform 0.10s ease-out',
-        willChange: 'transform',
+        filter: "grayscale(20%)",
+        transition: "transform 0.2s ease-out",
+        willChange: "transform",
       }}
     />
   </div>
