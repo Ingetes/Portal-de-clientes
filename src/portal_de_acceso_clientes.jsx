@@ -53,7 +53,29 @@ function PasswordMeter({ value }) {
 export default function PortalClientesAuth() {
   const [mode, setMode] = useState("login"); // 'login' | 'signup' | 'forgot'
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center p-4">
+<div className="relative min-h-screen bg-transparent flex items-center justify-center p-4">
+
+  {/* Fondo institucional (marca de agua INGETES) */}
+  <div className="absolute inset-0 z-0 pointer-events-none select-none" aria-hidden>
+    <img
+      src={`${import.meta.env.BASE_URL}ingetes.jpg`}
+      onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}ingetes.png`; }}
+      alt="Marca de agua INGETES"
+      style={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: `translate(-50%, calc(-62% + ${window.scrollY * 0.22}px))`,
+        width: 'min(1300px, 90vw)',
+        opacity: 0.18,
+        filter: 'grayscale(20%)',
+        transition: 'transform 0.10s ease-out',
+        willChange: 'transform',
+      }}
+    />
+  </div>
+  
+  <div className="relative z-10 w-full max-w-5xl mx-auto">
 <div className="w-full max-w-5xl mx-auto">
   {/* Contenido principal: grid de 2 columnas */}
   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
