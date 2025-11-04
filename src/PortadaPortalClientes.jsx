@@ -692,7 +692,7 @@ function Landing({ setChatOpen, chatOpen }) {
           <div className="relative">
 <div className="bg-white rounded-3xl shadow-lg p-0 overflow-hidden w-full md:w-[480px] flex justify-center items-center">
   <video
-    src={`${import.meta.env.BASE_URL}invideo-ai-1080 Ingetes S.A.S._ Todo en un clic para tu 2025-11-04.mp4`}
+    src={`${import.meta.env.BASE_URL}video.mp4`}
     controls
     autoPlay
     muted
