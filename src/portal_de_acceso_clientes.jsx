@@ -59,7 +59,7 @@ export default function PortalClientesAuth() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 return (
-  <div className="relative min-h-screen bg-transparent flex items-center justify-center p-4">
+  <div className="relative min-h-screen bg-gradient-to-b from-white to-slate-50 flex items-center justify-center p-4">
     {/* Fondo institucional (marca de agua INGETES) */}
     <div className="absolute inset-0 z-0 pointer-events-none select-none" aria-hidden="true">
       <img
@@ -81,15 +81,53 @@ return (
     {/* Contenido */}
     <div className="relative z-10 w-full max-w-5xl mx-auto">
       <div className="w-full max-w-5xl mx-auto">
-        {/* grid / tarjetas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* ... TU CONTENIDO ... */}
-          <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-100">
-            {mode === "login"  && <LoginView  onChangeMode={setMode} />}
-            {mode === "signup" && <SignupView onChangeMode={setMode} />}
-            {mode === "forgot" && <ForgotView  onChangeMode={setMode} />}
-          </div>
-        </div>
+{/* grid / tarjetas */}
+<div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+  {/* Panel verde (izquierda) */}
+  <div className="hidden md:flex rounded-2xl shadow-xl border border-emerald-700/20 bg-emerald-600/95 text-white p-8 flex-col justify-between">
+    <div>
+      <div className="flex items-center gap-3 mb-6">
+        <img
+          src={`${import.meta.env.BASE_URL}ingetes.svg`}
+          onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}ingetes.png`; }}
+          alt="INGETES"
+          className="h-10 w-auto"
+        />
+        <span className="text-2xl font-semibold tracking-tight">Portal de Clientes</span>
+      </div>
+
+      <h2 className="text-3xl font-bold leading-tight">
+        Bienvenido a tu portal de <span className="opacity-95">canales</span>
+      </h2>
+
+      <ul className="mt-6 space-y-3 text-emerald-50/90">
+        <li className="flex items-start gap-2">
+          <span className="mt-1 h-2 w-2 rounded-full bg-white/90" />
+          Descarga listas de precios y documentación clave
+        </li>
+        <li className="flex items-start gap-2">
+          <span className="mt-1 h-2 w-2 rounded-full bg-white/90" />
+          Cotizador rápido con plantillas estandarizadas
+        </li>
+        <li className="flex items-start gap-2">
+          <span className="mt-1 h-2 w-2 rounded-full bg-white/90" />
+          Beneficios y privilegios de <strong>INGECAP</strong>
+        </li>
+      </ul>
+    </div>
+
+    <p className="mt-8 text-xs/5 text-emerald-50/70">
+      © {new Date().getFullYear()} INGETES S.A.S. • Soluciones de Ingeniería a su servicio
+    </p>
+  </div>
+
+  {/* Tarjeta de acceso (derecha) */}
+  <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 md:p-8 border border-gray-100">
+    {mode === "login"  && <LoginView  onChangeMode={setMode} />}
+    {mode === "signup" && <SignupView onChangeMode={setMode} />}
+    {mode === "forgot" && <ForgotView  onChangeMode={setMode} />}
+  </div>
+</div>
       </div>
     </div>
   </div>  // <-- este </div> faltaba
