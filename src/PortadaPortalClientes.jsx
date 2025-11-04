@@ -685,7 +685,7 @@ function Landing({ setChatOpen, chatOpen }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 grid lg:grid-cols-2 gap-10 items-center">
           <div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-emerald-700 drop-shadow-sm">
-              <span className="text-slate-900">Portal de Canales</span> INGETES
+              <span className="text-slate-900">Portal affirmatum partners</span> INGETES
             </h1>
             <p className="mt-4 text-lg text-slate-700" id="proposito">Este portal es un espacio exclusivo para clientes que mantienen una relación comercial con INGETES. Aquí encontrarás documentación que facilita la elaboración de ofertas, herramientas para la selección de equipos y el diseño de tus proyectos, un cotizador para crear propuestas rápidas a tus clientes y acceso a privilegios exclusivos para miembros de INGECAP.</p>
             </div>
