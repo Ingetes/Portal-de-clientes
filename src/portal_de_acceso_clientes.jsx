@@ -58,60 +58,42 @@ export default function PortalClientesAuth() {
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-  return (
-<div className="relative min-h-screen bg-transparent flex items-center justify-center p-4">
+return (
+  <div className="relative min-h-screen bg-transparent flex items-center justify-center p-4">
+    {/* Fondo institucional (marca de agua INGETES) */}
+    <div className="absolute inset-0 z-0 pointer-events-none select-none" aria-hidden="true">
+      <img
+        src={`${import.meta.env.BASE_URL}ingetes.jpg`}
+        onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}ingetes.png`; }}
+        alt="Marca de agua INGETES"
+        className="absolute left-1/2 top-1/2 -translate-x-1/2"
+        style={{
+          transform: `translateY(calc(-50% + ${scrollY * 0.25}px))`,
+          width: "min(1300px, 90vw)",
+          opacity: 0.18,
+          filter: "grayscale(20%)",
+          transition: "transform 0.2s ease-out",
+          willChange: "transform",
+        }}
+      />
+    </div>
 
-  {/* Fondo institucional (marca de agua INGETES) */}
-  <div className="absolute inset-0 z-0 pointer-events-none select-none" aria-hidden>
-    <img
-      src={`${import.meta.env.BASE_URL}ingetes.jpg`}
-      onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}ingetes.png`; }}
-      alt="Marca de agua INGETES"
-      className="absolute left-1/2 top-1/2 -translate-x-1/2"
-      style={{
-        transform: `translateY(calc(-50% + ${scrollY * 0.25}px))`,
-        width: "min(1300px, 90vw)",
-        opacity: 0.18,
-        filter: "grayscale(20%)",
-        transition: "transform 0.2s ease-out",
-        willChange: "transform",
-      }}
-    />
-  </div>
-  
-  <div className="relative z-10 w-full max-w-5xl mx-auto">
-<div className="w-full max-w-5xl mx-auto">
-  {/* Contenido principal: grid de 2 columnas */}
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-    {/* Branding / Lado izquierdo */}
-    <div className="hidden md:flex flex-col justify-between rounded-2xl bg-[linear-gradient(135deg,#059669,rgba(5,150,105,0.8))] text-white p-8 shadow-xl">
-      <div>
-        <div className="flex items-center gap-3">
-          <div className="bg-white/15 rounded-xl p-2">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7">
-              <path d="M12 2c-.8 0-1.6.3-2.2.9L3 9.7V22h18V9.7l-6.8-6.8C13.6 2.3 12.8 2 12 2zM9 20H5v-8l7-7 7 7v8h-4v-6H9v6z"/>
-            </svg>
+    {/* Contenido */}
+    <div className="relative z-10 w-full max-w-5xl mx-auto">
+      <div className="w-full max-w-5xl mx-auto">
+        {/* grid / tarjetas */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* ... TU CONTENIDO ... */}
+          <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-100">
+            {mode === "login"  && <LoginView  onChangeMode={setMode} />}
+            {mode === "signup" && <SignupView onChangeMode={setMode} />}
+            {mode === "forgot" && <ForgotView  onChangeMode={setMode} />}
           </div>
-          <h1 className="text-2xl font-semibold leading-tight">Portal de Clientes INGETES</h1>
         </div>
-        <p className="mt-6 text-white/90 leading-relaxed">
-          Accede a documentación, herramientas de selección, cotizadores y beneficios exclusivos de nuestro ecosistema.
-        </p>
-      </div>
-      <div className="text-sm text-white/80">
-        <p>¿Aún no tienes acceso? Crea tu cuenta y nuestro equipo validará la información de tu empresa.</p>
       </div>
     </div>
-
-    {/* Panel derecho dinámico */}
-    <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-100">
-      {mode === "login" && <LoginView onChangeMode={setMode} />}
-      {mode === "signup" && <SignupView onChangeMode={setMode} />}
-      {mode === "forgot" && <ForgotView onChangeMode={setMode} />}
-    </div>
-  </div>
-</div>
-  );
+  </div>  // <-- este </div> faltaba
+);
 }
 
 function LoginView({ onChangeMode }) {
