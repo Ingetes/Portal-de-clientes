@@ -690,39 +690,17 @@ function Landing({ setChatOpen, chatOpen }) {
             <p className="mt-4 text-lg text-slate-700" id="proposito">Este portal es un espacio exclusivo para clientes que mantienen una relación comercial con INGETES. Aquí encontrarás documentación que facilita la elaboración de ofertas, herramientas para la selección de equipos y el diseño de tus proyectos, un cotizador para crear propuestas rápidas a tus clientes y acceso a privilegios exclusivos para miembros de INGECAP.</p>
             </div>
           <div className="relative">
-            <div className="rounded-3xl bg-white/70 backdrop-blur shadow-xl p-6 lg:p-8 border border-slate-100">
-              <h3 className="text-xl font-bold text-slate-900">Qué puedes hacer aquí?</h3>
-              <ul className="mt-4 space-y-3 text-slate-700">
-                <li className="flex gap-3"><span className="mt-1 h-2 w-2 rounded-full bg-emerald-500" />Descargar y consultar listas de precios Siemens.</li>
-                <li className="flex gap-3"><span className="mt-1 h-2 w-2 rounded-full bg-emerald-500" />Generar cotizaciones con plantillas estandarizadas de INGETES.</li>
-                <li className="flex gap-3"><span className="mt-1 h-2 w-2 rounded-full bg-emerald-500" />Hacer seguimiento a oportunidades y documentación clave.</li>
-                <li className="flex gap-3"><span className="mt-1 h-2 w-2 rounded-full bg-emerald-500" />Acumular y redimir <strong>INGEPUNTOS</strong> por tus compras.</li>
-                <li className="flex gap-3"><span className="mt-1 h-2 w-2 rounded-full bg-emerald-500" />Recibir soporte de nuestro <strong>Asistente Virtual</strong>.</li>
-              </ul>
-              <div className="mt-6 grid grid-cols-2 gap-4" id="beneficios">
-                {(() => { 
-                  // KPI 1: Tiempo a 1ª respuesta (min) - promedio local
-                  let avg = null;
-                  try { const arr = JSON.parse(localStorage.getItem('kpi:cot_durations')||'[]'); if (Array.isArray(arr) && arr.length) { avg = arr.reduce((a,b)=>a+b,0)/arr.length; } } catch {}
-                  // KPI 3: Uso de herramientas por sesión
-                  let tools = 0; let sessions = parseInt(localStorage.getItem('trk:session_count')||'1',10) || 1;
-                  for (let i=0;i<localStorage.length;i++){ const k=localStorage.key(i)||''; if(k.startsWith('trk:tool_click')||k.startsWith('trk:chat_tool_action')){ tools += parseInt(localStorage.getItem(k)||'0',10)||0; } }
-                  const perSess = tools / sessions;
-                  return (
-                    <>
-                      <div className="rounded-2xl border border-slate-200 p-4">
-                        <p className="text-sm text-slate-600">Tiempo a 1ª respuesta (min)</p>
-                        <p className="text-2xl font-extrabold text-slate-900">{avg!==null ? avg.toFixed(1) : '—'}</p>
-                      </div>
-                      <div className="rounded-2xl border border-slate-200 p-4">
-                        <p className="text-sm text-slate-600">Herramientas por sesión</p>
-                        <p className="text-2xl font-extrabold text-slate-900">{perSess ? perSess.toFixed(1) : '0.0'}</p>
-                      </div>
-                    </>
-                  ); })()}
-              </div>
-              <p className="mt-4 text-xs text-slate-500">*KPIs calculados localmente con base en el uso del portal en este navegador.</p>
-            </div>
+<div className="bg-white rounded-3xl shadow-lg p-0 overflow-hidden w-full md:w-[480px] flex justify-center items-center">
+  <video
+    src={`${import.meta.env.BASE_URL}invideo-ai-1080 Ingetes S.A.S._ Todo en un clic para tu  2025-11-04.mp4`}
+    controls
+    autoPlay
+    muted
+    loop
+    playsInline
+    className="w-full h-full object-cover rounded-3xl"
+  />
+</div>
           </div>
         </div>
       </section>
