@@ -712,7 +712,7 @@ function Landing({ setChatOpen, chatOpen }) {
       { title: '1. Ingresar a INGECAP', desc: 'Centro de experiencia e innovación.', cta: 'Ingresar', href: '#ingecap' , locked: true },
       { title: '2. Descarga listas y documentos', desc: 'Encuentra listas de precios Siemens, plantillas y guías de cotización.', cta: 'Ir a documentos', href: '#documentos' },
       { title: '3. Herramientas comerciales para los canales', desc: 'Accede a utilidades de selección, compatibilidad y configuradores.', cta: 'Abrir herramientas', href: '#herramientas' },
-      { title: '4. Cotizador Rápido', desc: 'Crea cotizaciones sencillas, aplica descuentos e impuestos, y exporta.', cta: 'Ingresar', href: '#cotizador' },
+      { title: '4. Cotizador Rápido', desc: 'Crea cotizaciones sencillas, aplica descuentos y visital el mall de siemens.', cta: 'Ingresar', href: '#cotizador' },
       { title: '5. Marcas aliadas', desc: 'Conoce los fabricantes y marcas que comercializa INGETES.', cta: 'Ver marcas', href: '#marcas' },
       { title: '6. Outsourcings autorizados', desc: 'Listado de aliados y proveedores certificados para servicios de automatización y control.', cta: 'Ver lista', href: '#outsourcing' },
       { title: '7. Integrantes comerciales', desc: 'Conoce al equipo comercial de INGETES y su especialización.', cta: 'Ver integrantes', href: '#comerciales' },
