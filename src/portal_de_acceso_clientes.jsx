@@ -62,20 +62,21 @@ return (
   <div className="relative min-h-screen bg-gradient-to-b from-white to-slate-50 flex items-center justify-center p-4">
     {/* Fondo institucional (marca de agua INGETES) */}
     <div className="absolute inset-0 z-0 pointer-events-none select-none" aria-hidden="true">
-      <img
-        src={`${import.meta.env.BASE_URL}ingetes.jpg`}
-        onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}ingetes.png`; }}
-        alt="Marca de agua INGETES"
-        className="absolute left-1/2 top-1/2 -translate-x-1/2"
-        style={{
-          transform: `translateY(calc(-50% + ${scrollY * 0.25}px))`,
-          width: "min(1300px, 90vw)",
-          opacity: 0.18,
-          filter: "grayscale(20%)",
-          transition: "transform 0.2s ease-out",
-          willChange: "transform",
-        }}
-      />
+<img
+  src={`${import.meta.env.BASE_URL}ingetes.jpg`}
+  onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}ingetes.png`; }}
+  alt="Marca de agua INGETES"
+  className="absolute left-1/2 top-1/2"
+  style={{
+    // Combina X y Y en un solo transform (incluyendo el parallax)
+    transform: `translate(-50%, -50%) translateY(${scrollY * 0.25}px)`,
+    width: "min(1300px, 90vw)",
+    opacity: 0.18,
+    filter: "grayscale(20%)",
+    transition: "transform 0.2s ease-out",
+    willChange: "transform",
+  }}
+/>
     </div>
 
     {/* Contenido */}
