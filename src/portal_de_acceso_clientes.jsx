@@ -131,7 +131,7 @@ return (
 </div>
       </div>
     </div>
-  </div>  // <-- este </div> faltaba
+  </div>  
 );
 }
 
