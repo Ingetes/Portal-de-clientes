@@ -374,7 +374,7 @@ useEffect(() => {
 {/* Fondo institucional global (marca de agua INGETES solo en el cuerpo, no en header/footer) */}
 <div className="absolute inset-0 z-0 pointer-events-none select-none" aria-hidden>
   <img
-    src={`${import.meta.env.BASE_URL}ingetes.jpg`}
+    src={`${import.meta.env.BASE_URL}ingetes.png`}
     onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}ingetes.png`; }}
     alt="Marca de agua INGETES"
 style={{
@@ -393,7 +393,7 @@ style={{
 
 {/* Marca lateral flotante */}
 <img
-  src={`${import.meta.env.BASE_URL}ingetes.jpg`}
+  src={`${import.meta.env.BASE_URL}ingetes.png`}
   alt="Logo INGETES"
   className="fixed top-1/2 right-0 w-24 opacity-20 translate-y-[-50%] pointer-events-none select-none"
 />
@@ -2391,7 +2391,7 @@ function Footer() {
   return (
     <footer className="relative bg-gradient-to-r from-[#0a0a0a] to-[#111827] text-slate-100 overflow-hidden">
   <img
-    src={`${import.meta.env.BASE_URL}ingetes.jpg`}
+    src={`${import.meta.env.BASE_URL}ingetes.png`}
     alt="Marca de agua INGETES"
     className="absolute right-10 bottom-10 w-40 opacity-10 pointer-events-none select-none"
   />
