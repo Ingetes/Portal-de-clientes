@@ -108,7 +108,7 @@ return (
         </li>
         <li className="flex items-start gap-2">
           <span className="mt-1 h-2 w-2 rounded-full bg-white/90" />
-          Cotizador rápido con plantillas estandarizadas
+          Cotizador rápido
         </li>
         <li className="flex items-start gap-2">
           <span className="mt-1 h-2 w-2 rounded-full bg-white/90" />
