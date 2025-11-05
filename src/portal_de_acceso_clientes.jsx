@@ -63,7 +63,7 @@ return (
     {/* Fondo institucional (marca de agua INGETES) */}
     <div className="absolute inset-0 z-0 pointer-events-none select-none" aria-hidden="true">
 <img
-  src={`${import.meta.env.BASE_URL}ingetes.jpg`}
+  src={`${import.meta.env.BASE_URL}ingetes.png`}
   onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}ingetes.png`; }}
   alt="Marca de agua INGETES"
   className="absolute left-1/2 top-1/2"
