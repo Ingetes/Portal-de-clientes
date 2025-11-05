@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 
 const logoIngecap = `${import.meta.env.BASE_URL}ingecap.jpg`;
 const marcaIngetes = `${import.meta.env.BASE_URL}ingetes.png`;
+// cerca de los otros const de imágenes, al inicio del archivo:
+const logoIngetes = `${import.meta.env.BASE_URL}ingetes.png`;
 const PDFJS_VIEWER = 'https://mozilla.github.io/pdf.js/web/viewer.html';
 
 const BASE = import.meta.env.BASE_URL;
