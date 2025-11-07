@@ -688,11 +688,8 @@ function Landing({ setChatOpen, chatOpen }) {
 <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight leading-tight text-slate-900">
   Portal{" "}
   <span
-    className="text-[#f97316] font-semibold"
-    style={{
-      textShadow: "0 1px 4px rgba(249,115,22,0.25)",
-      letterSpacing: "0.015em",
-    }}
+    className="text-[#f97316] font-semibold transition-all duration-300 ease-in-out hover:drop-shadow-[0_3px_6px_rgba(249,115,22,0.45)] hover:brightness-110"
+    style={{ letterSpacing: "0.015em" }}
   >
     affirmatum partners
   </span>{" "}
