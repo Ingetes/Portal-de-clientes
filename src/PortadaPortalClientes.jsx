@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
 const logoIngecap = `${import.meta.env.BASE_URL}ingecap.jpg`;
-const marcaIngetes = `${import.meta.env.BASE_URL}ingetes.png`;
 // cerca de los otros const de imágenes, al inicio del archivo:
 const logoIngetes = `${import.meta.env.BASE_URL}ingetes.png`;
-const PDFJS_VIEWER = 'https://mozilla.github.io/pdf.js/web/viewer.html';
 
 const BASE = import.meta.env.BASE_URL;
 const DOCS = {
@@ -47,37 +45,6 @@ function pathFromUrl(u) {
     return p;
   } catch {
     return '';
-  }
-}
-
-// consulta la fecha del último commit que tocó ese archivo
-async function githubLastCommitDate(pathPublic) {
-  const q = `https://api.github.com/repos/${REPO.owner}/${REPO.repo}/commits?path=${encodeURIComponent(pathPublic)}&per_page=1&sha=${REPO.main}`;
-  try {
-    const r = await fetch(q, { headers: { 'Accept': 'application/vnd.github+json' } });
-    if (!r.ok) return null;
-    const arr = await r.json().catch(() => []);
-    const iso = arr?.[0]?.commit?.committer?.date || arr?.[0]?.commit?.author?.date;
-    return iso ? new Date(iso) : null;
-  } catch {
-    return null;
-  }
-}
-
-// Devuelve última fecha de commit y si hay historial previo (>=2 commits para ese path)
-async function githubCommitMeta(pathPublic) {
-  const q = `https://api.github.com/repos/${REPO.owner}/${REPO.repo}/commits?path=${encodeURIComponent(pathPublic)}&sha=${REPO.main}&per_page=2`;
-  try {
-    const r = await fetch(q, { headers: { 'Accept': 'application/vnd.github+json' }, cache: 'no-store' });
-    if (!r.ok) return { lastDate: null, hasPrevious: false };
-    const arr = await r.json().catch(() => []);
-    const iso = arr?.[0]?.commit?.committer?.date || arr?.[0]?.commit?.author?.date;
-    return {
-      lastDate: iso ? new Date(iso) : null,
-      hasPrevious: (Array.isArray(arr) && arr.length > 1) // hay commits anteriores a este
-    };
-  } catch {
-    return { lastDate: null, hasPrevious: false };
   }
 }
 
@@ -1004,9 +971,7 @@ const BRANDS = [
 // ==========================================================
 function DocumentosScreen() {
   const [preview, setPreview] = React.useState(null);
-  const [term, setTerm] = React.useState('');
   const [usePdfJs, setUsePdfJs] = React.useState(true);
-  const [copied, setCopied] = React.useState(false);
 
   const isPdf   = (u) => /\.pdf($|[?#])/i.test(u);
   const isExcel = (u) => /\.(xlsx?|csv)($|[?#])/i.test(u);
@@ -1184,13 +1149,6 @@ const openPreview = (item, q = '') => {
   alert('Este archivo no puede previsualizarse. Se descargará.');
   downloadFile(href);
 };
-
-  // Ejecutar búsqueda en el visor actual
-  const applySearch = () => {
-    if (!preview) return;
-    const src = buildViewerSrc(preview.item.href, term, usePdfJs);
-    setPreview({ ...preview, src });
-  };
 
   // ZIP (opcional: igual al que ya tenías; omito por brevedad)
   const [zipProgress, setZipProgress] = React.useState({ current: 0, total: 0, status: 'idle' });
@@ -2090,8 +2048,7 @@ const downloadFile = (url, suggestedName) => {
       downloadFile(item.href);
       return;
     }
-    const src = buildViewerSrc(item.href, q || term, usePdfJs);
-    if (q) setTerm(q); else setTerm('');
+    const src = buildViewerSrc(item.href, q || '', usePdfJs);
     setPreview({ item, src });
     setCopied(false);
   };
@@ -2100,14 +2057,6 @@ const downloadFile = (url, suggestedName) => {
     if (!preview) return;
     const src = buildViewerSrc(preview.item.href, term, usePdfJs);
     setPreview({ ...preview, src });
-  };
-
-  const copyReference = async () => {
-    try {
-      await navigator.clipboard.writeText(term || '');
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch {}
   };
 
 // Mapa de bust por clave editable
@@ -2168,7 +2117,7 @@ const tools = [
     desc: 'Documento de referencia para elegir el liner adecuado según fluido y condiciones.',
     badge: 'Referencia',
     actions: [
-      { label: 'Vista previa', href: DOCS.liner, openInModal: true },
+      { label: 'Vista previa', href: withBust('liner', DOCS.liner), openInModal: true },
     ],
   },
   {
@@ -2177,7 +2126,7 @@ const tools = [
     badge: 'Referencia',
     actions: [
       { label: 'Abrir', href: 'https://www.coleparmer.com/chemical-resistance' },
-      { label: 'Vista previa', href: DOCS.chemical, openInModal: true },
+      { label: 'Vista previa', href: withBust('chemical', DOCS.chemical), openInModal: true },
     ],
   },
   {
@@ -2185,7 +2134,7 @@ const tools = [
     desc: 'Criterios de selección para celdas de carga por aplicación.',
     badge: 'Guía',
     actions: [
-      { label: 'Vista previa', href: DOCS.celdas, openInModal: true },
+      { label: 'Vista previa', href: withBust('celdas', DOCS.celdas), openInModal: true },
     ],
   },
   // --- NUEVAS HERRAMIENTAS AÑADIDAS ---
