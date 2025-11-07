@@ -973,6 +973,9 @@ function DocumentosScreen() {
   const [preview, setPreview] = React.useState(null);
   const [usePdfJs, setUsePdfJs] = React.useState(true);
 
+  const [term, setTerm] = React.useState('');     // término de búsqueda para el visor pdf.js
+  const [copied, setCopied] = React.useState(false); // flag para UI (lo ponemos aunque no lo muestres)
+
   const isPdf   = (u) => /\.pdf($|[?#])/i.test(u);
   const isExcel = (u) => /\.(xlsx?|csv)($|[?#])/i.test(u);
 
