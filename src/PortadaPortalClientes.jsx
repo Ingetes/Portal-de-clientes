@@ -685,20 +685,18 @@ function Landing({ setChatOpen, chatOpen }) {
       <section className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 grid lg:grid-cols-2 gap-10 items-center">
           <div>
-<h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-emerald-700 leading-tight">
-  <span className="text-slate-900">
-    Portal{" "}
-    <span
-      className="text-[#f97316] font-bold drop-shadow-[0_1px_4px_rgba(249,115,22,0.25)]"
-      style={{
-        textShadow: "0 0 6px rgba(249,115,22,0.3)",
-        letterSpacing: "0.02em",
-      }}
-    >
-      affirmatum partners
-    </span>{" "}
-  </span>
-  <span className="text-emerald-700 font-extrabold">INGETES</span>
+<h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight leading-tight text-slate-900">
+  Portal{" "}
+  <span
+    className="text-[#f97316] font-semibold"
+    style={{
+      textShadow: "0 1px 4px rgba(249,115,22,0.25)",
+      letterSpacing: "0.015em",
+    }}
+  >
+    affirmatum partners
+  </span>{" "}
+  <span className="text-[#007A63] font-bold">INGETES</span>
 </h1>
             <p className="mt-4 text-lg text-slate-700" id="proposito">Este portal es un espacio exclusivo para clientes que mantienen una relación comercial con INGETES. Aquí encontrarás documentación que facilita la elaboración de ofertas, herramientas para la selección de equipos y el diseño de tus proyectos, un cotizador para crear propuestas rápidas a tus clientes y acceso a privilegios exclusivos para miembros de INGECAP.</p>
             </div>
