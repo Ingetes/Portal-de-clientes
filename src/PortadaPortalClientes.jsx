@@ -4,6 +4,8 @@ const logoIngecap = `${import.meta.env.BASE_URL}ingecap.jpg`;
 // cerca de los otros const de imágenes, al inicio del archivo:
 const logoIngetes = `${import.meta.env.BASE_URL}ingetes.png`;
 
+const PDFJS_VIEWER = 'https://mozilla.github.io/pdf.js/web/viewer.html';
+
 const BASE = import.meta.env.BASE_URL;
 const DOCS = {
   siemens:    `${BASE}Listaprecios2025.pdf`,
