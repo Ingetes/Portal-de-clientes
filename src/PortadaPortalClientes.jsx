@@ -173,29 +173,27 @@ useEffect(() => {
 
 // Desplazamiento inteligente según la ruta
 useEffect(() => {
-  // Rutas de home
-  const isHome     = route === '#home' || route === '#ingresar' || route === '' || !route;
-  const isHomeCard = route === '#home-cards';
+  const isHome = route === '#home' || route === '#ingresar' || route === '' || !route;
 
-  // Si abro una sección, siempre al tope
-  if (!isHome && !isHomeCard) {
+  // Si abro una sección (no home), siempre sube al inicio
+  if (!isHome) {
     window.scrollTo({ top: 0, behavior: 'instant' });
     return;
   }
 
-  // Si vuelvo "normal" a la home, voy al inicio
-  if (isHome && !isHomeCard) {
-    window.scrollTo({ top: 0, behavior: 'instant' });
+  // Si estoy regresando a home desde "Volver"
+  const shouldScrollToCards = sessionStorage.getItem("scrollToCards") === "true";
+  if (shouldScrollToCards) {
+    sessionStorage.removeItem("scrollToCards");
+    const el = document.getElementById('como-empezar');
+    if (el) {
+      requestAnimationFrame(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+    }
     return;
   }
 
-  // Si vuelvo con el botón "Volver" (enlaza a #home-cards), bajo hasta las cards
-  if (isHomeCard) {
-    requestAnimationFrame(() => {
-      const el = document.getElementById('como-empezar');
-      el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-  }
+  // Por defecto: volver al inicio
+  window.scrollTo({ top: 0, behavior: 'instant' });
 }, [route]);
 
   // ---------------- Chatbot state & handlers ----------------
@@ -776,9 +774,13 @@ function OutsourcingScreen() {
               Estos son los aliados y proveedores certificados por INGETES para servicios de automatización, control e instrumentación industrial.
             </p>
           </div>
-          <a href="#home-cards" className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">
-            ← Volver
-          </a>
+<a
+  href="#home"
+  onClick={() => sessionStorage.setItem("scrollToCards", "true")}
+  className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+>
+  ← Volver
+</a>
         </div>
 
         <div className="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -812,7 +814,13 @@ function ComercialesScreen() {
             <h1 className="text-2xl md:text-3xl font-extrabold text-emerald-700">Equipo Comercial INGETES</h1>
             <p className="mt-2 text-slate-700 max-w-2xl">Conoce a nuestro equipo de ingeniería y ventas, su especialización y datos de contacto directo.</p>
           </div>
-          <a href="#home" className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">← Volver</a>
+<a
+  href="#home"
+  onClick={() => sessionStorage.setItem("scrollToCards", "true")}
+  className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+>
+  ← Volver
+</a>
         </div>
         <div className="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {data.map((p, i) => (
@@ -900,7 +908,13 @@ function IngecapScreen({ hasAccess, setHasAccess }) {
             <p className="mt-1 text-sm font-semibold text-emerald-700">Centro de experiencia e innovación</p>
             <p className="mt-2 text-slate-700 max-w-2xl">Bienvenido a la membresía de <strong>INGECAP</strong>. Desde aquí podrás acceder a servicios exclusivos que potencian tus proyectos y ventas. Esta sección se mostrará completa únicamente a usuarios con acceso habilitado.</p>
           </div>
-          <a onClick={goHome} className="cursor-pointer hidden md:inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">← Volver</a>
+<a
+  href="#home"
+  onClick={() => sessionStorage.setItem("scrollToCards", "true")}
+  className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+>
+  ← Volver
+</a>
         </div>
 
         {/* Banner de estado de acceso */}
@@ -967,7 +981,13 @@ const BRANDS = [
               Estas son algunas de las marcas que comercializa INGETES. Haz clic para conocer más.
             </p>
           </div>
-          <a href="#home" className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">← Volver</a>
+<a
+  href="#home"
+  onClick={() => sessionStorage.setItem("scrollToCards", "true")}
+  className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+>
+  ← Volver
+</a>
         </div>
 
         <div className="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -1292,7 +1312,13 @@ React.useEffect(() => {
               Descarga las listas de precios y archivos de inventario. Puedes previsualizar PDFs y buscar referencias.
             </p>
           </div>
-          <a href="#home" className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">← Volver</a>
+ <a
+  href="#home"
+  onClick={() => sessionStorage.setItem("scrollToCards", "true")}
+  className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+>
+  ← Volver
+</a>
         </div>
 
         <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -1833,12 +1859,13 @@ return (
             Se recomienda verificar siempre los valores finales antes de emitir una oferta formal.
           </p>
         </div>
-        <a
-          href="#home"
-          className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-        >
-          ← Volver
-        </a>
+<a
+  href="#home"
+  onClick={() => sessionStorage.setItem("scrollToCards", "true")}
+  className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+>
+  ← Volver
+</a>
       </div>
 
       {/* Fila referencia + descripción */}
@@ -2242,7 +2269,14 @@ const tools = [
             <h1 className="text-2xl md:text-3xl font-extrabold text-emerald-700">Herramientas comerciales para los canales</h1>
             <p className="mt-2 text-slate-700 max-w-2xl">Accede a utilidades tecnicas y de seleccion que agilizan tu preingenieria y cotizacion.</p>
           </div>
-          <a href="#home" className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">← Volver</a>
+<a
+  href="#home"
+  onClick={() => sessionStorage.setItem("scrollToCards", "true")}
+  className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+>
+  ← Volver
+</a>
+
         </div>
 
         <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -2359,7 +2393,13 @@ function StatsScreen() {
             <h1 className="text-2xl md:text-3xl font-extrabold text-emerald-700">Estadisticas de uso (local)</h1>
             <p className="mt-2 text-slate-700 max-w-2xl">Resumen simple basado en <code>localStorage</code>. Ideal para validar adopcion antes de conectar a backend.</p>
           </div>
-          <a href="#home" className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">← Volver</a>
+<a
+  href="#home"
+  onClick={() => sessionStorage.setItem("scrollToCards", "true")}
+  className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+>
+  ← Volver
+</a>
         </div>
 
         <div className="mt-8 overflow-x-auto">
