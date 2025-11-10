@@ -171,6 +171,33 @@ useEffect(() => {
   return () => window.removeEventListener('hashchange', onHash);
 }, []);
 
+// Desplazamiento inteligente según la ruta
+useEffect(() => {
+  // Rutas de home
+  const isHome     = route === '#home' || route === '#ingresar' || route === '' || !route;
+  const isHomeCard = route === '#home-cards';
+
+  // Si abro una sección, siempre al tope
+  if (!isHome && !isHomeCard) {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    return;
+  }
+
+  // Si vuelvo "normal" a la home, voy al inicio
+  if (isHome && !isHomeCard) {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    return;
+  }
+
+  // Si vuelvo con el botón "Volver" (enlaza a #home-cards), bajo hasta las cards
+  if (isHomeCard) {
+    requestAnimationFrame(() => {
+      const el = document.getElementById('como-empezar');
+      el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+}, [route]);
+
   // ---------------- Chatbot state & handlers ----------------
   const [messages, setMessages] = useState([
     { from: 'bot', text: '¡Hola! Soy tu asistente. Puedo navegar por el portal, abrir visores PDF y ayudarte con el Cotizador Rápido. Escribe "ayuda" para ver comandos.' }
@@ -666,7 +693,7 @@ function Landing({ setChatOpen, chatOpen }) {
     className="text-[#f97316] font-semibold transition-all duration-300 ease-in-out hover:drop-shadow-[0_3px_6px_rgba(249,115,22,0.45)] hover:brightness-110"
     style={{ letterSpacing: "0.015em" }}
   >
-    affirmatum partners
+    AFFIRMATUM PARTNERS
   </span>{" "}
   <span className="text-[#007A63] font-bold">INGETES</span>
 </h1>
@@ -749,7 +776,7 @@ function OutsourcingScreen() {
               Estos son los aliados y proveedores certificados por INGETES para servicios de automatización, control e instrumentación industrial.
             </p>
           </div>
-          <a href="#home" className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">
+          <a href="#home-cards" className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">
             ← Volver
           </a>
         </div>
