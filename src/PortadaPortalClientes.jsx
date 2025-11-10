@@ -1380,7 +1380,7 @@ React.useEffect(() => {
                   )}
                   
                   <button
-                    onClick={() => setPreview(null)}
+                    onClick={() => { setPreview(null); emit('portal:overlay', { active: false }); }}
                     className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold hover:bg-slate-50"
                   >
                     Cerrar
