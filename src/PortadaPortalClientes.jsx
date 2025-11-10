@@ -323,6 +323,14 @@ useEffect(() => {
   return () => window.removeEventListener("scroll", onScroll);
 }, []);
 
+// Flag global para saber si hay un visor/overlay abierto
+const [overlayActive, setOverlayActive] = useState(false);
+useEffect(() => {
+  const onOverlay = (e) => setOverlayActive(!!(e?.detail?.active));
+  window.addEventListener('portal:overlay', onOverlay);
+  return () => window.removeEventListener('portal:overlay', onOverlay);
+}, []);
+
 // Guard de autenticación: si no hay sesión, solo permite #ingresar
 useEffect(() => {
   const enforce = () => {
@@ -365,7 +373,7 @@ style={{
   alt="Logo INGETES"
   className="fixed top-1/2 right-0 w-24 opacity-20 translate-y-[-50%] pointer-events-none select-none"
 />
-      <Header onOpenSettings={() => setSettingsOpen(true)} />
+      <Header onOpenSettings={() => setSettingsOpen(true)} overlayActive={overlayActive} />
 {route === '#marcas' ? (
   <MarcasAliadasScreen />
 ) : route === '#comerciales' ? (
@@ -511,13 +519,13 @@ style={{
 // ==========================================================
 // Header
 // ==========================================================
-function Header({ onOpenSettings }) {
+function Header({ onOpenSettings, overlayActive }) {
   return (
     <>
       {/* Franja corporativa superior */}
       <div className="w-full h-2 bg-emerald-700" />
 
-      <header className="w-full sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-white/70 border-b border-slate-100">
+<header  className={`w-full sticky top-0 ${overlayActive ? 'z-0' : 'z-40'} backdrop-blur supports-[backdrop-filter]:bg-white/70 border-b border-slate-100`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <img src={logoIngetes} alt="INGETES" className="h-10 w-auto" />
@@ -1137,6 +1145,7 @@ const openPreview = (item, q = '') => {
     if (q) setTerm(q); else setTerm('');
     setPreview({ item: { ...item, href }, src });
     setCopied(false);
+    emit('portal:overlay', { active: true });   // ← añade esta línea
     return;
   }
 
@@ -2054,6 +2063,7 @@ const downloadFile = (url, suggestedName) => {
     const src = buildViewerSrc(item.href, q || '', usePdfJs);
     setPreview({ item, src });
     setCopied(false);
+    emit('portal:overlay', { active: true });  // ← añade
   };
 
   const applySearch = () => {
@@ -2282,7 +2292,7 @@ const tools = [
                 )}
               
                 <button
-                  onClick={() => setPreview(null)}
+                  onClick={() => { setPreview(null); emit('portal:overlay', { active: false }); }}
                   className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold hover:bg-slate-50"
                 >
                   Cerrar
