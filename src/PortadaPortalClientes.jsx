@@ -517,7 +517,7 @@ function Header({ onOpenSettings }) {
       {/* Franja corporativa superior */}
       <div className="w-full h-2 bg-emerald-700" />
 
-      <header className="w-full sticky top-0 z-20 backdrop-blur supports-[backdrop-filter]:bg-white/70 border-b border-slate-100">
+      <header className="w-full sticky top-0 z-10 backdrop-blur supports-[backdrop-filter]:bg-white/70 border-b border-slate-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <img src={logoIngetes} alt="INGETES" className="h-10 w-auto" />
@@ -2247,7 +2247,7 @@ const tools = [
 
       {/* Modal visor */}
       {preview && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
           <div className="w-full max-w-6xl rounded-3xl bg-white shadow-2xl overflow-hidden">
             <div className="flex items-center justify-between border-b border-slate-200 p-4">
               <div>
