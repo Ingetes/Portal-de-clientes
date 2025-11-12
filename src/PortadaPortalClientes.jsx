@@ -13,6 +13,7 @@ const DOCS = {
   liner:      `${BASE}Siemens%20Liner%20Full%20New.pdf`,
   chemical:   `${BASE}Chemical_Resistance_Chart_202106.pdf`,
   celdas:     `${BASE}manual%20de%20celdas%20y%20MODULOS%20DE%20PESAJE%20RICE%20LAKE%20en%20español.pdf`,
+  sitop:      `${BASE}SITOPSelectorEN.pdf`,
 };
 // === Archivos editables desde "Ajustes" (coinciden con los que sirves en GH Pages)
 const EDITABLE_FILES = [
@@ -2181,7 +2182,7 @@ const tools = [
     ],
   },
   {
-    title: 'Manual de selección de materiales y recubrimientos internos',
+    title: 'Compatibilidad de liner (medidores de caudal)',
     desc: 'Documento de referencia para elegir el liner adecuado según fluido y condiciones.',
     badge: 'Referencia',
     actions: [
@@ -2206,48 +2207,16 @@ const tools = [
     ],
   },
   // --- NUEVAS HERRAMIENTAS AÑADIDAS ---
-  {
-    title: 'Herramientas de selección de fuentes',
-    desc: 'Selector para elegir fuentes de alimentación adecuadas según carga y aplicación.',
-    badge: 'Utilidad',
-    actions: [
-      { label: 'Abrir', href: 'https://mall.industry.siemens.com/tia-selection-tool-standalone' },
-    ],
-  },
-  {
-    title: 'Switch de comunicación',
-    desc: 'Configurador de switches industriales y soluciones de comunicación.',
-    badge: 'Utilidad',
-    actions: [
-      { label: 'Abrir', href: 'https://mall.industry.siemens.com/mall/en/ww/Catalog/Product/6GK5' },
-    ],
-  },
-  {
-    title: 'Configuración de servos',
-    desc: 'Asistente para la parametrización de servomotores y controladores de movimiento.',
-    badge: 'Utilidad',
-    actions: [
-      { label: 'Abrir', href: 'https://mall.industry.siemens.com/spice/cloudcm/dashboard?caller=SPC' },
-    ],
-  },
-  {
-    title: 'Configurador de PC',
-    desc: 'Herramienta para configurar PCs industriales Siemens según requisitos del proyecto.',
-    badge: 'Utilidad',
-    actions: [
-      { label: 'Abrir', href: 'https://mall.industry.siemens.com/mall/en/ww/Catalog/Product/6ES7677' },
-    ],
-  },
-  {
-    title: 'Software de instrumentación',
-    desc: 'Acceso a herramientas y software de instrumentación para configuración y diagnóstico.',
-    badge: 'Software',
-    actions: [
-      { label: 'Abrir', href: 'https://support.industry.siemens.com/' },
-    ],
-  },
+{
+  title: 'Herramientas de selección de fuentes',
+  desc: 'Selector para elegir fuentes de alimentación adecuadas según carga y aplicación.',
+  badge: 'Utilidad',
+  actions: [
+    // Abre el visor interno (pdf.js). Desde el modal ya tienes botón "Descargar".
+    { label: 'Vista previa', href: withBust('sitop', DOCS.sitop), openInModal: true },
+  ],
+},
 ];
-
 
   // Desde el chatbot
   React.useEffect(() => {
