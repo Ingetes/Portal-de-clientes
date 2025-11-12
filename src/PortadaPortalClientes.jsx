@@ -64,16 +64,16 @@ function buildViewerSrc(href, q = '', usePdf = true) {
 
 if (usePdf) {
   // Visor PDF.js hospedado por Mozilla
-  const viewer = 'https://mozilla.github.io/pdf.js/web/viewer.html';
-  const fileParam = `?file=${encodeURIComponent(fileUrl)}`;
+const viewer = 'https://mozilla.github.io/pdf.js/web/viewer.html';
+const fileParam = `?file=${encodeURIComponent(fileUrl)}`;
 
-  // --- clave: hacer que los links externos del PDF abran en nueva pestaña ---
-  // pdf.js lee 'linktarget=blank' desde el hash.
-  const params = new URLSearchParams();
-  if (q) params.set('search', q);
-  params.set('linktarget', 'blank'); // <— AQUÍ la magia
+// Forzamos apertura en nueva pestaña de cualquier link externo dentro del PDF
+const params = new URLSearchParams();
+if (q) params.set('search', q);
+params.set('linktarget', 'blank');
+params.set('openExternalLinksInNewTab', 'true'); // ← clave añadida
 
-  return `${viewer}${fileParam}#${params.toString()}`;
+return `${viewer}${fileParam}#${params.toString()}`;
 }
 
   // Visor nativo del navegador
