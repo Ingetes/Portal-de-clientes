@@ -62,17 +62,19 @@ function buildViewerSrc(href, q = '', usePdf = true) {
     }
   })();
 
-  if (usePdf) {
-    // Visor PDF.js hospedado por Mozilla + forzar abrir links externos en nueva pestaña
-    const viewer = 'https://mozilla.github.io/pdf.js/web/viewer.html';
-    const fileParam = `?file=${encodeURIComponent(fileUrl)}`;
-    const params = [];
-    if (q) params.push(`search=${encodeURIComponent(q)}`);
-    // 👇 clave: forzar target _blank para enlaces externos
-    params.push('linktarget=blank');
-    const hash = `#${params.join('&')}`;
-    return `${viewer}${fileParam}${hash}`;
-  }
+if (usePdf) {
+  // Visor PDF.js hospedado por Mozilla
+  const viewer = 'https://mozilla.github.io/pdf.js/web/viewer.html';
+  const fileParam = `?file=${encodeURIComponent(fileUrl)}`;
+
+  // --- clave: hacer que los links externos del PDF abran en nueva pestaña ---
+  // pdf.js lee 'linktarget=blank' desde el hash.
+  const params = new URLSearchParams();
+  if (q) params.set('search', q);
+  params.set('linktarget', 'blank'); // <— AQUÍ la magia
+
+  return `${viewer}${fileParam}#${params.toString()}`;
+}
 
   // Visor nativo del navegador
   const base = fileUrl.split('#')[0];
