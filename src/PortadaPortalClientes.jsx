@@ -1695,8 +1695,9 @@ const openMall = (e) => {
     if (!raw) return "(sin confirmar)";
     const n = (raw.match(/\d+/)?.[0]) ? parseInt(raw.match(/\d+/)[0], 10) : NaN;
     if (!Number.isFinite(n)) return raw;
-    if (n >= 1 && n <= 5) return "3-5 días. (Salvo venta previa)";
-    if (n >= 30 && n <= 45) return "30-45 días. (Salvo venta previa)";
+    if (n >= 1 && n <= 6) return "3-5 días. (Salvo venta previa)";
+    if (n >= 7 && n <= 20) return "10-20 días. (Salvo venta previa)";
+    if (n >= 21 && n <= 45) return "30-45 días. (Salvo venta previa)";
     if (n >= 46 && n <= 60) return "6 - 8 semanas";
     if (n >= 61 && n <= 80) return "8 - 10 semanas";
     if (n >= 81 && n <= 90) return "10 - 12 semanas";
