@@ -1446,12 +1446,7 @@ React.useEffect(() => {
               </div>
             </div>
             <div className="h-[75vh]">
-<iframe
-  title="Visor PDF"
-  src={preview.src}
-  className="w-full h-full"
-  sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
-/>
+<iframe title="Visor PDF" src={preview.src} className="w-full h-full" sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"/>
             </div>
           </div>
         </div>
