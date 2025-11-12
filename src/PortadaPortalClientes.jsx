@@ -64,14 +64,13 @@ function buildViewerSrc(href, q = '', usePdf = true) {
 
 if (usePdf) {
   // Visor PDF.js hospedado por Mozilla
+// dentro de buildViewerSrc(...)
 const viewer = 'https://mozilla.github.io/pdf.js/web/viewer.html';
 const fileParam = `?file=${encodeURIComponent(fileUrl)}`;
-
-// Forzamos apertura en nueva pestaña de cualquier link externo dentro del PDF
 const params = new URLSearchParams();
 if (q) params.set('search', q);
+// ¡este es el que fuerza _blank!
 params.set('linktarget', 'blank');
-params.set('openExternalLinksInNewTab', 'true'); // ← clave añadida
 
 return `${viewer}${fileParam}#${params.toString()}`;
 }
@@ -1451,7 +1450,7 @@ React.useEffect(() => {
     src={preview.src} // <- ya viene generado por buildViewerSrc con linktarget=blank
     className="w-full h-[calc(100vh-120px)]"
     allow="fullscreen"
-    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
   />
 </div>
             </div>
@@ -2348,7 +2347,7 @@ const tools = [
     src={preview.src} // <- ya viene generado por buildViewerSrc con linktarget=blank
     className="w-full h-[calc(100vh-120px)]"
     allow="fullscreen"
-    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
   />
 </div>
             </div>
