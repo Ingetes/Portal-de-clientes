@@ -2091,6 +2091,123 @@ function HerramientasScreen() {
   const [usePdfJs, setUsePdfJs] = React.useState(true);
   const [copied, setCopied]     = React.useState(false);
 
+  // === Cuestionario de instrumentación (terceros) ===
+  const [quizOpen, setQuizOpen] = React.useState(false);
+  const [quizType, setQuizType] = React.useState(null); // 'flujo'|'nivel'|'temperatura'|'presion'|'peso'
+  const [quizData, setQuizData] = React.useState({});   // respuestas
+
+  // Esquemas por sensor (preguntas resumidas y limpias)
+  const QUIZ = {
+    flujo: {
+      title: 'Sensor de flujo',
+      fields: [
+        { k:'material', label:'Material que pasa por la tubería', type:'select', options:['Gas','Líquido','Vapor'] },
+        { k:'liquido', label:'Si eliges Líquido, ¿cuál?', type:'text', hint:'Opcional si no es líquido' },
+        { k:'temp', label:'Rango de temperatura del medio', type:'text', placeholder:'°C' },
+        { k:'dn', label:'Diámetro nominal (DN) de la tubería', type:'text' },
+        { k:'conexion', label:'Conexión a proceso', type:'select', options:['Bridada','Sanitaria (Triclamp)','Otra'] },
+        { k:'prop', label:'Propiedades (densidad/viscosidad/conductividad/corrosión/abrasión)', type:'textarea' },
+        { k:'alimentacion', label:'Alimentación del transmisor', type:'radio', options:['110 VAC','24 VDC'] },
+        { k:'comun', label:'Comunicación', type:'select', options:['HART','Profibus DP','Profibus PA','Foundation Fieldbus','Modbus'] },
+      ],
+    },
+    nivel: {
+      title: 'Sensor de nivel',
+      fields: [
+        { k:'modo', label:'Tipo de medición', type:'radio', options:['Continua','Detección'] },
+        { k:'material', label:'Material a medir', type:'select', options:['Líquido','Sólidos a granel','Interfaz'] },
+        { k:'liquido', label:'Si es líquido, ¿cuál?', type:'text' },
+        { k:'altura', label:'Altura del tanque', type:'text' },
+        { k:'diametro', label:'Diámetro del tanque', type:'text' },
+        { k:'conexion', label:'Conexión a proceso', type:'select', options:['Bridada','Roscada','Sanitaria (Triclamp)'] },
+        { k:'comun', label:'Comunicación', type:'select', options:['HART (4–20 mA)','Profibus DP','Modbus'] },
+        { k:'alimentacion', label:'Alimentación', type:'select', options:['110 VAC','24 VDC','Fuente interna'] },
+        { k:'temp', label:'Temperatura del material', type:'text' },
+      ],
+    },
+    temperatura: {
+      title: 'Sensor de temperatura',
+      fields: [
+        { k:'elemento', label:'Elemento/Transmisor', type:'select', options:['RTD (PT100/PT1000)','Termocupla (J/K/S)'] },
+        { k:'rango', label:'Rango de temperatura de proceso', type:'text' },
+        { k:'comun', label:'Comunicación', type:'select', options:['4–20 mA','HART','0–10 V'] },
+        { k:'atex', label:'¿Requiere protección contra explosión?', type:'radio', options:['Sí','No'] },
+      ],
+    },
+    presion: {
+      title: 'Sensor de presión',
+      fields: [
+        { k:'tipo', label:'Tipo de presión (absoluta/manométrica/diferencial)', type:'text' },
+        { k:'comun', label:'Comunicación', type:'select', options:['4–20 mA','0–10 V','HART','Modbus'] },
+        { k:'rango', label:'Rango de presión', type:'text' },
+        { k:'conexion', label:'Conexión a proceso', type:'text' },
+        { k:'precision', label:'Precisión requerida', type:'text' },
+        { k:'elec', label:'¿Conexión eléctrica especial?', type:'text' },
+        { k:'atex', label:'¿Protección contra explosión?', type:'radio', options:['Sí','No'] },
+      ],
+    },
+    peso: {
+      title: 'Sensor de peso (celdas de carga)',
+      fields: [
+        { k:'forma', label:'Forma del tanque', type:'text' },
+        { k:'capVacio', label:'Peso del tanque vacío', type:'text' },
+        { k:'capLleno', label:'Peso del tanque lleno', type:'text' },
+        { k:'apoyos', label:'Número de puntos de apoyo', type:'text' },
+        { k:'gradoIP', label:'Grado IP requerido', type:'text' },
+      ],
+    },
+  };
+
+  // abrir/cerrar
+  const openQuiz = () => { setQuizData({}); setQuizType(null); setQuizOpen(true); emit('portal:overlay',{active:true}); };
+  const closeQuiz = () => { setQuizOpen(false); setQuizType(null); setQuizData({}); emit('portal:overlay',{active:false}); };
+
+  // Cambios de respuesta
+  const setAns = (k, v) => setQuizData((d) => ({ ...d, [k]: v }));
+
+  // Generar PDF (jsPDF en demanda)
+  async function downloadQuizPdf() {
+    if (!quizType) return;
+    const cfg = QUIZ[quizType];
+    const { jsPDF } = await import('jspdf');
+
+    const doc = new jsPDF({ unit:'pt', format:'a4' });
+    const pad = 56;
+    let y = pad;
+
+    // Encabezado
+    doc.setFont('helvetica','bold'); doc.setFontSize(14);
+    doc.text('Brief de instrumentación – INGETES', pad, y); y += 20;
+    doc.setFont('helvetica','normal'); doc.setFontSize(12);
+    doc.text(`Tipo: ${cfg.title}`, pad, y); y += 24;
+
+    // Contenido
+    cfg.fields.forEach(f => {
+      const val = (quizData[f.k] ?? '').toString().trim() || '—';
+      const label = `• ${f.label}:`;
+      y = writeWrap(doc, label, pad, y, 480, true);
+      y = writeWrap(doc, val, pad + 16, y, 464, false);
+      y += 6;
+      if (y > 770) { doc.addPage(); y = pad; }
+    });
+
+    // Nota
+    y += 8;
+    doc.setFont('helvetica','italic'); doc.setFontSize(10);
+    y = writeWrap(doc, 'Este documento se generó automáticamente desde el Portal de Clientes – INGETES.', pad, y, 480, false);
+
+    const safeName = cfg.title.replace(/\s+/g,'_');
+    doc.save(`Brief_instrumentacion_${safeName}.pdf`);
+  }
+
+  // Helper de texto con salto
+  function writeWrap(doc, text, x, y, maxW, bold=false) {
+    doc.setFont('helvetica', bold ? 'bold' : 'normal');
+    const lines = doc.splitTextToSize(String(text), maxW);
+    lines.forEach(line => { doc.text(line, x, y); y += 16; });
+    return y;
+  }
+  
   const isPdf = (u) => /\.pdf($|[?#])/i.test(u);
 
   const fileNameFromUrl = (url, fallback = 'documento') => {
@@ -2184,6 +2301,14 @@ const tools = [
     ],
   },
   {
+    title: 'Brief de instrumentación (terceros)',
+    desc: 'Cuestionario por tipo de sensor (flujo, nivel, temperatura, presión y peso) y descarga de un PDF con las respuestas.',
+    badge: 'Formulario',
+    actions: [
+      { label: 'Responder', openQuiz: true }
+    ],
+  },
+  {
     title: 'Configurador de variadores y servomotores SIEMENS',
     desc: 'Configura variadores, motores y servos según requerimientos.',
     badge: 'Siemens',
@@ -2270,7 +2395,15 @@ const tools = [
               <p className="mt-2 text-slate-700 text-sm">{t.desc}</p>
               <div className="mt-5 flex flex-wrap gap-3">
                 {t.actions?.map((a, idx) =>
-                  a.openInModal ? (
+                  a.openQuiz ? (
+                    <button
+                      key={idx}
+                      onClick={openQuiz}
+                      className={`rounded-xl px-4 py-2 text-sm font-semibold ${idx === 0 ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-white text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50'}`}
+                    >
+                      {a.label}
+                    </button>
+                  ) : a.openInModal ? (
                     <button
                       key={idx}
                       onClick={() => openPreview({ title: t.title, href: a.href })}
@@ -2350,6 +2483,118 @@ const tools = [
     sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
   />
 </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Modal – Brief de instrumentación */}
+      {quizOpen && (
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
+          <div className="w-full max-w-3xl rounded-3xl bg-white shadow-2xl overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-200 p-4">
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">
+                  {quizType ? QUIZ[quizType].title : 'Brief de instrumentación'}
+                </h3>
+                <p className="text-xs text-slate-500">
+                  {quizType ? 'Completa el cuestionario y descarga el PDF.' : 'Elige el tipo de sensor para iniciar.'}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                {quizType && (
+                  <button
+                    onClick={downloadQuizPdf}
+                    className="rounded-xl bg-slate-900 px-3 py-2 text-white text-sm font-semibold hover:bg-black"
+                  >
+                    Descargar PDF
+                  </button>
+                )}
+                <button
+                  onClick={closeQuiz}
+                  className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold hover:bg-slate-50"
+                >
+                  Cerrar
+                </button>
+              </div>
+            </div>
+
+            <div className="max-h-[75vh] overflow-y-auto p-5">
+              {!quizType ? (
+                <div>
+                  <p className="text-sm text-slate-700 mb-4">Selecciona el tipo de sensor:</p>
+                  <div className="flex flex-wrap gap-2">
+                    <button onClick={()=>setQuizType('flujo')} className="rounded-xl bg-emerald-600 text-white px-4 py-2 font-semibold hover:bg-emerald-700">Flujo</button>
+                    <button onClick={()=>setQuizType('nivel')} className="rounded-xl bg-emerald-600 text-white px-4 py-2 font-semibold hover:bg-emerald-700">Nivel</button>
+                    <button onClick={()=>setQuizType('temperatura')} className="rounded-xl bg-emerald-600 text-white px-4 py-2 font-semibold hover:bg-emerald-700">Temperatura</button>
+                    <button onClick={()=>setQuizType('presion')} className="rounded-xl bg-emerald-600 text-white px-4 py-2 font-semibold hover:bg-emerald-700">Presión</button>
+                    <button onClick={()=>setQuizType('peso')} className="rounded-xl bg-emerald-600 text-white px-4 py-2 font-semibold hover:bg-emerald-700">Peso</button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {QUIZ[quizType].fields.map(f => (
+                    <div key={f.k}>
+                      <label className="block text-xs text-slate-600 mb-1">{f.label}</label>
+
+                      {f.type === 'text' && (
+                        <input
+                          className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                          value={quizData[f.k] || ''}
+                          onChange={(e)=>setAns(f.k, e.target.value)}
+                          placeholder={f.placeholder || ''}
+                        />
+                      )}
+
+                      {f.type === 'textarea' && (
+                        <textarea
+                          rows={3}
+                          className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                          value={quizData[f.k] || ''}
+                          onChange={(e)=>setAns(f.k, e.target.value)}
+                        />
+                      )}
+
+                      {f.type === 'select' && (
+                        <select
+                          className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                          value={quizData[f.k] || ''}
+                          onChange={(e)=>setAns(f.k, e.target.value)}
+                        >
+                          <option value="">— Selecciona —</option>
+                          {f.options.map(op => <option key={op} value={op}>{op}</option>)}
+                        </select>
+                      )}
+
+                      {f.type === 'radio' && (
+                        <div className="flex flex-wrap gap-3">
+                          {f.options.map(op => (
+                            <label key={op} className="inline-flex items-center gap-2 text-sm">
+                              <input
+                                type="radio"
+                                name={`rad-${quizType}-${f.k}`}
+                                checked={(quizData[f.k] || '') === op}
+                                onChange={()=>setAns(f.k, op)}
+                              />
+                              <span>{op}</span>
+                            </label>
+                          ))}
+                        </div>
+                      )}
+
+                      {f.hint && <p className="mt-1 text-xs text-slate-500">{f.hint}</p>}
+                    </div>
+                  ))}
+
+                  <div className="pt-2">
+                    <button
+                      onClick={downloadQuizPdf}
+                      className="rounded-xl bg-emerald-600 text-white px-4 py-2 font-semibold hover:bg-emerald-700"
+                    >
+                      Descargar PDF
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
