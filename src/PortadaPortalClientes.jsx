@@ -1445,19 +1445,15 @@ React.useEffect(() => {
               </div>
             </div>
             <div className="h-[75vh]">
-// Construye la URL del visor pdf.js con la preferencia linktarget=blank
-const viewerUrl = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${
-  encodeURIComponent(preview.src)
-}#page=1&zoom=auto&linktarget=blank&disableopenurl=false`;
-
-// Y úsala en el iframe:
-<iframe
-  title="Visor PDF"
-  src={viewerUrl}
-  className="w-full h-[calc(100vh-120px)]"   // o la altura que ya usabas
-  allow="fullscreen"
-  sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
-/>
+<div className="h-[75vh]">
+  <iframe
+    title="Visor PDF"
+    src={preview.src} // <- ya viene generado por buildViewerSrc con linktarget=blank
+    className="w-full h-[calc(100vh-120px)]"
+    allow="fullscreen"
+    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+  />
+</div>
             </div>
           </div>
         </div>
@@ -2346,19 +2342,15 @@ const tools = [
               </div>
             </div>
             <div className="h-[75vh]">
-// Construye la URL del visor pdf.js con la preferencia linktarget=blank
-const viewerUrl = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${
-  encodeURIComponent(preview.src)
-}#page=1&zoom=auto&linktarget=blank&disableopenurl=false`;
-
-// Y úsala en el iframe:
-<iframe
-  title="Visor PDF"
-  src={viewerUrl}
-  className="w-full h-[calc(100vh-120px)]"   // o la altura que ya usabas
-  allow="fullscreen"
-  sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
-/>
+<div className="h-[75vh]">
+  <iframe
+    title="Visor PDF"
+    src={preview.src} // <- ya viene generado por buildViewerSrc con linktarget=blank
+    className="w-full h-[calc(100vh-120px)]"
+    allow="fullscreen"
+    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+  />
+</div>
             </div>
           </div>
         </div>
