@@ -54,25 +54,27 @@ function buildViewerSrc(href, q = '', usePdf = true) {
   // Asegurar URL ABSOLUTA del PDF (importante cuando el visor está en otro dominio)
   const fileUrl = (() => {
     try {
-      // Si ya viene con http(s) lo dejamos; si no, lo resolvemos contra el origin
       return href.startsWith('http')
         ? href
         : new URL(href, window.location.origin).href;
     } catch {
-      // fallback por si algo raro pasa
       return href;
     }
   })();
 
   if (usePdf) {
-    // Visor PDF.js hospedado por Mozilla
+    // Visor PDF.js hospedado por Mozilla + forzar abrir links externos en nueva pestaña
     const viewer = 'https://mozilla.github.io/pdf.js/web/viewer.html';
     const fileParam = `?file=${encodeURIComponent(fileUrl)}`;
-    const hash = q ? `#search=${encodeURIComponent(q)}` : '';
+    const params = [];
+    if (q) params.push(`search=${encodeURIComponent(q)}`);
+    // 👇 clave: forzar target _blank para enlaces externos
+    params.push('linktarget=blank');
+    const hash = `#${params.join('&')}`;
     return `${viewer}${fileParam}${hash}`;
   }
 
-  // Visor nativo del navegador (la URL puede ser relativa o absoluta)
+  // Visor nativo del navegador
   const base = fileUrl.split('#')[0];
   const hash = q ? `#search=${encodeURIComponent(q)}` : '#toolbar=1';
   return `${base}${hash}`;
