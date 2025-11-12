@@ -1445,23 +1445,18 @@ React.useEffect(() => {
               </div>
             </div>
             <div className="h-[75vh]">
+// Construye la URL del visor pdf.js con la preferencia linktarget=blank
+const viewerUrl = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${
+  encodeURIComponent(preview.src)
+}#page=1&zoom=auto&linktarget=blank&disableopenurl=false`;
+
+// Y úsala en el iframe:
 <iframe
   title="Visor PDF"
-  srcDoc={`
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <base target="_blank">
-      <meta http-equiv="Content-Security-Policy" content="default-src * blob: data: gap:; script-src 'unsafe-inline' 'unsafe-eval' *; style-src 'unsafe-inline' *;">
-    </head>
-    <body style="margin:0;padding:0;overflow:hidden">
-      <iframe src="${preview.src}" style="border:0;width:100%;height:100vh" allow="fullscreen"></iframe>
-    </body>
-    </html>
-  `}
-  sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
-  referrerPolicy="no-referrer"
-  className="w-full h-full"
+  src={viewerUrl}
+  className="w-full h-[calc(100vh-120px)]"   // o la altura que ya usabas
+  allow="fullscreen"
+  sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
 />
             </div>
           </div>
@@ -2351,23 +2346,18 @@ const tools = [
               </div>
             </div>
             <div className="h-[75vh]">
+// Construye la URL del visor pdf.js con la preferencia linktarget=blank
+const viewerUrl = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${
+  encodeURIComponent(preview.src)
+}#page=1&zoom=auto&linktarget=blank&disableopenurl=false`;
+
+// Y úsala en el iframe:
 <iframe
   title="Visor PDF"
-  srcDoc={`
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <base target="_blank">
-      <meta http-equiv="Content-Security-Policy" content="default-src * blob: data: gap:; script-src 'unsafe-inline' 'unsafe-eval' *; style-src 'unsafe-inline' *;">
-    </head>
-    <body style="margin:0;padding:0;overflow:hidden">
-      <iframe src="${preview.src}" style="border:0;width:100%;height:100vh" allow="fullscreen"></iframe>
-    </body>
-    </html>
-  `}
-  sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
-  referrerPolicy="no-referrer"
-  className="w-full h-full"
+  src={viewerUrl}
+  className="w-full h-[calc(100vh-120px)]"   // o la altura que ya usabas
+  allow="fullscreen"
+  sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
 />
             </div>
           </div>
