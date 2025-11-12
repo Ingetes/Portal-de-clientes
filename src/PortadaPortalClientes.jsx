@@ -1449,7 +1449,7 @@ React.useEffect(() => {
   title="Visor PDF"
   src={preview.src}
   className="w-full h-full"
-  sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
+  sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
 />
             </div>
           </div>
@@ -2343,7 +2343,7 @@ const tools = [
   title="Visor PDF"
   src={preview.src}
   className="w-full h-full"
-  sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
+  sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
 />
             </div>
           </div>
