@@ -1447,10 +1447,21 @@ React.useEffect(() => {
             <div className="h-[75vh]">
 <iframe
   title="Visor PDF"
-  src={preview.src}
-  className="w-full h-full"
+  srcDoc={`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <base target="_blank">
+      <meta http-equiv="Content-Security-Policy" content="default-src * blob: data: gap:; script-src 'unsafe-inline' 'unsafe-eval' *; style-src 'unsafe-inline' *;">
+    </head>
+    <body style="margin:0;padding:0;overflow:hidden">
+      <iframe src="${preview.src}" style="border:0;width:100%;height:100vh" allow="fullscreen"></iframe>
+    </body>
+    </html>
+  `}
   sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
   referrerPolicy="no-referrer"
+  className="w-full h-full"
 />
             </div>
           </div>
@@ -2342,10 +2353,21 @@ const tools = [
             <div className="h-[75vh]">
 <iframe
   title="Visor PDF"
-  src={preview.src}
-  className="w-full h-full"
+  srcDoc={`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <base target="_blank">
+      <meta http-equiv="Content-Security-Policy" content="default-src * blob: data: gap:; script-src 'unsafe-inline' 'unsafe-eval' *; style-src 'unsafe-inline' *;">
+    </head>
+    <body style="margin:0;padding:0;overflow:hidden">
+      <iframe src="${preview.src}" style="border:0;width:100%;height:100vh" allow="fullscreen"></iframe>
+    </body>
+    </html>
+  `}
   sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
   referrerPolicy="no-referrer"
+  className="w-full h-full"
 />
             </div>
           </div>
