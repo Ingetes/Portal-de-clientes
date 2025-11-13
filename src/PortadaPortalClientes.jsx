@@ -2373,118 +2373,6 @@ const tools = [
           </div>
         </div>
       )}
-      {/* Modal – Cuestionario para selección de intrumentación */}
-      {quizOpen && (
-        <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
-          <div className="w-full max-w-3xl rounded-3xl bg-white shadow-2xl overflow-hidden">
-            <div className="flex items-center justify-between border-b border-slate-200 p-4">
-              <div>
-                <h3 className="text-lg font-bold text-slate-900">
-                  {quizType ? QUIZ[quizType].title : 'Cuestionario para selección de intrumentación'}
-                </h3>
-                <p className="text-xs text-slate-500">
-                  {quizType ? 'Completa el cuestionario y descarga el PDF.' : 'Elige el tipo de sensor para iniciar.'}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                {quizType && (
-                  <button
-                    onClick={downloadQuizPdf}
-                    className="rounded-xl bg-slate-900 px-3 py-2 text-white text-sm font-semibold hover:bg-black"
-                  >
-                    Descargar PDF
-                  </button>
-                )}
-                <button
-                  onClick={closeQuiz}
-                  className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold hover:bg-slate-50"
-                >
-                  Cerrar
-                </button>
-              </div>
-            </div>
-
-            <div className="max-h-[75vh] overflow-y-auto p-5">
-              {!quizType ? (
-                <div>
-                  <p className="text-sm text-slate-700 mb-4">Selecciona el tipo de sensor:</p>
-                  <div className="flex flex-wrap gap-2">
-                    <button onClick={()=>setQuizType('flujo')} className="rounded-xl bg-emerald-600 text-white px-4 py-2 font-semibold hover:bg-emerald-700">Flujo</button>
-                    <button onClick={()=>setQuizType('nivel')} className="rounded-xl bg-emerald-600 text-white px-4 py-2 font-semibold hover:bg-emerald-700">Nivel</button>
-                    <button onClick={()=>setQuizType('temperatura')} className="rounded-xl bg-emerald-600 text-white px-4 py-2 font-semibold hover:bg-emerald-700">Temperatura</button>
-                    <button onClick={()=>setQuizType('presion')} className="rounded-xl bg-emerald-600 text-white px-4 py-2 font-semibold hover:bg-emerald-700">Presión</button>
-                    <button onClick={()=>setQuizType('peso')} className="rounded-xl bg-emerald-600 text-white px-4 py-2 font-semibold hover:bg-emerald-700">Peso</button>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {QUIZ[quizType].fields.map(f => (
-                    <div key={f.k}>
-                      <label className="block text-xs text-slate-600 mb-1">{f.label}</label>
-
-                      {f.type === 'text' && (
-                        <input
-                          className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                          value={quizData[f.k] || ''}
-                          onChange={(e)=>setAns(f.k, e.target.value)}
-                          placeholder={f.placeholder || ''}
-                        />
-                      )}
-
-                      {f.type === 'textarea' && (
-                        <textarea
-                          rows={3}
-                          className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                          value={quizData[f.k] || ''}
-                          onChange={(e)=>setAns(f.k, e.target.value)}
-                        />
-                      )}
-
-                      {f.type === 'select' && (
-                        <select
-                          className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                          value={quizData[f.k] || ''}
-                          onChange={(e)=>setAns(f.k, e.target.value)}
-                        >
-                          <option value="">— Selecciona —</option>
-                          {f.options.map(op => <option key={op} value={op}>{op}</option>)}
-                        </select>
-                      )}
-
-                      {f.type === 'radio' && (
-                        <div className="flex flex-wrap gap-3">
-                          {f.options.map(op => (
-                            <label key={op} className="inline-flex items-center gap-2 text-sm">
-                              <input
-                                type="radio"
-                                name={`rad-${quizType}-${f.k}`}
-                                checked={(quizData[f.k] || '') === op}
-                                onChange={()=>setAns(f.k, op)}
-                              />
-                              <span>{op}</span>
-                            </label>
-                          ))}
-                        </div>
-                      )}
-
-                      {f.hint && <p className="mt-1 text-xs text-slate-500">{f.hint}</p>}
-                    </div>
-                  ))}
-
-                  <div className="pt-2">
-                    <button
-                      onClick={downloadQuizPdf}
-                      className="rounded-xl bg-emerald-600 text-white px-4 py-2 font-semibold hover:bg-emerald-700"
-                    >
-                      Descargar PDF
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </section>
   );
 }
@@ -2511,7 +2399,19 @@ flujo: {
       hint: 'Solo aplica si el material es líquido',
     },
     { k:'temp', label:'Rango de temperatura del medio', type:'text', placeholder:'°C' },
-    { k:'dn', label:'Diámetro nominal (DN) de la tubería', type:'text' },
+    {
+      k: 'dnValor',
+      label: 'Diámetro nominal de la tubería',
+      type: 'text',
+      placeholder: 'Valor numérico',
+    },
+    {
+      k: 'dnUnidad',
+      label: 'Unidad del diámetro nominal',
+      type: 'select',
+      options: ['pulg', 'mm'],
+    },
+
     {
       k:'conexion',
       label:'Conexión a proceso',
@@ -2594,6 +2494,18 @@ flujo: {
 
   const [quizType, setQuizType] = useState(null);  // flujo | nivel | temperatura | presion | peso
   const [quizData, setQuizData] = useState({});    // respuestas
+  const [contact, setContact] = useState({
+    appName: '',
+    empresa: '',
+    nombre: '',
+    cargo: '',
+    celular: '',
+    correo: '',
+  });
+
+  const setContactField = (k, v) =>
+    setContact((c) => ({ ...c, [k]: v }));
+
 
   const setAns = (k, v) => setQuizData((d) => ({ ...d, [k]: v }));
 
@@ -2611,6 +2523,32 @@ flujo: {
     });
   }
 
+  function validateContactBeforeDownload() {
+    const required = [
+      { k: 'appName', label: 'Nombre de la aplicación' },
+      { k: 'empresa', label: 'Empresa' },
+      { k: 'nombre', label: 'Nombre' },
+      { k: 'cargo', label: 'Cargo' },
+      { k: 'celular', label: 'Celular' },
+      { k: 'correo', label: 'Correo electrónico' },
+    ];
+
+    const missing = required.filter(
+      (r) => !String(contact[r.k] || '').trim()
+    );
+
+    if (missing.length > 0) {
+      const lista = missing.map((r) => `• ${r.label}`).join('\n');
+      alert(
+        'Completa los datos de la aplicación y contacto antes de descargar el PDF:\n\n' +
+        lista
+      );
+      return false;
+    }
+
+    return true;
+  }
+  
   // Valida que todos los campos visibles tengan valor
   function validateQuizBeforeDownload() {
     if (!quizType) {
@@ -2658,7 +2596,8 @@ flujo: {
   async function downloadQuizPdf() {
     if (!quizType) return;
 
-    // ✅ Primero validamos que todo lo visible esté diligenciado
+    // Primero validamos contacto y luego las preguntas
+    if (!validateContactBeforeDownload()) return;
     if (!validateQuizBeforeDownload()) return;
 
     const cfg = QUIZ[quizType];
@@ -2678,12 +2617,66 @@ flujo: {
     doc.setFontSize(12);
     doc.text(`Tipo: ${cfg.title}`, pad, y);
     y += 24;
+    // Bloque de datos de aplicación y contacto
+    const contactLines = [
+      ['Nombre de la aplicación', contact.appName],
+      ['Empresa', contact.empresa],
+      ['Nombre', contact.nombre],
+      ['Cargo', contact.cargo],
+      ['Celular', contact.celular],
+      ['Correo electrónico', contact.correo],
+    ];
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    y = writeWrap(doc, 'Datos de la aplicación y contacto', pad, y, 480, true);
+    y += 4;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+    contactLines.forEach(([label, value]) => {
+      y = writeWrap(doc, `${label}: ${value || '—'}`, pad, y, 480, false);
+      y += 2;
+      if (y > 770) {
+        doc.addPage();
+        y = pad;
+      }
+    });
+
+    y += 8;
 
     // Contenido (solo campos visibles)
     const visible = getVisibleFields(cfg, quizType, quizData);
     visible.forEach((f) => {
       const val = (quizData[f.k] ?? '').toString().trim() || '—';
       const label = `• ${f.label}:`;
+          const visible = getVisibleFields(cfg, quizType, quizData);
+    visible.forEach((f) => {
+      // DN con unidad
+      if (quizType === 'flujo' && f.k === 'dnValor') {
+        const val = (quizData.dnValor ?? '').toString().trim() || '—';
+        const unidad = (quizData.dnUnidad ?? '').toString().trim();
+        const combinado = unidad ? `${val} ${unidad}` : val;
+        const label = '• Diámetro nominal (DN) de la tubería:';
+        y = writeWrap(doc, label, pad, y, 480, true);
+        y = writeWrap(doc, combinado, pad + 16, y, 464, false);
+        y += 6;
+        if (y > 770) {
+          doc.addPage();
+          y = pad;
+        }
+        return;
+      }
+      if (quizType === 'flujo' && f.k === 'dnUnidad') {
+        // ya lo imprimimos junto con dnValor
+        return;
+      }
+
+      // --- resto de campos, igual que antes ---
+      if (quizType === 'flujo' && f.k === 'liquido' && quizData.material !== 'Líquido') return;
+      if (quizType === 'flujo' && f.k === 'conexionOtra' && quizData.conexion !== 'Otra') return;
+      if (quizType === 'nivel' && f.k === 'liquido' && quizData.material !== 'Líquido') return;
+
       y = writeWrap(doc, label, pad, y, 480, true);
       y = writeWrap(doc, val, pad + 16, y, 464, false);
       y += 6;
@@ -2691,6 +2684,7 @@ flujo: {
         doc.addPage();
         y = pad;
       }
+      
     });
 
     // Nota
@@ -2813,6 +2807,86 @@ flujo: {
             </div>
           </div>
 
+            {/* Card 2: datos de aplicación y contacto */}
+            <div className="mt-6 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+              <p className="text-sm font-medium text-slate-800 mb-3">
+                2. Datos de la aplicación y contacto
+              </p>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs text-slate-600 mb-1">
+                    Nombre de la aplicación
+                  </label>
+                  <input
+                    className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                    value={contact.appName}
+                    onChange={(e) => setContactField('appName', e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs text-slate-600 mb-1">
+                    Empresa
+                  </label>
+                  <input
+                    className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                    value={contact.empresa}
+                    onChange={(e) => setContactField('empresa', e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs text-slate-600 mb-1">
+                    Nombre
+                  </label>
+                  <input
+                    className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                    value={contact.nombre}
+                    onChange={(e) => setContactField('nombre', e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs text-slate-600 mb-1">
+                    Cargo
+                  </label>
+                  <input
+                    className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                    value={contact.cargo}
+                    onChange={(e) => setContactField('cargo', e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs text-slate-600 mb-1">
+                    Celular
+                  </label>
+                  <input
+                    className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                    value={contact.celular}
+                    onChange={(e) => setContactField('celular', e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs text-slate-600 mb-1">
+                    Correo electrónico
+                  </label>
+                  <input
+                    type="email"
+                    className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                    value={contact.correo}
+                    onChange={(e) => setContactField('correo', e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <p className="mt-3 text-[11px] text-slate-500">
+                Estos datos se incluirán en el PDF del cuestionario.
+              </p>
+            </div>
+
           {/* Columna derecha: formulario */}
           <div className="md:col-span-2">
             <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -2839,6 +2913,39 @@ flujo: {
     return null;
   }
 
+  // --- Campo especial: DN con unidades (flujo) ---
+  if (quizType === 'flujo' && f.k === 'dnValor') {
+    return (
+      <div key="dn-grupo">
+        <label className="block text-xs text-slate-600 mb-1">
+          Diámetro nominal (DN) de la tubería
+        </label>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <input
+            className="flex-1 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            placeholder="Valor numérico"
+            value={quizData.dnValor || ''}
+            onChange={(e) => setAns('dnValor', e.target.value)}
+          />
+          <select
+            className="w-full sm:w-40 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            value={quizData.dnUnidad || ''}
+            onChange={(e) => setAns('dnUnidad', e.target.value)}
+          >
+            <option value="">Unidad</option>
+            <option value="pulg">pulg</option>
+            <option value="mm">mm</option>
+          </select>
+        </div>
+      </div>
+    );
+  }
+
+  // evitamos que dnUnidad se pinte aparte
+  if (quizType === 'flujo' && f.k === 'dnUnidad') {
+    return null;
+  }
+  
   // --- Grupo especial: Propiedades del producto (solo flujo) ---
   if (quizType === 'flujo' && f.k === 'densidad') {
     const propKeys = [
