@@ -2774,9 +2774,6 @@ flujo: {
 
   // Helper para escribir texto con salto de línea en jsPDF
   function writeWrap(doc, text, x, y, maxW, bold = false) {
-
-  // Helper para escribir texto con salto de línea en jsPDF
-  function writeWrap(doc, text, x, y, maxW, bold = false) {
     doc.setFont('helvetica', bold ? 'bold' : 'normal');
     const lines = doc.splitTextToSize(String(text), maxW);
     lines.forEach(line => {
