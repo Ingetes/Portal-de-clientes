@@ -2914,6 +2914,60 @@ flujo: {
     return null;
   }
 
+  // --- Grupo especial: Propiedades del producto (solo flujo) ---
+  if (quizType === 'flujo' && f.k === 'densidad') {
+    const propKeys = [
+      'densidad',
+      'viscosidad',
+      'conductividad',
+      'corrosion',
+      'abrasion',
+    ];
+
+    return (
+      <div
+        key="grupo-propiedades"
+        className="border border-slate-200 rounded-2xl p-4 bg-slate-50/60"
+      >
+        <p className="text-xs font-semibold text-slate-700 mb-3">
+          Propiedades del producto
+        </p>
+
+        <div className="space-y-3 pl-2">
+          {propKeys.map((k) => {
+            const field = QUIZ.flujo.fields.find((ff) => ff.k === k);
+            if (!field) return null;
+
+            return (
+              <div
+                key={k}
+                className="grid grid-cols-[130px,1fr] gap-3 items-center"
+              >
+                <span className="text-xs text-slate-600">
+                  {field.label}:
+                </span>
+                <input
+                  className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                  value={quizData[k] || ''}
+                  onChange={(e) => setAns(k, e.target.value)}
+                />
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  // Saltar los otros campos de propiedades porque ya se renderizan en el grupo
+  if (
+    quizType === 'flujo' &&
+    ['viscosidad', 'conductividad', 'corrosion', 'abrasion'].includes(f.k)
+  ) {
+    return null;
+  }
+
+  // --- Render genérico para el resto de preguntas ---
   return (
     <div key={f.k}>
       <label className="block text-xs text-slate-600 mb-1">
