@@ -2187,14 +2187,6 @@ const tools = [
     ],
   },
   {
-    title: 'Cuestionario para selección de intrumentación',
-    desc: 'Cuestionario por tipo de sensor (flujo, nivel, temperatura, presión y peso) y descarga de un PDF con las respuestas.',
-    badge: 'Formulario',
-    actions: [
-      { label: 'Responder', href: '#brief'  }
-    ],
-  },
-  {
     title: 'Configurador de variadores y servomotores SIEMENS',
     desc: 'Configura variadores, motores y servos según requerimientos.',
     badge: 'Siemens',
