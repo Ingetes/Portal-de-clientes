@@ -2725,6 +2725,56 @@ flujo: {
 
   const setAns = (k, v) => setQuizData((d) => ({ ...d, [k]: v }));
 
+  // Devuelve solo los campos que realmente están visibles en el formulario
+  function getVisibleFields(cfg, type, data) {
+    return cfg.fields.filter((f) => {
+      // Reglas de visibilidad (las mismas que usas en el render)
+      if (type === 'flujo' && f.k === 'liquido' && data.material !== 'Líquido') return false;
+      if (type === 'flujo' && f.k === 'conexionOtra' && data.conexion !== 'Otra') return false;
+      if (type === 'nivel' && f.k === 'liquido' && data.material !== 'Líquido') return false;
+
+      // El grupo de propiedades del producto (flujo) siempre es visible, así que
+      // sus campos individuales también cuentan como requeridos
+      return true;
+    });
+  }
+
+  // Valida que todos los campos visibles tengan valor
+  function validateQuizBeforeDownload() {
+    if (!quizType) {
+      alert('Primero selecciona el tipo de sensor.');
+      return false;
+    }
+
+    const cfg = QUIZ[quizType];
+    const visible = getVisibleFields(cfg, quizType, quizData);
+
+    const missing = visible.filter((f) => {
+      const v = (quizData[f.k] ?? '').toString().trim();
+      return !v; // vacío → falta
+    });
+
+    if (missing.length > 0) {
+      const lista = missing
+        .slice(0, 4)
+        .map((f) => `• ${f.label}`)
+        .join('\n');
+
+      alert(
+        'Para descargar el PDF debes completar todos los campos visibles.\n\n' +
+        'Campos pendientes:\n' +
+        lista +
+        (missing.length > 4 ? '\n…' : '')
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  // Helper para escribir texto con salto de línea en jsPDF
+  function writeWrap(doc, text, x, y, maxW, bold = false) {
+
   // Helper para escribir texto con salto de línea en jsPDF
   function writeWrap(doc, text, x, y, maxW, bold = false) {
     doc.setFont('helvetica', bold ? 'bold' : 'normal');
@@ -2738,6 +2788,10 @@ flujo: {
 
   async function downloadQuizPdf() {
     if (!quizType) return;
+
+    // ✅ Primero validamos que todo lo visible esté diligenciado
+    if (!validateQuizBeforeDownload()) return;
+
     const cfg = QUIZ[quizType];
     const { jsPDF } = await import('jspdf');
 
@@ -2756,8 +2810,9 @@ flujo: {
     doc.text(`Tipo: ${cfg.title}`, pad, y);
     y += 24;
 
-    // Contenido
-    cfg.fields.forEach(f => {
+    // Contenido (solo campos visibles)
+    const visible = getVisibleFields(cfg, quizType, quizData);
+    visible.forEach((f) => {
       const val = (quizData[f.k] ?? '').toString().trim() || '—';
       const label = `• ${f.label}:`;
       y = writeWrap(doc, label, pad, y, 480, true);
@@ -2785,6 +2840,7 @@ flujo: {
     const safeName = cfg.title.replace(/\s+/g, '_');
     doc.save(`Brief_instrumentacion_${safeName}.pdf`);
   }
+
 
   return (
     <section
