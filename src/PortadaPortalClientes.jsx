@@ -2094,134 +2094,6 @@ function HerramientasScreen() {
   const [usePdfJs, setUsePdfJs] = React.useState(true);
   const [copied, setCopied]     = React.useState(false);
 
-  // === Cuestionario de instrumentación (terceros) ===
-  const [quizOpen, setQuizOpen] = React.useState(false);
-  const [quizType, setQuizType] = React.useState(null); // 'flujo'|'nivel'|'temperatura'|'presion'|'peso'
-  const [quizData, setQuizData] = React.useState({});   // respuestas
-
-  // Esquemas por sensor (preguntas resumidas y limpias)
-  const QUIZ = {
-    flujo: {
-      title: 'Sensor de flujo',
-      fields: [
-        { k:'material', label:'Material que pasa por la tubería', type:'select', options:['Gas','Líquido','Vapor'] },
-        { k:'liquido', label:'Si eliges Líquido, ¿cuál?', type:'text', hint:'Opcional si no es líquido' },
-        { k:'temp', label:'Rango de temperatura del medio', type:'text', placeholder:'°C' },
-        { k:'dn', label:'Diámetro nominal de la tubería', type:'text' },
-        { k:'conexion', label:'Conexión a proceso', type:'select', options:['Brida','Sanitaria (Triclamp)','Otra'] },
-        { k:'prop', label:'Propiedades (densidad/viscosidad/conductividad/corrosión/abrasión)', type:'textarea' },
-        { k:'alimentacion', label:'Alimentación del transmisor', type:'radio', options:['110 VAC','24 VDC'] },
-        { k:'comun', label:'Comunicación', type:'select', options:['HART','Profibus DP','Profibus PA','Foundation Fieldbus','Modbus'] },
-      ],
-    },
-    nivel: {
-      title: 'Sensor de nivel',
-      fields: [
-        { k:'modo', label:'Tipo de medición', type:'radio', options:['Continua','Detección'] },
-        { k:'material', label:'Material a medir', type:'select', options:['Líquido','Sólidos a granel','Interfaz'] },
-        { k:'liquido', label:'Si es líquido, ¿cuál?', type:'text' },
-        { k:'altura', label:'Altura del tanque', type:'text' },
-        { k:'diametro', label:'Diámetro del tanque', type:'text' },
-        { k:'conexion', label:'Conexión a proceso', type:'select', options:['Brida','Roscada','Sanitaria (Triclamp)'] },
-        { k:'comun', label:'Comunicación', type:'select', options:['HART (4–20 mA)','Profibus DP','Modbus'] },
-        { k:'alimentacion', label:'Alimentación', type:'select', options:['110 VAC','24 VDC','Fuente interna'] },
-        { k:'temp', label:'Temperatura del material', type:'text' },
-      ],
-    },
-    temperatura: {
-      title: 'Sensor de temperatura',
-      fields: [
-        { k:'elemento', label:'Elemento/Transmisor', type:'select', options:['RTD (PT100/PT1000)','Termocupla (J/K/S)'] },
-        { k:'rango', label:'Rango de temperatura de proceso', type:'text' },
-        { k:'comun', label:'Comunicación', type:'select', options:['4–20 mA','HART','0–10 V'] },
-        { k:'atex', label:'¿Requiere protección contra explosión?', type:'radio', options:['Sí','No'] },
-      ],
-    },
-    presion: {
-      title: 'Sensor de presión',
-      fields: [
-        { k:'tipo', label:'Tipo de presión (absoluta/manométrica/diferencial)', type:'text' },
-        { k:'comun', label:'Comunicación', type:'select', options:['4–20 mA','0–10 V','HART','Modbus'] },
-        { k:'rango', label:'Rango de presión', type:'text' },
-        { k:'conexion', label:'Conexión a proceso', type:'text' },
-        { k:'precision', label:'Precisión requerida', type:'text' },
-        { k:'elec', label:'¿Conexión eléctrica especial?', type:'text' },
-        { k:'atex', label:'¿Protección contra explosión?', type:'radio', options:['Sí','No'] },
-      ],
-    },
-    peso: {
-      title: 'Sensor de peso (celdas de carga)',
-      fields: [
-        { k:'forma', label:'Forma del tanque', type:'text' },
-        { k:'capVacio', label:'Peso del tanque vacío', type:'text' },
-        { k:'capLleno', label:'Peso del tanque lleno', type:'text' },
-        { k:'apoyos', label:'Número de puntos de apoyo', type:'text' },
-        { k:'gradoIP', label:'Grado IP requerido', type:'text' },
-      ],
-    },
-  };
-
-  // abrir/cerrar
-  const openQuiz = () => {
-    // en lugar de abrir modal, navegamos a la nueva pantalla
-    window.location.hash = '#brief';
-  };
-  const closeQuiz = () => { setQuizOpen(false); setQuizType(null); setQuizData({}); emit('portal:overlay',{active:false}); };
-
-  // Cambios de respuesta
-  const setAns = (k, v) => setQuizData((d) => ({ ...d, [k]: v }));
-
-  // Generar PDF (jsPDF en demanda)
-  async function downloadQuizPdf() {
-    if (!quizType) return;
-    const cfg = QUIZ[quizType];
-    const { jsPDF } = await import('jspdf');
-
-    const doc = new jsPDF({ unit:'pt', format:'a4' });
-    const pad = 56;
-    let y = pad;
-
-    // Encabezado
-    doc.setFont('helvetica','bold'); doc.setFontSize(14);
-    doc.text('Cuestionario para selección de intrumentación – INGETES', pad, y); y += 20;
-    doc.setFont('helvetica','normal'); doc.setFontSize(12);
-    doc.text(`Tipo: ${cfg.title}`, pad, y); y += 24;
-
-    // Contenido
-cfg.fields.forEach(f => {
-  // mismas reglas de visibilidad que en el formulario
-  if (quizType === 'flujo' && f.k === 'liquido' && quizData.material !== 'Líquido') return;
-  if (quizType === 'flujo' && f.k === 'conexionOtra' && quizData.conexion !== 'Otra') return;
-  if (quizType === 'nivel' && f.k === 'liquido' && quizData.material !== 'Líquido') return;
-
-  const val = (quizData[f.k] ?? '').toString().trim() || '—';
-  const label = `• ${f.label}:`;
-  y = writeWrap(doc, label, pad, y, 480, true);
-  y = writeWrap(doc, val, pad + 16, y, 464, false);
-  y += 6;
-  if (y > 770) {
-    doc.addPage();
-    y = pad;
-  }
-});
-
-    // Nota
-    y += 8;
-    doc.setFont('helvetica','italic'); doc.setFontSize(10);
-    y = writeWrap(doc, 'Este documento se generó automáticamente desde el Portal de Clientes – INGETES.', pad, y, 480, false);
-
-    const safeName = cfg.title.replace(/\s+/g,'_');
-    doc.save(`Brief_instrumentacion_${safeName}.pdf`);
-  }
-
-  // Helper de texto con salto
-  function writeWrap(doc, text, x, y, maxW, bold=false) {
-    doc.setFont('helvetica', bold ? 'bold' : 'normal');
-    const lines = doc.splitTextToSize(String(text), maxW);
-    lines.forEach(line => { doc.text(line, x, y); y += 16; });
-    return y;
-  }
-  
   const isPdf = (u) => /\.pdf($|[?#])/i.test(u);
 
   const fileNameFromUrl = (url, fallback = 'documento') => {
@@ -2319,7 +2191,7 @@ const tools = [
     desc: 'Cuestionario por tipo de sensor (flujo, nivel, temperatura, presión y peso) y descarga de un PDF con las respuestas.',
     badge: 'Formulario',
     actions: [
-      { label: 'Responder', openQuiz: true }
+      { label: 'Responder', href: '#brief'  }
     ],
   },
   {
