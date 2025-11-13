@@ -2183,7 +2183,7 @@ function HerramientasScreen() {
 
     // Encabezado
     doc.setFont('helvetica','bold'); doc.setFontSize(14);
-    doc.text('Brief de instrumentación – INGETES', pad, y); y += 20;
+    doc.text('Cuestionario para selección de intrumentación – INGETES', pad, y); y += 20;
     doc.setFont('helvetica','normal'); doc.setFontSize(12);
     doc.text(`Tipo: ${cfg.title}`, pad, y); y += 24;
 
@@ -2315,7 +2315,7 @@ const tools = [
     ],
   },
   {
-    title: 'Brief de instrumentación (terceros)',
+    title: 'Cuestionario para selección de intrumentación',
     desc: 'Cuestionario por tipo de sensor (flujo, nivel, temperatura, presión y peso) y descarga de un PDF con las respuestas.',
     badge: 'Formulario',
     actions: [
@@ -2501,14 +2501,14 @@ const tools = [
           </div>
         </div>
       )}
-      {/* Modal – Brief de instrumentación */}
+      {/* Modal – Cuestionario para selección de intrumentación */}
       {quizOpen && (
         <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
           <div className="w-full max-w-3xl rounded-3xl bg-white shadow-2xl overflow-hidden">
             <div className="flex items-center justify-between border-b border-slate-200 p-4">
               <div>
                 <h3 className="text-lg font-bold text-slate-900">
-                  {quizType ? QUIZ[quizType].title : 'Brief de instrumentación'}
+                  {quizType ? QUIZ[quizType].title : 'Cuestionario para selección de intrumentación'}
                 </h3>
                 <p className="text-xs text-slate-500">
                   {quizType ? 'Completa el cuestionario y descarga el PDF.' : 'Elige el tipo de sensor para iniciar.'}
@@ -2743,7 +2743,7 @@ function BriefInstrumentacionScreen() {
     // Encabezado
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(14);
-    doc.text('Brief de instrumentación – INGETES', pad, y);
+    doc.text('Cuestionario para selección de intrumentación – INGETES', pad, y);
     y += 20;
 
     doc.setFont('helvetica', 'normal');
@@ -2791,7 +2791,7 @@ function BriefInstrumentacionScreen() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl md:text-3xl font-extrabold text-emerald-700">
-              Brief de instrumentación (terceros)
+              Cuestionario para selección de intrumentación
             </h1>
             <p className="mt-2 text-slate-700 max-w-2xl">
               Selecciona el tipo de sensor, responde las preguntas clave y descarga un PDF
@@ -2889,12 +2889,12 @@ function BriefInstrumentacionScreen() {
               {!quizType ? (
                 <p className="text-sm text-slate-600">
                   Selecciona primero el tipo de sensor en la columna izquierda para ver
-                  las preguntas del brief.
+                  las preguntas del cuestionario.
                 </p>
               ) : (
                 <div className="space-y-4">
                   <h2 className="text-lg font-semibold text-slate-900 mb-2">
-                    2. Responde el brief – {QUIZ[quizType].title}
+                    2. Responde el Cuestionario – {QUIZ[quizType].title}
                   </h2>
 
 {QUIZ[quizType].fields.map((f) => {
