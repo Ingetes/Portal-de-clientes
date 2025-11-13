@@ -2623,41 +2623,46 @@ const tools = [
 function BriefInstrumentacionScreen() {
   // Definición de los formularios por tipo de sensor
   const QUIZ = {
-    flujo: {
-      title: 'Sensor de flujo',
-      fields: [
-        { 
-          k: 'material',
-          label: 'Material que pasa por la tubería',
-          type: 'select',
-          options: ['Gas', 'Líquido', 'Vapor']
-        },
-        {
-          // SOLO se mostrará si material === "Líquido"
-          k: 'liquido',
-          label: 'Si es líquido, especifique cuál es',
-          type: 'text',
-          hint: 'Solo aplica si el material es líquido',
-        },
-        { k:'temp', label:'Rango de temperatura del medio', type:'text', placeholder:'°C' },
-        { k:'dn', label:'Diámetro nominal (DN) de la tubería', type:'text' },
-        {
-          k:'conexion',
-          label:'Conexión a proceso',
-          type:'select',
-          options:['Bridada','Sanitaria (Triclamp)','Otra']
-        },
-        {
-          // SOLO se mostrará si conexion === "Otra"
-          k:'conexionOtra',
-          label:'Si selecciona "Otra", especifique cuál',
-          type:'text',
-        },
-        { k:'prop', label:'Propiedades (densidad/viscosidad/conductividad/corrosión/abrasión)', type:'textarea' },
-        { k:'alimentacion', label:'Alimentación del transmisor', type:'radio', options:['110 VAC','24 VDC'] },
-        { k:'comun', label:'Comunicación', type:'select', options:['HART','Profibus DP','Profibus PA','Foundation Fieldbus','Modbus'] },
-      ],
+flujo: {
+  title: 'Sensor de flujo',
+  fields: [
+    { 
+      k: 'material',
+      label: 'Material que pasa por la tubería',
+      type: 'select',
+      options: ['Gas', 'Líquido', 'Vapor']
     },
+    {
+      k: 'liquido',
+      label: 'Si es líquido, especifique cuál es',
+      type: 'text',
+      hint: 'Solo aplica si el material es líquido',
+    },
+    { k:'temp', label:'Rango de temperatura del medio', type:'text', placeholder:'°C' },
+    { k:'dn', label:'Diámetro nominal (DN) de la tubería', type:'text' },
+    {
+      k:'conexion',
+      label:'Conexión a proceso',
+      type:'select',
+      options:['Bridada','Sanitaria (Triclamp)','Otra']
+    },
+    {
+      k:'conexionOtra',
+      label:'Si selecciona "Otra", especifique cuál',
+      type:'text',
+    },
+
+    // 🔹 AQUÍ van ahora las propiedades por separado
+    { k:'densidad',      label:'Densidad',                    type:'text' },
+    { k:'viscosidad',    label:'Viscosidad',                  type:'text' },
+    { k:'conductividad', label:'Conductividad',               type:'text' },
+    { k:'corrosion',     label:'Resistencia a la corrosión',  type:'text' },
+    { k:'abrasion',      label:'Resistencia a la abrasión',   type:'text' },
+
+    { k:'alimentacion', label:'Alimentación del transmisor', type:'radio', options:['110 VAC','24 VDC'] },
+    { k:'comun', label:'Comunicación', type:'select', options:['HART','Profibus DP','Profibus PA','Foundation Fieldbus','Modbus'] },
+  ],
+},
     nivel: {
       title: 'Sensor de nivel',
       fields: [
