@@ -2164,10 +2164,6 @@ const withBust = (key, url) => {
   catch { return url + q; }
 };
 
-// …y en el array "tools", donde uses DOCS.liner / DOCS.chemical / DOCS.celdas:
-actions: [{ label: 'Vista previa', href: withBust('liner', DOCS.liner), openInModal: true }]
-// idem para 'chemical' y 'celdas'
-
 const tools = [
   {
     title: 'TIA SELECTION TOOL',
@@ -2588,7 +2584,7 @@ flujo: {
   async function downloadQuizPdf() {
     if (!quizType) return;
 
-    // Primero validamos contacto y luego las preguntas
+    // 1. Validaciones
     if (!validateContactBeforeDownload()) return;
     if (!validateQuizBeforeDownload()) return;
 
@@ -2599,17 +2595,22 @@ flujo: {
     const pad = 56;
     let y = pad;
 
-    // Encabezado
+    // ===== Encabezado =====
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(14);
-    doc.text('Cuestionario para selección de intrumentación – INGETES', pad, y);
+    doc.text(
+      'Cuestionario para selección de instrumentación – INGETES',
+      pad,
+      y
+    );
     y += 20;
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(12);
     doc.text(`Tipo: ${cfg.title}`, pad, y);
     y += 24;
-    // Bloque de datos de aplicación y contacto
+
+    // ===== Datos de aplicación y contacto =====
     const contactLines = [
       ['Nombre de la aplicación', contact.appName],
       ['Empresa', contact.empresa],
@@ -2621,13 +2622,27 @@ flujo: {
 
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
-    y = writeWrap(doc, 'Datos de la aplicación y contacto', pad, y, 480, true);
+    y = writeWrap(
+      doc,
+      'Datos de la aplicación y contacto',
+      pad,
+      y,
+      480,
+      true
+    );
     y += 4;
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(11);
     contactLines.forEach(([label, value]) => {
-      y = writeWrap(doc, `${label}: ${value || '—'}`, pad, y, 480, false);
+      y = writeWrap(
+        doc,
+        `${label}: ${value || '—'}`,
+        pad,
+        y,
+        480,
+        false
+      );
       y += 2;
       if (y > 770) {
         doc.addPage();
@@ -2637,49 +2652,52 @@ flujo: {
 
     y += 8;
 
-    // Contenido (solo campos visibles)
+    // ===== Preguntas del cuestionario (solo campos visibles) =====
     const visible = getVisibleFields(cfg, quizType, quizData);
+
     visible.forEach((f) => {
-      const val = (quizData[f.k] ?? '').toString().trim() || '—';
-      const label = `• ${f.label}:`;
-          const visible = getVisibleFields(cfg, quizType, quizData);
-    visible.forEach((f) => {
-      // DN con unidad
+      // --- Caso especial: DN + unidad para flujo ---
       if (quizType === 'flujo' && f.k === 'dnValor') {
         const val = (quizData.dnValor ?? '').toString().trim() || '—';
         const unidad = (quizData.dnUnidad ?? '').toString().trim();
         const combinado = unidad ? `${val} ${unidad}` : val;
         const label = '• Diámetro nominal (DN) de la tubería:';
+
         y = writeWrap(doc, label, pad, y, 480, true);
         y = writeWrap(doc, combinado, pad + 16, y, 464, false);
         y += 6;
+
         if (y > 770) {
           doc.addPage();
           y = pad;
         }
-        return;
+        return; // ya se manejó aquí
       }
+
+      // dnUnidad no se imprime aparte, va junto con dnValor
       if (quizType === 'flujo' && f.k === 'dnUnidad') {
-        // ya lo imprimimos junto con dnValor
         return;
       }
 
-      // --- resto de campos, igual que antes ---
+      // Redundante (por seguridad) – visibilidad condicional
       if (quizType === 'flujo' && f.k === 'liquido' && quizData.material !== 'Líquido') return;
       if (quizType === 'flujo' && f.k === 'conexionOtra' && quizData.conexion !== 'Otra') return;
       if (quizType === 'nivel' && f.k === 'liquido' && quizData.material !== 'Líquido') return;
 
+      const val = (quizData[f.k] ?? '').toString().trim() || '—';
+      const label = `• ${f.label}:`;
+
       y = writeWrap(doc, label, pad, y, 480, true);
       y = writeWrap(doc, val, pad + 16, y, 464, false);
       y += 6;
+
       if (y > 770) {
         doc.addPage();
         y = pad;
       }
-      
     });
 
-    // Nota
+    // ===== Nota final =====
     y += 8;
     doc.setFont('helvetica', 'italic');
     doc.setFontSize(10);
@@ -2695,392 +2713,6 @@ flujo: {
     const safeName = cfg.title.replace(/\s+/g, '_');
     doc.save(`Brief_instrumentacion_${safeName}.pdf`);
   }
-
-
-  return (
-    <section
-      id="brief"
-      className="min-h-[70vh] border-t border-slate-100 bg-transparent relative z-10"
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        {/* Encabezado */}
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-emerald-700">
-              Cuestionario para selección de intrumentación
-            </h1>
-            <p className="mt-2 text-slate-700 max-w-2xl">
-              Selecciona el tipo de sensor, responde las preguntas clave y descarga un PDF
-              resumen para compartir con el cliente o con ingeniería.
-            </p>
-          </div>
-          <a
-            href="#herramientas"
-            className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-          >
-            ← Volver
-          </a>
-        </div>
-
-        {/* Contenido principal */}
-        <div className="mt-8 grid md:grid-cols-3 gap-6">
-          {/* Columna izquierda: selección de tipo */}
-          <div className="md:col-span-1">
-            <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-              <p className="text-sm font-medium text-slate-800 mb-3">
-                1. Elige el tipo de sensor
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <button
-                  onClick={() => { setQuizType('flujo'); setQuizData({}); }}
-                  className={`rounded-xl px-4 py-2 text-sm font-semibold ${
-                    quizType === 'flujo'
-                      ? 'bg-emerald-600 text-white'
-                      : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
-                  }`}
-                >
-                  Flujo
-                </button>
-                <button
-                  onClick={() => { setQuizType('nivel'); setQuizData({}); }}
-                  className={`rounded-xl px-4 py-2 text-sm font-semibold ${
-                    quizType === 'nivel'
-                      ? 'bg-emerald-600 text-white'
-                      : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
-                  }`}
-                >
-                  Nivel
-                </button>
-                <button
-                  onClick={() => { setQuizType('temperatura'); setQuizData({}); }}
-                  className={`rounded-xl px-4 py-2 text-sm font-semibold ${
-                    quizType === 'temperatura'
-                      ? 'bg-emerald-600 text-white'
-                      : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
-                  }`}
-                >
-                  Temperatura
-                </button>
-                <button
-                  onClick={() => { setQuizType('presion'); setQuizData({}); }}
-                  className={`rounded-xl px-4 py-2 text-sm font-semibold ${
-                    quizType === 'presion'
-                      ? 'bg-emerald-600 text-white'
-                      : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
-                  }`}
-                >
-                  Presión
-                </button>
-                <button
-                  onClick={() => { setQuizType('peso'); setQuizData({}); }}
-                  className={`rounded-xl px-4 py-2 text-sm font-semibold ${
-                    quizType === 'peso'
-                      ? 'bg-emerald-600 text-white'
-                      : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
-                  }`}
-                >
-                  Peso
-                </button>
-              </div>
-
-              <p className="mt-4 text-xs text-slate-500">
-                Una vez respondas el formulario, podrás descargar un PDF con todas las
-                respuestas para anexarlo al correo o a la cotización.
-              </p>
-
-              {quizType && (
-                <button
-                  onClick={downloadQuizPdf}
-                  className="mt-4 inline-flex items-center rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-black"
-                >
-                  Descargar PDF
-                </button>
-              )}
-            </div>
-          </div>
-
-            {/* Card 2: datos de aplicación y contacto */}
-            <div className="mt-6 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-              <p className="text-sm font-medium text-slate-800 mb-3">
-                2. Datos de la aplicación y contacto
-              </p>
-
-              <div className="space-y-3">
-                <div>
-                  <label className="block text-xs text-slate-600 mb-1">
-                    Nombre de la aplicación
-                  </label>
-                  <input
-                    className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                    value={contact.appName}
-                    onChange={(e) => setContactField('appName', e.target.value)}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs text-slate-600 mb-1">
-                    Empresa
-                  </label>
-                  <input
-                    className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                    value={contact.empresa}
-                    onChange={(e) => setContactField('empresa', e.target.value)}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs text-slate-600 mb-1">
-                    Nombre
-                  </label>
-                  <input
-                    className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                    value={contact.nombre}
-                    onChange={(e) => setContactField('nombre', e.target.value)}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs text-slate-600 mb-1">
-                    Cargo
-                  </label>
-                  <input
-                    className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                    value={contact.cargo}
-                    onChange={(e) => setContactField('cargo', e.target.value)}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs text-slate-600 mb-1">
-                    Celular
-                  </label>
-                  <input
-                    className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                    value={contact.celular}
-                    onChange={(e) => setContactField('celular', e.target.value)}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs text-slate-600 mb-1">
-                    Correo electrónico
-                  </label>
-                  <input
-                    type="email"
-                    className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                    value={contact.correo}
-                    onChange={(e) => setContactField('correo', e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <p className="mt-3 text-[11px] text-slate-500">
-                Estos datos se incluirán en el PDF del cuestionario.
-              </p>
-            </div>
-
-          {/* Columna derecha: formulario */}
-          <div className="md:col-span-2">
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              {!quizType ? (
-                <p className="text-sm text-slate-600">
-                  Selecciona primero el tipo de sensor en la columna izquierda para ver
-                  las preguntas del cuestionario.
-                </p>
-              ) : (
-                <div className="space-y-4">
-                  <h2 className="text-lg font-semibold text-slate-900 mb-2">
-                    2. Responde el Cuestionario – {QUIZ[quizType].title}
-                  </h2>
-
-{QUIZ[quizType].fields.map((f) => {
-  // --- Reglas de visibilidad dinámica ---
-  if (quizType === 'flujo' && f.k === 'liquido' && quizData.material !== 'Líquido') {
-    return null;
-  }
-  if (quizType === 'flujo' && f.k === 'conexionOtra' && quizData.conexion !== 'Otra') {
-    return null;
-  }
-  if (quizType === 'nivel' && f.k === 'liquido' && quizData.material !== 'Líquido') {
-    return null;
-  }
-
-  // --- Campo especial: DN con unidades (flujo) ---
-  if (quizType === 'flujo' && f.k === 'dnValor') {
-    return (
-      <div key="dn-grupo">
-        <label className="block text-xs text-slate-600 mb-1">
-          Diámetro nominal (DN) de la tubería
-        </label>
-        <div className="flex flex-col sm:flex-row gap-3">
-          <input
-            className="flex-1 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-            placeholder="Valor numérico"
-            value={quizData.dnValor || ''}
-            onChange={(e) => setAns('dnValor', e.target.value)}
-          />
-          <select
-            className="w-full sm:w-40 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-            value={quizData.dnUnidad || ''}
-            onChange={(e) => setAns('dnUnidad', e.target.value)}
-          >
-            <option value="">Unidad</option>
-            <option value="pulg">pulg</option>
-            <option value="mm">mm</option>
-          </select>
-        </div>
-      </div>
-    );
-  }
-
-  // evitamos que dnUnidad se pinte aparte
-  if (quizType === 'flujo' && f.k === 'dnUnidad') {
-    return null;
-  }
-  
-  // --- Grupo especial: Propiedades del producto (solo flujo) ---
-  if (quizType === 'flujo' && f.k === 'densidad') {
-    const propKeys = [
-      'densidad',
-      'viscosidad',
-      'conductividad',
-      'corrosion',
-      'abrasion',
-    ];
-
-    return (
-      <div
-        key="grupo-propiedades"
-        className="border border-slate-200 rounded-2xl p-4 bg-slate-50/60"
-      >
-        <p className="text-xs font-semibold text-slate-700 mb-3">
-          Propiedades del producto
-        </p>
-
-        <div className="space-y-3 pl-2">
-          {propKeys.map((k) => {
-            const field = QUIZ.flujo.fields.find((ff) => ff.k === k);
-            if (!field) return null;
-
-            return (
-              <div
-                key={k}
-                className="grid grid-cols-[130px,1fr] gap-3 items-center"
-              >
-                <span className="text-xs text-slate-600">
-                  {field.label}:
-                </span>
-                <input
-                  className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                  value={quizData[k] || ''}
-                  onChange={(e) => setAns(k, e.target.value)}
-                />
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    );
-  }
-
-  // Saltar los otros campos de propiedades porque ya se renderizan en el grupo
-  if (
-    quizType === 'flujo' &&
-    ['viscosidad', 'conductividad', 'corrosion', 'abrasion'].includes(f.k)
-  ) {
-    return null;
-  }
-
-  // --- Render genérico para el resto de preguntas ---
-  return (
-    <div key={f.k}>
-      <label className="block text-xs text-slate-600 mb-1">
-        {f.label}
-      </label>
-
-      {f.type === 'text' && (
-        <input
-          className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-          value={quizData[f.k] || ''}
-          onChange={(e) => setAns(f.k, e.target.value)}
-          placeholder={f.placeholder || ''}
-        />
-      )}
-
-      {f.type === 'textarea' && (
-        <textarea
-          rows={3}
-          className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-          value={quizData[f.k] || ''}
-          onChange={(e) => setAns(f.k, e.target.value)}
-        />
-      )}
-
-      {f.type === 'select' && (
-        <select
-          className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-          value={quizData[f.k] || ''}
-          onChange={(e) => setAns(f.k, e.target.value)}
-        >
-          <option value="">— Selecciona —</option>
-          {f.options.map((op) => (
-            <option key={op} value={op}>
-              {op}
-            </option>
-          ))}
-        </select>
-      )}
-
-      {f.type === 'radio' && (
-        <div className="flex flex-wrap gap-3">
-          {f.options.map((op) => (
-            <label
-              key={op}
-              className="inline-flex items-center gap-2 text-sm"
-            >
-              <input
-                type="radio"
-                name={`rad-${quizType}-${f.k}`}
-                checked={(quizData[f.k] || '') === op}
-                onChange={() => setAns(f.k, op)}
-              />
-              <span>{op}</span>
-            </label>
-          ))}
-        </div>
-      )}
-
-      {f.hint && (
-        <p className="mt-1 text-xs text-slate-500">{f.hint}</p>
-      )}
-    </div>
-  );
-})}
-
-                  <div className="pt-2 flex flex-wrap gap-3">
-                    <button
-                      onClick={downloadQuizPdf}
-                      className="rounded-xl bg-emerald-600 text-white px-4 py-2 text-sm font-semibold hover:bg-emerald-700"
-                    >
-                      Descargar PDF
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setQuizData({})}
-                      className="rounded-xl bg-white border border-slate-300 text-slate-700 px-4 py-2 text-sm font-semibold hover:bg-slate-50"
-                    >
-                      Limpiar respuestas
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 // ==========================================================
 // Estadisticas
