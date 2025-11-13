@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
+
 const logoIngecap = `${import.meta.env.BASE_URL}ingecap.jpg`;
 // cerca de los otros const de imágenes, al inicio del archivo:
 const logoIngetes = `${import.meta.env.BASE_URL}ingetes.png`;
