@@ -2619,50 +2619,52 @@ const tools = [
 
 // ==========================================================
 // Brief de instrumentación (pantalla completa)
-// ==========================================================
 function BriefInstrumentacionScreen() {
   // Definición de los formularios por tipo de sensor
   const QUIZ = {
-flujo: {
-  title: 'Sensor de flujo',
-  fields: [
-    { 
-      k: 'material',
-      label: 'Material que pasa por la tubería',
-      type: 'select',
-      options: ['Gas', 'Líquido', 'Vapor']
-    },
-    {
-      k: 'liquido',
-      label: 'Si es líquido, especifique cuál es',
-      type: 'text',
-      hint: 'Solo aplica si el material es líquido',
-    },
-    { k:'temp', label:'Rango de temperatura del medio', type:'text', placeholder:'°C' },
-    { k:'dn', label:'Diámetro nominal (DN) de la tubería', type:'text' },
-    {
-      k:'conexion',
-      label:'Conexión a proceso',
-      type:'select',
-      options:['Bridada','Sanitaria (Triclamp)','Otra']
-    },
-    {
-      k:'conexionOtra',
-      label:'Si selecciona "Otra", especifique cuál',
-      type:'text',
-    },
+    flujo: {
+      title: 'Sensor de flujo',
+      fields: [
+        { 
+          k: 'material',
+          label: 'Material que pasa por la tubería',
+          type: 'select',
+          options: ['Gas', 'Líquido', 'Vapor']
+        },
+        {
+          k: 'liquido',
+          label: 'Si es líquido, especifique cuál es',
+          type: 'text',
+          hint: 'Solo aplica si el material es líquido',
+        },
+        { k:'temp', label:'Rango de temperatura del medio', type:'text', placeholder:'°C' },
 
-    // 🔹 AQUÍ van ahora las propiedades por separado
-    { k:'densidad',      label:'Densidad',                    type:'text' },
-    { k:'viscosidad',    label:'Viscosidad',                  type:'text' },
-    { k:'conductividad', label:'Conductividad',               type:'text' },
-    { k:'corrosion',     label:'Resistencia a la corrosión',  type:'text' },
-    { k:'abrasion',      label:'Resistencia a la abrasión',   type:'text' },
+        // 🔹 Este campo se mostrará con input + selector de unidades
+        { k:'dn', label:'Diámetro nominal de la tubería', type:'text' },
 
-    { k:'alimentacion', label:'Alimentación del transmisor', type:'radio', options:['110 VAC','24 VDC'] },
-    { k:'comun', label:'Comunicación', type:'select', options:['HART','Profibus DP','Profibus PA','Foundation Fieldbus','Modbus'] },
-  ],
-},
+        {
+          k:'conexion',
+          label:'Conexión a proceso',
+          type:'select',
+          options:['Bridada','Sanitaria (Triclamp)','Otra']
+        },
+        {
+          k:'conexionOtra',
+          label:'Si selecciona "Otra", especifique cuál',
+          type:'text',
+        },
+
+        // Propiedades del producto (se dibujan como un grupo aparte)
+        { k:'densidad',      label:'Densidad',                    type:'text' },
+        { k:'viscosidad',    label:'Viscosidad',                  type:'text' },
+        { k:'conductividad', label:'Conductividad',               type:'text' },
+        { k:'corrosion',     label:'Resistencia a la corrosión',  type:'text' },
+        { k:'abrasion',      label:'Resistencia a la abrasión',   type:'text' },
+
+        { k:'alimentacion', label:'Alimentación del transmisor', type:'radio', options:['110 VAC','24 VDC'] },
+        { k:'comun', label:'Comunicación', type:'select', options:['HART','Profibus DP','Profibus PA','Foundation Fieldbus','Modbus'] },
+      ],
+    },
     nivel: {
       title: 'Sensor de nivel',
       fields: [
@@ -2720,10 +2722,22 @@ flujo: {
     },
   };
 
-  const [quizType, setQuizType] = useState(null);  // flujo | nivel | temperatura | presion | peso
-  const [quizData, setQuizData] = useState({});    // respuestas
+  // 🔹 Estado del cuestionario
+  const [quizType, setQuizType] = useState(null);      // flujo | nivel | temperatura | presion | peso
+  const [quizData, setQuizData] = useState({});        // respuestas
+
+  // 🔹 NUEVO: Datos generales de la aplicación
+  const [general, setGeneral] = useState({
+    appName: '',
+    empresa: '',
+    contacto: '',
+    cargo: '',
+    celular: '',
+    correo: '',
+  });
 
   const setAns = (k, v) => setQuizData((d) => ({ ...d, [k]: v }));
+  const setGen = (k, v) => setGeneral((g) => ({ ...g, [k]: v }));
 
   // Devuelve solo los campos que realmente están visibles en el formulario
   function getVisibleFields(cfg, type, data) {
@@ -2732,9 +2746,6 @@ flujo: {
       if (type === 'flujo' && f.k === 'liquido' && data.material !== 'Líquido') return false;
       if (type === 'flujo' && f.k === 'conexionOtra' && data.conexion !== 'Otra') return false;
       if (type === 'nivel' && f.k === 'liquido' && data.material !== 'Líquido') return false;
-
-      // El grupo de propiedades del producto (flujo) siempre es visible, así que
-      // sus campos individuales también cuentan como requeridos
       return true;
     });
   }
@@ -2807,10 +2818,48 @@ flujo: {
     doc.text(`Tipo: ${cfg.title}`, pad, y);
     y += 24;
 
+    // 🔹 Bloque de datos generales (solo si hay algo diligenciado)
+    const hasGeneral = Object.values(general).some(v => (v || '').trim());
+    if (hasGeneral) {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
+      y = writeWrap(doc, 'Datos generales de la aplicación', pad, y, 480, true);
+      y += 4;
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(11);
+
+      const pairs = [
+        ['Nombre de la aplicación', general.appName],
+        ['Empresa', general.empresa],
+        ['Nombre de contacto', general.contacto],
+        ['Cargo', general.cargo],
+        ['Celular', general.celular],
+        ['Correo', general.correo],
+      ];
+
+      pairs.forEach(([label, value]) => {
+        const val = (value || '').toString().trim() || '—';
+        y = writeWrap(doc, `• ${label}: ${val}`, pad, y, 480, false);
+      });
+
+      y += 12;
+    }
+
     // Contenido (solo campos visibles)
     const visible = getVisibleFields(cfg, quizType, quizData);
     visible.forEach((f) => {
-      const val = (quizData[f.k] ?? '').toString().trim() || '—';
+      // Valor con manejo especial para DN (flujo) con unidad
+      let raw = (quizData[f.k] ?? '').toString().trim();
+
+      if (quizType === 'flujo' && f.k === 'dn') {
+        const unit = (quizData.dnUnidad || '').toString().trim();
+        if (unit) {
+          raw = raw ? `${raw} ${unit}` : unit;
+        }
+      }
+
+      const val = raw || '—';
       const label = `• ${f.label}:`;
       y = writeWrap(doc, label, pad, y, 480, true);
       y = writeWrap(doc, val, pad + 16, y, 464, false);
@@ -2837,7 +2886,6 @@ flujo: {
     const safeName = cfg.title.replace(/\s+/g, '_');
     doc.save(`Brief_instrumentacion_${safeName}.pdf`);
   }
-
 
   return (
     <section
@@ -2866,8 +2914,9 @@ flujo: {
 
         {/* Contenido principal */}
         <div className="mt-8 grid md:grid-cols-3 gap-6">
-          {/* Columna izquierda: selección de tipo */}
-          <div className="md:col-span-1">
+          {/* Columna izquierda: Card 1 + Card 2 */}
+          <div className="md:col-span-1 space-y-4">
+            {/* Card 1: tipo de sensor */}
             <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
               <p className="text-sm font-medium text-slate-800 mb-3">
                 1. Elige el tipo de sensor
@@ -2939,9 +2988,86 @@ flujo: {
                 </button>
               )}
             </div>
+
+            {/* Card 2: Datos generales */}
+            <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+              <p className="text-sm font-medium text-slate-800 mb-3">
+                2. Datos generales de la aplicación
+              </p>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs text-slate-600 mb-1">
+                    Nombre de la aplicación
+                  </label>
+                  <input
+                    className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                    value={general.appName}
+                    onChange={(e) => setGen('appName', e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-slate-600 mb-1">
+                    Empresa
+                  </label>
+                  <input
+                    className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                    value={general.empresa}
+                    onChange={(e) => setGen('empresa', e.target.value)}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs text-slate-600 mb-1">
+                      Nombre de contacto
+                    </label>
+                    <input
+                      className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                      value={general.contacto}
+                      onChange={(e) => setGen('contacto', e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-slate-600 mb-1">
+                      Cargo
+                    </label>
+                    <input
+                      className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                      value={general.cargo}
+                      onChange={(e) => setGen('cargo', e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs text-slate-600 mb-1">
+                      Celular
+                    </label>
+                    <input
+                      className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                      value={general.celular}
+                      onChange={(e) => setGen('celular', e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-slate-600 mb-1">
+                      Correo
+                    </label>
+                    <input
+                      type="email"
+                      className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                      value={general.correo}
+                      onChange={(e) => setGen('correo', e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Columna derecha: formulario */}
+          {/* Columna derecha: formulario técnico */}
           <div className="md:col-span-2">
             <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
               {!quizType ? (
@@ -2952,139 +3078,166 @@ flujo: {
               ) : (
                 <div className="space-y-4">
                   <h2 className="text-lg font-semibold text-slate-900 mb-2">
-                    2. Responde el Cuestionario – {QUIZ[quizType].title}
+                    3. Responde el Cuestionario – {QUIZ[quizType].title}
                   </h2>
 
-{QUIZ[quizType].fields.map((f) => {
-  // --- Reglas de visibilidad dinámica ---
-  if (quizType === 'flujo' && f.k === 'liquido' && quizData.material !== 'Líquido') {
-    return null;
-  }
-  if (quizType === 'flujo' && f.k === 'conexionOtra' && quizData.conexion !== 'Otra') {
-    return null;
-  }
-  if (quizType === 'nivel' && f.k === 'liquido' && quizData.material !== 'Líquido') {
-    return null;
-  }
+                  {QUIZ[quizType].fields.map((f) => {
+                    // --- Reglas de visibilidad dinámica ---
+                    if (quizType === 'flujo' && f.k === 'liquido' && quizData.material !== 'Líquido') {
+                      return null;
+                    }
+                    if (quizType === 'flujo' && f.k === 'conexionOtra' && quizData.conexion !== 'Otra') {
+                      return null;
+                    }
+                    if (quizType === 'nivel' && f.k === 'liquido' && quizData.material !== 'Líquido') {
+                      return null;
+                    }
 
-  // --- Grupo especial: Propiedades del producto (solo flujo) ---
-  if (quizType === 'flujo' && f.k === 'densidad') {
-    const propKeys = [
-      'densidad',
-      'viscosidad',
-      'conductividad',
-      'corrosion',
-      'abrasion',
-    ];
+                    // --- Grupo especial: Propiedades del producto (solo flujo) ---
+                    if (quizType === 'flujo' && f.k === 'densidad') {
+                      const propKeys = [
+                        'densidad',
+                        'viscosidad',
+                        'conductividad',
+                        'corrosion',
+                        'abrasion',
+                      ];
 
-    return (
-      <div
-        key="grupo-propiedades"
-        className="border border-slate-200 rounded-2xl p-4 bg-slate-50/60"
-      >
-        <p className="text-xs font-semibold text-slate-700 mb-3">
-          Propiedades del producto
-        </p>
+                      return (
+                        <div
+                          key="grupo-propiedades"
+                          className="border border-slate-200 rounded-2xl p-4 bg-slate-50/60"
+                        >
+                          <p className="text-xs font-semibold text-slate-700 mb-3">
+                            Propiedades del producto
+                          </p>
 
-        <div className="space-y-3 pl-2">
-          {propKeys.map((k) => {
-            const field = QUIZ.flujo.fields.find((ff) => ff.k === k);
-            if (!field) return null;
+                          <div className="space-y-3 pl-2">
+                            {propKeys.map((k) => {
+                              const field = QUIZ.flujo.fields.find((ff) => ff.k === k);
+                              if (!field) return null;
 
-            return (
-              <div
-                key={k}
-                className="grid grid-cols-[130px,1fr] gap-3 items-center"
-              >
-                <span className="text-xs text-slate-600">
-                  {field.label}:
-                </span>
-                <input
-                  className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                  value={quizData[k] || ''}
-                  onChange={(e) => setAns(k, e.target.value)}
-                />
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    );
-  }
+                              return (
+                                <div
+                                  key={k}
+                                  className="grid grid-cols-[130px,1fr] gap-3 items-center"
+                                >
+                                  <span className="text-xs text-slate-600">
+                                    {field.label}:
+                                  </span>
+                                  <input
+                                    className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                                    value={quizData[k] || ''}
+                                    onChange={(e) => setAns(k, e.target.value)}
+                                  />
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    }
 
-  // Saltar los otros campos de propiedades porque ya se renderizan en el grupo
-  if (
-    quizType === 'flujo' &&
-    ['viscosidad', 'conductividad', 'corrosion', 'abrasion'].includes(f.k)
-  ) {
-    return null;
-  }
+                    // Saltar los otros campos de propiedades porque ya se renderizan en el grupo
+                    if (
+                      quizType === 'flujo' &&
+                      ['viscosidad', 'conductividad', 'corrosion', 'abrasion'].includes(f.k)
+                    ) {
+                      return null;
+                    }
 
-  // --- Render genérico para el resto de preguntas ---
-  return (
-    <div key={f.k}>
-      <label className="block text-xs text-slate-600 mb-1">
-        {f.label}
-      </label>
+                    // 🔹 Campo especial: Diámetro nominal con selector de unidades
+                    if (quizType === 'flujo' && f.k === 'dn') {
+                      return (
+                        <div key="dn">
+                          <label className="block text-xs text-slate-600 mb-1">
+                            {f.label}
+                          </label>
+                          <div className="flex gap-3">
+                            <input
+                              className="flex-1 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                              value={quizData.dn || ''}
+                              onChange={(e) => setAns('dn', e.target.value)}
+                              placeholder="Ej. 2 o 50"
+                            />
+                            <select
+                              className="w-28 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                              value={quizData.dnUnidad || 'pulg'}
+                              onChange={(e) => setAns('dnUnidad', e.target.value)}
+                            >
+                              <option value="pulg">pulg</option>
+                              <option value="mm">mm</option>
+                            </select>
+                          </div>
+                        </div>
+                      );
+                    }
 
-      {f.type === 'text' && (
-        <input
-          className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-          value={quizData[f.k] || ''}
-          onChange={(e) => setAns(f.k, e.target.value)}
-          placeholder={f.placeholder || ''}
-        />
-      )}
+                    // --- Render genérico para el resto de preguntas ---
+                    return (
+                      <div key={f.k}>
+                        <label className="block text-xs text-slate-600 mb-1">
+                          {f.label}
+                        </label>
 
-      {f.type === 'textarea' && (
-        <textarea
-          rows={3}
-          className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-          value={quizData[f.k] || ''}
-          onChange={(e) => setAns(f.k, e.target.value)}
-        />
-      )}
+                        {f.type === 'text' && (
+                          <input
+                            className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                            value={quizData[f.k] || ''}
+                            onChange={(e) => setAns(f.k, e.target.value)}
+                            placeholder={f.placeholder || ''}
+                          />
+                        )}
 
-      {f.type === 'select' && (
-        <select
-          className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-          value={quizData[f.k] || ''}
-          onChange={(e) => setAns(f.k, e.target.value)}
-        >
-          <option value="">— Selecciona —</option>
-          {f.options.map((op) => (
-            <option key={op} value={op}>
-              {op}
-            </option>
-          ))}
-        </select>
-      )}
+                        {f.type === 'textarea' && (
+                          <textarea
+                            rows={3}
+                            className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                            value={quizData[f.k] || ''}
+                            onChange={(e) => setAns(f.k, e.target.value)}
+                          />
+                        )}
 
-      {f.type === 'radio' && (
-        <div className="flex flex-wrap gap-3">
-          {f.options.map((op) => (
-            <label
-              key={op}
-              className="inline-flex items-center gap-2 text-sm"
-            >
-              <input
-                type="radio"
-                name={`rad-${quizType}-${f.k}`}
-                checked={(quizData[f.k] || '') === op}
-                onChange={() => setAns(f.k, op)}
-              />
-              <span>{op}</span>
-            </label>
-          ))}
-        </div>
-      )}
+                        {f.type === 'select' && (
+                          <select
+                            className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                            value={quizData[f.k] || ''}
+                            onChange={(e) => setAns(f.k, e.target.value)}
+                          >
+                            <option value="">— Selecciona —</option>
+                            {f.options.map((op) => (
+                              <option key={op} value={op}>
+                                {op}
+                              </option>
+                            ))}
+                          </select>
+                        )}
 
-      {f.hint && (
-        <p className="mt-1 text-xs text-slate-500">{f.hint}</p>
-      )}
-    </div>
-  );
-})}
+                        {f.type === 'radio' && (
+                          <div className="flex flex-wrap gap-3">
+                            {f.options.map((op) => (
+                              <label
+                                key={op}
+                                className="inline-flex items-center gap-2 text-sm"
+                              >
+                                <input
+                                  type="radio"
+                                  name={`rad-${quizType}-${f.k}`}
+                                  checked={(quizData[f.k] || '') === op}
+                                  onChange={() => setAns(f.k, op)}
+                                />
+                                <span>{op}</span>
+                              </label>
+                            ))}
+                          </div>
+                        )}
+
+                        {f.hint && (
+                          <p className="mt-1 text-xs text-slate-500">{f.hint}</p>
+                        )}
+                      </div>
+                    );
+                  })}
 
                   <div className="pt-2 flex flex-wrap gap-3">
                     <button
