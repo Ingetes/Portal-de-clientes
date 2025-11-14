@@ -2087,141 +2087,16 @@ return (
 
 // ==========================================================
 // Herramientas (con visor interno PDF)
-// ==========================================================
 function HerramientasScreen() {
   const [preview, setPreview]   = React.useState(null); // { item:{title,href}, src }
   const [term, setTerm]         = React.useState('');
   const [usePdfJs, setUsePdfJs] = React.useState(true);
-  const [copied, setCopied]     = React.useState(false);
 
-  // === Cuestionario de instrumentación (terceros) ===
-  const [quizOpen, setQuizOpen] = React.useState(false);
-  const [quizType, setQuizType] = React.useState(null); // 'flujo'|'nivel'|'temperatura'|'presion'|'peso'
-  const [quizData, setQuizData] = React.useState({});   // respuestas
-
-  // Esquemas por sensor (preguntas resumidas y limpias)
-  const QUIZ = {
-    flujo: {
-      title: 'Sensor de flujo',
-      fields: [
-        { k:'material', label:'Material que pasa por la tubería', type:'select', options:['Gas','Líquido','Vapor'] },
-        { k:'liquido', label:'Si eliges Líquido, ¿cuál?', type:'text', hint:'Opcional si no es líquido' },
-        { k:'temp', label:'Rango de temperatura del medio', type:'text', placeholder:'°C' },
-        { k:'dn', label:'Diámetro nominal de la tubería', type:'text' },
-        { k:'conexion', label:'Conexión a proceso', type:'select', options:['Brida','Sanitaria (Triclamp)','Otra'] },
-        { k:'prop', label:'Propiedades (densidad/viscosidad/conductividad/corrosión/abrasión)', type:'textarea' },
-        { k:'alimentacion', label:'Alimentación del transmisor', type:'radio', options:['110 VAC','24 VDC'] },
-        { k:'comun', label:'Comunicación', type:'select', options:['HART','Profibus DP','Profibus PA','Foundation Fieldbus','Modbus'] },
-      ],
-    },
-    nivel: {
-      title: 'Sensor de nivel',
-      fields: [
-        { k:'modo', label:'Tipo de medición', type:'radio', options:['Continua','Detección'] },
-        { k:'material', label:'Material a medir', type:'select', options:['Líquido','Sólidos a granel','Interfaz'] },
-        { k:'liquido', label:'Si es líquido, ¿cuál?', type:'text' },
-        { k:'altura', label:'Altura del tanque', type:'text' },
-        { k:'diametro', label:'Diámetro del tanque', type:'text' },
-        { k:'conexion', label:'Conexión a proceso', type:'select', options:['Bridada','Roscada','Sanitaria (Triclamp)'] },
-        { k:'comun', label:'Comunicación', type:'select', options:['HART (4–20 mA)','Profibus DP','Modbus'] },
-        { k:'alimentacion', label:'Alimentación', type:'select', options:['110 VAC','24 VDC','Fuente interna'] },
-        { k:'temp', label:'Temperatura del material', type:'text' },
-      ],
-    },
-    temperatura: {
-      title: 'Sensor de temperatura',
-      fields: [
-        { k:'elemento', label:'Elemento/Transmisor', type:'select', options:['RTD (PT100/PT1000)','Termocupla (J/K/S)'] },
-        { k:'rango', label:'Rango de temperatura de proceso', type:'text' },
-        { k:'comun', label:'Comunicación', type:'select', options:['4–20 mA','HART','0–10 V'] },
-        { k:'atex', label:'¿Requiere protección contra explosión?', type:'radio', options:['Sí','No'] },
-      ],
-    },
-    presion: {
-      title: 'Sensor de presión',
-      fields: [
-        { k:'tipo', label:'Tipo de presión (absoluta/manométrica/diferencial)', type:'text' },
-        { k:'comun', label:'Comunicación', type:'select', options:['4–20 mA','0–10 V','HART','Modbus'] },
-        { k:'rango', label:'Rango de presión', type:'text' },
-        { k:'conexion', label:'Conexión a proceso', type:'text' },
-        { k:'precision', label:'Precisión requerida', type:'text' },
-        { k:'elec', label:'¿Conexión eléctrica especial?', type:'text' },
-        { k:'atex', label:'¿Protección contra explosión?', type:'radio', options:['Sí','No'] },
-      ],
-    },
-    peso: {
-      title: 'Sensor de peso (celdas de carga)',
-      fields: [
-        { k:'forma', label:'Forma del tanque', type:'text' },
-        { k:'capVacio', label:'Peso del tanque vacío', type:'text' },
-        { k:'capLleno', label:'Peso del tanque lleno', type:'text' },
-        { k:'apoyos', label:'Número de puntos de apoyo', type:'text' },
-        { k:'gradoIP', label:'Grado IP requerido', type:'text' },
-      ],
-    },
-  };
-
-  // abrir/cerrar
+  // Abre el brief en pantalla completa
   const openQuiz = () => {
-    // en lugar de abrir modal, navegamos a la nueva pantalla
     window.location.hash = '#brief';
   };
-  const closeQuiz = () => { setQuizOpen(false); setQuizType(null); setQuizData({}); emit('portal:overlay',{active:false}); };
 
-  // Cambios de respuesta
-  const setAns = (k, v) => setQuizData((d) => ({ ...d, [k]: v }));
-
-  // Generar PDF (jsPDF en demanda)
-  async function downloadQuizPdf() {
-    if (!quizType) return;
-    const cfg = QUIZ[quizType];
-    const { jsPDF } = await import('jspdf');
-
-    const doc = new jsPDF({ unit:'pt', format:'a4' });
-    const pad = 56;
-    let y = pad;
-
-    // Encabezado
-    doc.setFont('helvetica','bold'); doc.setFontSize(14);
-    doc.text('Cuestionario para selección de intrumentación – INGETES', pad, y); y += 20;
-    doc.setFont('helvetica','normal'); doc.setFontSize(12);
-    doc.text(`Tipo: ${cfg.title}`, pad, y); y += 24;
-
-    // Contenido
-cfg.fields.forEach(f => {
-  // mismas reglas de visibilidad que en el formulario
-  if (quizType === 'flujo' && f.k === 'liquido' && quizData.material !== 'Líquido') return;
-  if (quizType === 'flujo' && f.k === 'conexionOtra' && quizData.conexion !== 'Otra') return;
-  if (quizType === 'nivel' && f.k === 'liquido' && quizData.material !== 'Líquido') return;
-
-  const val = (quizData[f.k] ?? '').toString().trim() || '—';
-  const label = `• ${f.label}:`;
-  y = writeWrap(doc, label, pad, y, 480, true);
-  y = writeWrap(doc, val, pad + 16, y, 464, false);
-  y += 6;
-  if (y > 770) {
-    doc.addPage();
-    y = pad;
-  }
-});
-
-    // Nota
-    y += 8;
-    doc.setFont('helvetica','italic'); doc.setFontSize(10);
-    y = writeWrap(doc, 'Este documento se generó automáticamente desde el Portal de Clientes – INGETES.', pad, y, 480, false);
-
-    const safeName = cfg.title.replace(/\s+/g,'_');
-    doc.save(`Brief_instrumentacion_${safeName}.pdf`);
-  }
-
-  // Helper de texto con salto
-  function writeWrap(doc, text, x, y, maxW, bold=false) {
-    doc.setFont('helvetica', bold ? 'bold' : 'normal');
-    const lines = doc.splitTextToSize(String(text), maxW);
-    lines.forEach(line => { doc.text(line, x, y); y += 16; });
-    return y;
-  }
-  
   const isPdf = (u) => /\.pdf($|[?#])/i.test(u);
 
   const fileNameFromUrl = (url, fallback = 'documento') => {
@@ -2229,27 +2104,34 @@ cfg.fields.forEach(f => {
       const clean = url.split('#')[0].split('?')[0];
       const last = clean.substring(clean.lastIndexOf('/') + 1) || fallback;
       return decodeURIComponent(last);
-    } catch { return fallback; }
+    } catch {
+      return fallback;
+    }
   };
 
-// Reemplaza la función downloadFile por esta versión (en DocumentosScreen y HerramientasScreen)
-const downloadFile = (url, suggestedName) => {
-  const encoded = encodeURI(url); // respeta %20, etc.
-  const name = suggestedName || (() => {
-    try {
-      const clean = encoded.split('#')[0].split('?')[0];
-      return decodeURIComponent(clean.substring(clean.lastIndexOf('/') + 1) || 'documento');
-    } catch { return 'documento'; }
-  })();
+  const downloadFile = (url, suggestedName) => {
+    const encoded = encodeURI(url); // respeta %20, etc.
+    const name =
+      suggestedName ||
+      (() => {
+        try {
+          const clean = encoded.split('#')[0].split('?')[0];
+          return decodeURIComponent(
+            clean.substring(clean.lastIndexOf('/') + 1) || 'documento'
+          );
+        } catch {
+          return 'documento';
+        }
+      })();
 
-  const a = document.createElement('a');
-  a.href = encoded;
-  a.download = name;            // sugiere el nombre
-  a.rel = 'noopener';
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-};
+    const a = document.createElement('a');
+    a.href = encoded;
+    a.download = name;
+    a.rel = 'noopener';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  };
 
   const openPreview = (item, q = '') => {
     if (!isPdf(item.href)) {
@@ -2259,115 +2141,137 @@ const downloadFile = (url, suggestedName) => {
     }
     const src = buildViewerSrc(item.href, q || '', usePdfJs);
     setPreview({ item, src });
-    setCopied(false);
-    emit('portal:overlay', { active: true });  // ← añade
+    // no necesitamos copied aquí
+    emit('portal:overlay', { active: true });
   };
 
-  const applySearch = () => {
-    if (!preview) return;
-    const src = buildViewerSrc(preview.item.href, term, usePdfJs);
-    setPreview({ ...preview, src });
+  // Mapa de bust por clave editable (para romper caché)
+  const [bustMap, setBustMap] = React.useState({});
+
+  React.useEffect(() => {
+    const onFilesUpdated = (e) => {
+      const { results = [] } = e.detail || {};
+      const next = { ...bustMap };
+      results
+        .filter((r) => r.ok && r.bust && r.key)
+        .forEach((r) => {
+          next[r.key] = r.bust;
+        });
+      setBustMap(next);
+    };
+
+    window.addEventListener('portal:filesUpdated', onFilesUpdated);
+    return () => window.removeEventListener('portal:filesUpdated', onFilesUpdated);
+  }, [bustMap]);
+
+  const withBust = (key, url) => {
+    const q = bustMap[key];
+    if (!q) return url;
+    try {
+      const u = new URL(url, window.location.origin);
+      u.search = q;
+      return u.pathname + u.search;
+    } catch {
+      return url + q;
+    }
   };
 
-// Mapa de bust por clave editable
-const [bustMap, setBustMap] = React.useState({});
+  const tools = [
+    {
+      title: 'TIA SELECTION TOOL',
+      desc: 'Selección de equipos para TIA Portal: CPUs, IOs, comunicaciones y accesorios.',
+      badge: 'Siemens',
+      actions: [
+        {
+          label: 'Descargar software',
+          href: 'https://www.siemens.com/tia-selection-tool-standalone',
+        },
+        { label: 'Abrir en Nube', href: 'https://www.siemens.com/tstcloud' },
+      ],
+    },
+    {
+      title: 'PIA SELECTION TOOL',
+      desc: 'Selección para instrumentación y analítica de procesos.',
+      badge: 'Siemens',
+      actions: [
+        {
+          label: 'Abrir',
+          href: 'https://www.pia-portal.automation.siemens.com/default.htm',
+        },
+      ],
+    },
+    {
+      title: 'Cuestionario para selección de intrumentación',
+      desc: 'Cuestionario por tipo de sensor (flujo, nivel, temperatura, presión y peso) y descarga de un PDF con las respuestas.',
+      badge: 'Formulario',
+      actions: [{ label: 'Responder', openQuiz: true }],
+    },
+    {
+      title: 'Configurador de variadores y servomotores SIEMENS',
+      desc: 'Configura variadores, motores y servos según requerimientos.',
+      badge: 'Siemens',
+      actions: [
+        {
+          label: 'Abrir',
+          href: 'https://mall.industry.siemens.com/spice/cloudcm/dashboard?caller=SPC',
+        },
+      ],
+    },
+    {
+      title: 'Compatibilidad de liner (medidores de caudal)',
+      desc: 'Documento de referencia para elegir el liner adecuado según fluido y condiciones.',
+      badge: 'Referencia',
+      actions: [
+        {
+          label: 'Vista previa',
+          href: withBust('liner', DOCS.liner),
+          openInModal: true,
+        },
+      ],
+    },
+    {
+      title: 'Tabla de compatibilidad de materiales',
+      desc: 'Consulta rápida para compatibilidades químicas y de proceso.',
+      badge: 'Referencia',
+      actions: [
+        {
+          label: 'Abrir',
+          href: 'https://www.coleparmer.com/chemical-resistance',
+        },
+        {
+          label: 'Vista previa',
+          href: withBust('chemical', DOCS.chemical),
+          openInModal: true,
+        },
+      ],
+    },
+    {
+      title: 'Guía de selección de celdas de carga',
+      desc: 'Criterios de selección para celdas de carga por aplicación.',
+      badge: 'Guía',
+      actions: [
+        {
+          label: 'Vista previa',
+          href: withBust('celdas', DOCS.celdas),
+          openInModal: true,
+        },
+      ],
+    },
+    {
+      title: 'Herramientas de selección de fuentes',
+      desc: 'Selector para elegir fuentes de alimentación adecuadas según carga y aplicación.',
+      badge: 'Utilidad',
+      actions: [
+        {
+          label: 'Vista previa',
+          href: withBust('sitop', DOCS.sitop),
+          openInModal: true,
+        },
+      ],
+    },
+  ];
 
-// Escucha actualizaciones desde Ajustes
-React.useEffect(() => {
-  const onFilesUpdated = (e) => {
-    const { results = [] } = e.detail || {};
-    const next = { ...bustMap };
-    results.filter(r => r.ok && r.bust && r.key).forEach(r => { next[r.key] = r.bust; });
-    setBustMap(next);
-  };
-  window.addEventListener('portal:filesUpdated', onFilesUpdated);
-  return () => window.removeEventListener('portal:filesUpdated', onFilesUpdated);
-}, [bustMap]);
-
-// Helper para aplicar bust por key
-const withBust = (key, url) => {
-  const q = bustMap[key];
-  if (!q) return url;
-  try { const u = new URL(url, window.location.origin); u.search = q; return u.pathname + u.search; }
-  catch { return url + q; }
-};
-
-// …y en el array "tools", donde uses DOCS.liner / DOCS.chemical / DOCS.celdas:
-actions: [{ label: 'Vista previa', href: withBust('liner', DOCS.liner), openInModal: true }]
-// idem para 'chemical' y 'celdas'
-
-const tools = [
-  {
-    title: 'TIA SELECTION TOOL',
-    desc: 'Selección de equipos para TIA Portal: CPUs, IOs, comunicaciones y accesorios.',
-    badge: 'Siemens',
-    actions: [
-      { label: 'Descargar software', href: 'https://www.siemens.com/tia-selection-tool-standalone' },
-      { label: 'Abrir en Nube', href: 'https://www.siemens.com/tstcloud' },
-    ],
-  },
-  {
-    title: 'PIA SELECTION TOOL',
-    desc: 'Selección para instrumentación y analítica de procesos.',
-    badge: 'Siemens',
-    actions: [
-      { label: 'Abrir', href: 'https://www.pia-portal.automation.siemens.com/default.htm' },
-    ],
-  },
-  {
-    title: 'Cuestionario para selección de intrumentación',
-    desc: 'Cuestionario por tipo de sensor (flujo, nivel, temperatura, presión y peso) y descarga de un PDF con las respuestas.',
-    badge: 'Formulario',
-    actions: [
-      { label: 'Responder', openQuiz: true }
-    ],
-  },
-  {
-    title: 'Configurador de variadores y servomotores SIEMENS',
-    desc: 'Configura variadores, motores y servos según requerimientos.',
-    badge: 'Siemens',
-    actions: [
-      { label: 'Abrir', href: 'https://mall.industry.siemens.com/spice/cloudcm/dashboard?caller=SPC' },
-    ],
-  },
-  {
-    title: 'Compatibilidad de liner (medidores de caudal)',
-    desc: 'Documento de referencia para elegir el liner adecuado según fluido y condiciones.',
-    badge: 'Referencia',
-    actions: [
-      { label: 'Vista previa', href: withBust('liner', DOCS.liner), openInModal: true },
-    ],
-  },
-  {
-    title: 'Tabla de compatibilidad de materiales',
-    desc: 'Consulta rápida para compatibilidades químicas y de proceso.',
-    badge: 'Referencia',
-    actions: [
-      { label: 'Abrir', href: 'https://www.coleparmer.com/chemical-resistance' },
-      { label: 'Vista previa', href: withBust('chemical', DOCS.chemical), openInModal: true },
-    ],
-  },
-  {
-    title: 'Guía de selección de celdas de carga',
-    desc: 'Criterios de selección para celdas de carga por aplicación.',
-    badge: 'Guía',
-    actions: [
-      { label: 'Vista previa', href: withBust('celdas', DOCS.celdas), openInModal: true },
-    ],
-  },
-  // --- NUEVAS HERRAMIENTAS AÑADIDAS ---
-{
-  title: 'Herramientas de selección de fuentes',
-  desc: 'Selector para elegir fuentes de alimentación adecuadas según carga y aplicación.',
-  badge: 'Utilidad',
-  actions: [
-    // Abre el visor interno (pdf.js). Desde el modal ya tienes botón "Descargar".
-    { label: 'Vista previa', href: withBust('sitop', DOCS.sitop), openInModal: true },
-  ],
-},
-];
-
-  // Desde el chatbot
+  // Desde el chatbot (visor para sección Herramientas)
   React.useEffect(() => {
     const onOpen = (e) => {
       const d = e.detail || {};
@@ -2381,30 +2285,41 @@ const tools = [
   }, [usePdfJs]);
 
   return (
-    <section id="herramientas" className="min-h-[70vh] border-t border-slate-100 bg-transparent relative z-10">
+    <section
+      id="herramientas"
+      className="min-h-[70vh] border-t border-slate-100 bg-transparent relative z-10"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-emerald-700">Herramientas comerciales para los canales</h1>
-            <p className="mt-2 text-slate-700 max-w-2xl">Accede a utilidades tecnicas y de seleccion que agilizan tu preingenieria y cotizacion.</p>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-emerald-700">
+              Herramientas comerciales para los canales
+            </h1>
+            <p className="mt-2 text-slate-700 max-w-2xl">
+              Accede a utilidades tecnicas y de seleccion que agilizan tu
+              preingenieria y cotizacion.
+            </p>
           </div>
-<a
-  href="#home"
-  onClick={() => sessionStorage.setItem("scrollToCards", "true")}
-  className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
->
-  ← Volver
-</a>
-
+          <a
+            href="#home"
+            onClick={() => sessionStorage.setItem('scrollToCards', 'true')}
+            className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+          >
+            ← Volver
+          </a>
         </div>
 
         <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {tools.map((t, i) => (
-            <article key={i} className="relative rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow overflow-hidden"
-                >
+            <article
+              key={i}
+              className="relative rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+            >
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-bold text-slate-900">{t.title}</h3>
-                <span className="text-xs px-2 py-1 rounded-full bg-slate-50 text-slate-700 border border-slate-200">{t.badge}</span>
+                <span className="text-xs px-2 py-1 rounded-full bg-slate-50 text-slate-700 border border-slate-200">
+                  {t.badge}
+                </span>
               </div>
               <p className="mt-2 text-slate-700 text-sm">{t.desc}</p>
               <div className="mt-5 flex flex-wrap gap-3">
@@ -2413,15 +2328,25 @@ const tools = [
                     <button
                       key={idx}
                       onClick={openQuiz}
-                      className={`rounded-xl px-4 py-2 text-sm font-semibold ${idx === 0 ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-white text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50'}`}
+                      className={`rounded-xl px-4 py-2 text-sm font-semibold ${
+                        idx === 0
+                          ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                          : 'bg-white text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50'
+                      }`}
                     >
                       {a.label}
                     </button>
                   ) : a.openInModal ? (
                     <button
                       key={idx}
-                      onClick={() => openPreview({ title: t.title, href: a.href })}
-                      className={`rounded-xl px-4 py-2 text-sm font-semibold ${idx === 0 ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-white text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50'}`}
+                      onClick={() =>
+                        openPreview({ title: t.title, href: a.href })
+                      }
+                      className={`rounded-xl px-4 py-2 text-sm font-semibold ${
+                        idx === 0
+                          ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                          : 'bg-white text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50'
+                      }`}
                     >
                       {a.label}
                     </button>
@@ -2431,7 +2356,11 @@ const tools = [
                       href={a.href}
                       target="_blank"
                       rel="noopener"
-                      className={`rounded-xl px-4 py-2 text-sm font-semibold ${idx === 0 ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-white text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50'}`}
+                      className={`rounded-xl px-4 py-2 text-sm font-semibold ${
+                        idx === 0
+                          ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                          : 'bg-white text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50'
+                      }`}
                     >
                       {a.label}
                     </a>
@@ -2445,15 +2374,22 @@ const tools = [
 
       {/* Modal visor */}
       {preview && (
-        <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
+        <div
+          className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/50 p-4"
+          role="dialog"
+          aria-modal="true"
+        >
           <div className="w-full max-w-6xl rounded-3xl bg-white shadow-2xl overflow-hidden">
             <div className="flex items-center justify-between border-b border-slate-200 p-4">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">{preview.item.title}</h3>
-                <p className="text-xs text-slate-500">Visor interno • Herramientas</p>
+                <h3 className="text-lg font-bold text-slate-900">
+                  {preview.item.title}
+                </h3>
+                <p className="text-xs text-slate-500">
+                  Visor interno • Herramientas
+                </p>
               </div>
               <div className="flex items-center gap-2">
-                {/* Mostrar checkbox solo para PDFs */}
                 {isPdf(preview.item.href) && (
                   <label className="hidden md:inline-flex items-center gap-2 mr-3 text-xs text-slate-600 cursor-pointer select-none">
                     <input
@@ -2462,25 +2398,41 @@ const tools = [
                       onChange={(e) => {
                         const v = e.target.checked;
                         setUsePdfJs(v);
-                        setPreview(p => p ? ({ ...p, src: buildViewerSrc(p.item.href, term, v) }) : p);
+                        setPreview((p) =>
+                          p
+                            ? {
+                                ...p,
+                                src: buildViewerSrc(
+                                  p.item.href,
+                                  term,
+                                  v
+                                ),
+                              }
+                            : p
+                        );
                       }}
                     />
                     Usar visor pdf.js
                   </label>
                 )}
-              
-                {/* Mostrar botón Descargar solo si NO es Inventario INGETES */}
-                {preview.item.key !== 'inventario' && (
-                  <button
-                    onClick={() => downloadFile(preview.item.href, fileNameFromUrl(preview.item.href))}
-                    className="rounded-xl bg-slate-900 px-3 py-2 text-white text-sm font-semibold hover:bg-black"
-                  >
-                    Descargar
-                  </button>
-                )}
-              
+
                 <button
-                  onClick={() => { setPreview(null); emit('portal:overlay', { active: false }); }}
+                  onClick={() =>
+                    downloadFile(
+                      preview.item.href,
+                      fileNameFromUrl(preview.item.href)
+                    )
+                  }
+                  className="rounded-xl bg-slate-900 px-3 py-2 text-white text-sm font-semibold hover:bg-black"
+                >
+                  Descargar
+                </button>
+
+                <button
+                  onClick={() => {
+                    setPreview(null);
+                    emit('portal:overlay', { active: false });
+                  }}
                   className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold hover:bg-slate-50"
                 >
                   Cerrar
@@ -2488,127 +2440,13 @@ const tools = [
               </div>
             </div>
             <div className="h-[75vh]">
-<div className="h-[75vh]">
-  <iframe
-    title="Visor PDF"
-    src={preview.src} // <- ya viene generado por buildViewerSrc con linktarget=blank
-    className="w-full h-[calc(100vh-120px)]"
-    allow="fullscreen"
-    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
-  />
-</div>
-            </div>
-          </div>
-        </div>
-      )}
-      {/* Modal – Cuestionario para selección de intrumentación */}
-      {quizOpen && (
-        <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
-          <div className="w-full max-w-3xl rounded-3xl bg-white shadow-2xl overflow-hidden">
-            <div className="flex items-center justify-between border-b border-slate-200 p-4">
-              <div>
-                <h3 className="text-lg font-bold text-slate-900">
-                  {quizType ? QUIZ[quizType].title : 'Cuestionario para selección de intrumentación'}
-                </h3>
-                <p className="text-xs text-slate-500">
-                  {quizType ? 'Completa el cuestionario y descarga el PDF.' : 'Elige el tipo de sensor para iniciar.'}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                {quizType && (
-                  <button
-                    onClick={downloadQuizPdf}
-                    className="rounded-xl bg-slate-900 px-3 py-2 text-white text-sm font-semibold hover:bg-black"
-                  >
-                    Descargar PDF
-                  </button>
-                )}
-                <button
-                  onClick={closeQuiz}
-                  className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold hover:bg-slate-50"
-                >
-                  Cerrar
-                </button>
-              </div>
-            </div>
-
-            <div className="max-h-[75vh] overflow-y-auto p-5">
-              {!quizType ? (
-                <div>
-                  <p className="text-sm text-slate-700 mb-4">Selecciona el tipo de sensor:</p>
-                  <div className="flex flex-wrap gap-2">
-                    <button onClick={()=>setQuizType('flujo')} className="rounded-xl bg-emerald-600 text-white px-4 py-2 font-semibold hover:bg-emerald-700">Flujo</button>
-                    <button onClick={()=>setQuizType('nivel')} className="rounded-xl bg-emerald-600 text-white px-4 py-2 font-semibold hover:bg-emerald-700">Nivel</button>
-                    <button onClick={()=>setQuizType('temperatura')} className="rounded-xl bg-emerald-600 text-white px-4 py-2 font-semibold hover:bg-emerald-700">Temperatura</button>
-                    <button onClick={()=>setQuizType('presion')} className="rounded-xl bg-emerald-600 text-white px-4 py-2 font-semibold hover:bg-emerald-700">Presión</button>
-                    <button onClick={()=>setQuizType('peso')} className="rounded-xl bg-emerald-600 text-white px-4 py-2 font-semibold hover:bg-emerald-700">Peso</button>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {QUIZ[quizType].fields.map(f => (
-                    <div key={f.k}>
-                      <label className="block text-xs text-slate-600 mb-1">{f.label}</label>
-
-                      {f.type === 'text' && (
-                        <input
-                          className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                          value={quizData[f.k] || ''}
-                          onChange={(e)=>setAns(f.k, e.target.value)}
-                          placeholder={f.placeholder || ''}
-                        />
-                      )}
-
-                      {f.type === 'textarea' && (
-                        <textarea
-                          rows={3}
-                          className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                          value={quizData[f.k] || ''}
-                          onChange={(e)=>setAns(f.k, e.target.value)}
-                        />
-                      )}
-
-                      {f.type === 'select' && (
-                        <select
-                          className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                          value={quizData[f.k] || ''}
-                          onChange={(e)=>setAns(f.k, e.target.value)}
-                        >
-                          <option value="">— Selecciona —</option>
-                          {f.options.map(op => <option key={op} value={op}>{op}</option>)}
-                        </select>
-                      )}
-
-                      {f.type === 'radio' && (
-                        <div className="flex flex-wrap gap-3">
-                          {f.options.map(op => (
-                            <label key={op} className="inline-flex items-center gap-2 text-sm">
-                              <input
-                                type="radio"
-                                name={`rad-${quizType}-${f.k}`}
-                                checked={(quizData[f.k] || '') === op}
-                                onChange={()=>setAns(f.k, op)}
-                              />
-                              <span>{op}</span>
-                            </label>
-                          ))}
-                        </div>
-                      )}
-
-                      {f.hint && <p className="mt-1 text-xs text-slate-500">{f.hint}</p>}
-                    </div>
-                  ))}
-
-                  <div className="pt-2">
-                    <button
-                      onClick={downloadQuizPdf}
-                      className="rounded-xl bg-emerald-600 text-white px-4 py-2 font-semibold hover:bg-emerald-700"
-                    >
-                      Descargar PDF
-                    </button>
-                  </div>
-                </div>
-              )}
+              <iframe
+                title="Visor PDF"
+                src={preview.src}
+                className="w-full h-[calc(100vh-120px)]"
+                allow="fullscreen"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
+              />
             </div>
           </div>
         </div>
