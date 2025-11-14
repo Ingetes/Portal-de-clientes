@@ -2461,82 +2461,91 @@ function HerramientasScreen() {
 // Brief de instrumentación (pantalla completa)
 function BriefInstrumentacionScreen() {
   // Definición de los formularios por tipo de sensor
-  const QUIZ = {
-    flujo: {
-      title: 'Sensor de flujo',
-      fields: [
-        // 1) PROPIEDADES DEL PRODUCTO (BLOQUE AL INICIO)
-        { k: 'densidad',      label: 'Densidad',                    type: 'text' },
-        { k: 'viscosidad',    label: 'Viscosidad',                  type: 'text' },
-        { k: 'conductividad', label: 'Conductividad',               type: 'text' },
-        {
-          k: 'corrosion',
-          label: 'Resistencia a la corrosión (opcional)',
-          type: 'text'
-        },
-        {
-          k: 'abrasion',
-          label: 'Resistencia a la abrasión (opcional)',
-          type: 'text'
-        },
+const QUIZ = {
+  flujo: {
+    title: 'Sensor de flujo',
+    fields: [
+      // 1) PROPIEDADES DEL PRODUCTO (BLOQUE AL INICIO)
+      { k: 'densidad',      label: 'Densidad',                    type: 'text' },
+      { k: 'viscosidad',    label: 'Viscosidad',                  type: 'text' },
+      { k: 'conductividad', label: 'Conductividad',               type: 'text' }, // ahora opcional en validación
+      {
+        k: 'corrosion',
+        label: 'Resistencia a la corrosión (opcional)',
+        type: 'text'
+      },
+      {
+        k: 'abrasion',
+        label: 'Resistencia a la abrasión (opcional)',
+        type: 'text'
+      },
 
-        // 2) PROPIEDADES DEL SENSOR / PROCESO
-        {
-          k: 'material',
-          label: 'Material que pasa por la tubería',
-          type: 'select',
-          options: ['Gas', 'Líquido', 'Vapor']
-        },
-        {
-          k: 'liquido',
-          label: 'Si es líquido, especifique cuál es',
-          type: 'text',
-          hint: 'Solo aplica si el material es líquido',
-        },
-        { k: 'temp', label: 'Rango de temperatura del medio', type: 'text', placeholder: '°C' },
+      // 2) PROPIEDADES DEL SENSOR / PROCESO
+      {
+        k: 'material',
+        label: 'Material que pasa por la tubería',
+        type: 'select',
+        options: ['Gas', 'Líquido', 'Vapor']
+      },
+      {
+        k: 'liquido',
+        label: 'Si es líquido, especifique cuál es',
+        type: 'text',
+        hint: 'Solo aplica si el material es líquido',
+      },
+      {
+        k: 'gas',
+        label: 'Si es gas, especifique cuál es',
+        type: 'text',
+        hint: 'Solo aplica si el material es gas',
+      },
+      { k: 'temp', label: 'Rango de temperatura del medio', type: 'text', placeholder: '°C' },
 
-        // DN con unidades
-        { k: 'dn', label: 'Diámetro nominal de la tubería', type: 'text' },
+      // nuevo campo: presión del medio
+      { k: 'presionMedio', label: 'Rango de la presión del medio', type: 'text', placeholder: 'bar, psi, etc.' },
 
-        {
-          k: 'conexion',
-          label: 'Conexión a proceso',
-          type: 'select',
-          options: ['brida', 'Sanitaria (Triclamp)', 'Otra']
-        },
-        {
-          k: 'conexionOtra',
-          label: 'Si selecciona "Otra", especifique cuál',
-          type: 'text',
-        },
+      // DN con unidades
+      { k: 'dn', label: 'Diámetro nominal de la tubería', type: 'text' },
 
-        // 3) TRANSMISOR (AL FINAL)
-        {
-          k: 'montaje',
-          label: 'Montaje del transmisor',
-          type: 'select',
-          options: ['Compacto', 'Remoto']
-        },
-        {
-          k: 'montajeDist',
-          label: 'Si es remoto, distancia entre sensor y transmisor',
-          type: 'text',
-          placeholder: 'Ej. 5 m'
-        },
-        {
-          k: 'alimentacion',
-          label: 'Alimentación del transmisor',
-          type: 'radio',
-          options: ['110 VAC', '24 VDC']
-        },
-        {
-          k: 'comun',
-          label: 'Comunicación',
-          type: 'select',
-          options: ['HART', 'Profibus DP', 'Profibus PA', 'Foundation Fieldbus', 'Modbus']
-        },
-      ],
-    },
+      {
+        k: 'conexion',
+        label: 'Conexión a proceso',
+        type: 'select',
+        options: ['Brida (flange)', 'Sanitaria (Triclamp)', 'Otra']
+      },
+      {
+        k: 'conexionOtra',
+        label: 'Si selecciona "Otra", especifique cuál',
+        type: 'text',
+      },
+
+      // 3) TRANSMISOR (AL FINAL)
+      {
+        k: 'montaje',
+        label: 'Montaje del transmisor',
+        type: 'select',
+        options: ['Compacto', 'Remoto']
+      },
+      {
+        k: 'montajeDist',
+        label: 'Si es remoto, distancia entre sensor y transmisor',
+        type: 'text',
+        placeholder: 'Ej. 5 m'
+      },
+      {
+        k: 'alimentacion',
+        label: 'Alimentación del transmisor',
+        type: 'radio',
+        options: ['110 VAC', '24 VDC']
+      },
+      {
+        k: 'comun',
+        label: 'Comunicación',
+        type: 'select',
+        options: ['HART', 'Profibus DP', 'Profibus PA', 'Foundation Fieldbus', 'Modbus']
+      },
+    ],
+  },
     nivel: {
       title: 'Sensor de nivel',
       fields: [
@@ -2612,16 +2621,17 @@ function BriefInstrumentacionScreen() {
   const setGen = (k, v) => setGeneral((g) => ({ ...g, [k]: v }));
 
   // Devuelve solo los campos que realmente están visibles en el formulario
-  function getVisibleFields(cfg, type, data) {
-    return cfg.fields.filter((f) => {
-      // Reglas de visibilidad (las mismas que usamos en el render)
-      if (type === 'flujo' && f.k === 'liquido' && data.material !== 'Líquido') return false;
-      if (type === 'flujo' && f.k === 'conexionOtra' && data.conexion !== 'Otra') return false;
-      if (type === 'flujo' && f.k === 'montajeDist' && data.montaje !== 'Remoto') return false;
-      if (type === 'nivel' && f.k === 'liquido' && data.material !== 'Líquido') return false;
-      return true;
-    });
-  }
+function getVisibleFields(cfg, type, data) {
+  return cfg.fields.filter((f) => {
+    // Reglas de visibilidad (las mismas que usamos en el render)
+    if (type === 'flujo' && f.k === 'liquido' && data.material !== 'Líquido') return false;
+    if (type === 'flujo' && f.k === 'gas' && data.material !== 'Gas') return false;
+    if (type === 'flujo' && f.k === 'conexionOtra' && data.conexion !== 'Otra') return false;
+    if (type === 'flujo' && f.k === 'montajeDist' && data.montaje !== 'Remoto') return false;
+    if (type === 'nivel' && f.k === 'liquido' && data.material !== 'Líquido') return false;
+    return true;
+  });
+}
 
   // Valida que TODOS los campos obligatorios estén llenos
   function validateQuizBeforeDownload() {
@@ -2650,12 +2660,12 @@ function BriefInstrumentacionScreen() {
 
     const missingFields = visible.filter((f) => {
       // En flujo, corrosión y abrasión son opcionales
-      if (
-        quizType === 'flujo' &&
-        (f.k === 'corrosion' || f.k === 'abrasion')
-      ) {
-        return false;
-      }
+if (
+  quizType === 'flujo' &&
+  (f.k === 'corrosion' || f.k === 'abrasion' || f.k === 'conductividad')
+) {
+  return false;
+}
 
       const v = (quizData[f.k] ?? '').toString().trim();
       return !v; // vacío → falta
@@ -2983,6 +2993,9 @@ function BriefInstrumentacionScreen() {
                     if (quizType === 'flujo' && f.k === 'liquido' && quizData.material !== 'Líquido') {
                       return null;
                     }
+                    if (quizType === 'flujo' && f.k === 'gas' && quizData.material !== 'Gas') {
+                      return null;
+                    }
                     if (quizType === 'flujo' && f.k === 'conexionOtra' && quizData.conexion !== 'Otra') {
                       return null;
                     }
@@ -3062,10 +3075,10 @@ function BriefInstrumentacionScreen() {
                             />
                             <select
                               className="w-28 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                              value={quizData.dnUnidad || 'pulg'}
+                              value={quizData.dnUnidad || 'in'}
                               onChange={(e) => setAns('dnUnidad', e.target.value)}
                             >
-                              <option value="pulg">pulg</option>
+                              <option value="in">pulg</option>
                               <option value="mm">mm</option>
                             </select>
                           </div>
