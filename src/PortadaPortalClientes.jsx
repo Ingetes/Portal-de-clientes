@@ -2636,15 +2636,44 @@ nivel: {
     },
   ],
 },
-    temperatura: {
-      title: 'Sensor de temperatura',
-      fields: [
-        { k: 'elemento', label: 'Elemento/Transmisor', type: 'select', options: ['RTD (PT100/PT1000)', 'Termocupla (J/K/S)'] },
-        { k: 'rango', label: 'Rango de temperatura de proceso', type: 'text' },
-        { k: 'comun', label: 'Comunicación', type: 'select', options: ['4–20 mA', 'HART', '0–10 V'] },
-        { k: 'atex', label: '¿Requiere protección contra explosión?', type: 'radio', options: ['Sí', 'No'] },
-      ],
+temperatura: {
+  title: 'Sensor de temperatura',
+  fields: [
+    {
+      k: 'elemento',
+      label: 'Elemento / Transmisor',
+      type: 'select',
+      options: ['RTD (PT100/PT1000)', 'Termocupla (J/K/S)'],
     },
+    {
+      k: 'rango',
+      label: 'Rango de temperatura de proceso',
+      type: 'text',
+      placeholder: 'Ej. -50 °C a 300 °C',
+    },
+
+    // 👇 NUEVO CAMPO
+    {
+      k: 'displayTemp',
+      label: '¿Con display local?',
+      type: 'radio',
+      options: ['Con display', 'Sin display'],
+    },
+
+    {
+      k: 'comun',
+      label: 'Comunicación',
+      type: 'select',
+      options: ['4–20 mA', 'HART', '0–10 V'],
+    },
+    {
+      k: 'atex',
+      label: '¿Requiere protección contra explosión?',
+      type: 'radio',
+      options: ['Sí', 'No'],
+    },
+  ],
+},
     presion: {
       title: 'Sensor de presión',
       fields: [
