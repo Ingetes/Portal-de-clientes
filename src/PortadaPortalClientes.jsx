@@ -3078,7 +3078,7 @@ if (
                               value={quizData.dnUnidad || 'in'}
                               onChange={(e) => setAns('dnUnidad', e.target.value)}
                             >
-                              <option value="in">pulg</option>
+                              <option value="in">in</option>
                               <option value="mm">mm</option>
                             </select>
                           </div>
