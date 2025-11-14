@@ -2502,7 +2502,7 @@ function BriefInstrumentacionScreen() {
           k: 'conexion',
           label: 'Conexión a proceso',
           type: 'select',
-          options: ['Bridada', 'Sanitaria (Triclamp)', 'Otra']
+          options: ['brida', 'Sanitaria (Triclamp)', 'Otra']
         },
         {
           k: 'conexionOtra',
@@ -2555,7 +2555,7 @@ function BriefInstrumentacionScreen() {
         },
         { k: 'altura', label: 'Altura del tanque', type: 'text' },
         { k: 'diametro', label: 'Diámetro del tanque', type: 'text' },
-        { k: 'conexion', label: 'Conexión a proceso', type: 'select', options: ['Bridada', 'Roscada', 'Sanitaria (Triclamp)'] },
+        { k: 'conexion', label: 'Conexión a proceso', type: 'select', options: ['brida', 'Roscada', 'Sanitaria (Triclamp)'] },
         { k: 'comun', label: 'Comunicación', type: 'select', options: ['HART (4–20 mA)', 'Profibus DP', 'Modbus'] },
         { k: 'alimentacion', label: 'Alimentación', type: 'select', options: ['110 VAC', '24 VDC', 'Fuente interna'] },
         { k: 'temp', label: 'Temperatura del material', type: 'text' },
