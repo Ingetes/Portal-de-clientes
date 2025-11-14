@@ -2553,30 +2553,89 @@ const QUIZ = {
       },
     ],
   },
-    nivel: {
-      title: 'Sensor de nivel',
-      fields: [
-        { k: 'modo', label: 'Tipo de medición', type: 'radio', options: ['Continua', 'Detección'] },
-        {
-          k: 'material',
-          label: 'Material a medir',
-          type: 'select',
-          options: ['Líquido', 'Sólidos a granel', 'Interfaz']
-        },
-        {
-          // SOLO se mostrará si material === "Líquido"
-          k: 'liquido',
-          label: 'Si es líquido, ¿cuál?',
-          type: 'text',
-        },
-        { k: 'altura', label: 'Altura del tanque', type: 'text' },
-        { k: 'diametro', label: 'Diámetro del tanque', type: 'text' },
-        { k: 'conexion', label: 'Conexión a proceso', type: 'select', options: ['brida', 'Roscada', 'Sanitaria (Triclamp)'] },
-        { k: 'comun', label: 'Comunicación', type: 'select', options: ['HART (4–20 mA)', 'Profibus DP', 'Modbus'] },
-        { k: 'alimentacion', label: 'Alimentación', type: 'select', options: ['110 VAC', '24 VDC', 'Fuente interna'] },
-        { k: 'temp', label: 'Temperatura del material', type: 'text' },
-      ],
+nivel: {
+  title: 'Sensor de nivel',
+  fields: [
+    { 
+      k: 'modo',
+      label: 'Tipo de medición',
+      type: 'radio',
+      options: ['Continua', 'Detección']
     },
+    {
+      k: 'material',
+      label: 'Material a medir',
+      type: 'select',
+      options: ['Líquido', 'Sólidos a granel', 'Interfaz']
+    },
+    {
+      k: 'liquido',
+      label: 'Si es líquido, ¿cuál?',
+      type: 'text',
+    },
+
+    // SOLO si material === "Interfaz"
+    {
+      k: 'interfazFluidos',
+      label: 'Si es interfaz, fluidos de proceso',
+      type: 'text',
+      hint: 'Ej. Agua / Aceite, Agua / Combustible',
+    },
+    {
+      k: 'interfazSonda',
+      label: 'Si es interfaz, longitud de la sonda',
+      type: 'text',
+      placeholder: 'Ej. 1.5 m o 1500 mm',
+    },
+
+    { k: 'altura', label: 'Altura del tanque', type: 'text' },
+
+    // Diámetro con unidades (igual estilo que flujo)
+    { k: 'diametro', label: 'Diámetro del tanque', type: 'text' },
+
+    {
+      k: 'conexion',
+      label: 'Conexión a proceso',
+      type: 'select',
+      options: ['Brida', 'Roscada', 'Sanitaria (Triclamp)']
+    },
+
+    // Temperatura / presión de almacenamiento
+    {
+      k: 'temp',
+      label: 'Temperatura de almacenamiento',
+      type: 'text',
+      placeholder: '°C',
+    },
+    {
+      k: 'presionAlmacenamiento',
+      label: 'Presión de almacenamiento',
+      type: 'text',
+      placeholder: 'bar, psi, etc.',
+    },
+
+    // Display del equipo
+    {
+      k: 'display',
+      label: '¿Con display local?',
+      type: 'radio',
+      options: ['Con display', 'Sin display'],
+    },
+
+    { 
+      k: 'comun',
+      label: 'Comunicación',
+      type: 'select',
+      options: ['HART (4–20 mA)', 'Profibus DP', 'Modbus']
+    },
+    {
+      k: 'alimentacion',
+      label: 'Alimentación',
+      type: 'select',
+      options: ['110 VAC', '24 VDC', 'Fuente interna']
+    },
+  ],
+},
     temperatura: {
       title: 'Sensor de temperatura',
       fields: [
@@ -2630,12 +2689,17 @@ const QUIZ = {
   // Devuelve solo los campos que realmente están visibles en el formulario
 function getVisibleFields(cfg, type, data) {
   return cfg.fields.filter((f) => {
-    // Reglas de visibilidad (las mismas que usamos en el render)
+    // Flujo
     if (type === 'flujo' && f.k === 'liquido' && data.material !== 'Líquido') return false;
     if (type === 'flujo' && f.k === 'gas' && data.material !== 'Gas') return false;
     if (type === 'flujo' && f.k === 'conexionOtra' && data.conexion !== 'Otra') return false;
     if (type === 'flujo' && f.k === 'montajeDist' && data.montaje !== 'Remoto') return false;
+
+    // Nivel
     if (type === 'nivel' && f.k === 'liquido' && data.material !== 'Líquido') return false;
+    if (type === 'nivel' && f.k === 'interfazFluidos' && data.material !== 'Interfaz') return false;
+    if (type === 'nivel' && f.k === 'interfazSonda' && data.material !== 'Interfaz') return false;
+
     return true;
   });
 }
@@ -2762,27 +2826,31 @@ if (
 
     // Contenido técnico (solo campos visibles)
     const visible = getVisibleFields(cfg, quizType, quizData);
-    visible.forEach((f) => {
-      // Valor con manejo especial para DN (flujo) con unidad
-      let raw = (quizData[f.k] ?? '').toString().trim();
+visible.forEach((f) => {
+  let raw = (quizData[f.k] ?? '').toString().trim();
 
-      if (quizType === 'flujo' && f.k === 'dn') {
-        const unit = (quizData.dnUnidad || '').toString().trim();
-        if (unit) {
-          raw = raw ? `${raw} ${unit}` : unit;
-        }
-      }
+  // Flujo: diámetro nominal con unidad
+  if (quizType === 'flujo' && f.k === 'dn') {
+    const unit = (quizData.dnUnidad || '').toString().trim();
+    if (unit) raw = raw ? `${raw} ${unit}` : unit;
+  }
 
-      const val = raw || '—';
-      const label = `• ${f.label}:`;
-      y = writeWrap(doc, label, pad, y, 480, true);
-      y = writeWrap(doc, val, pad + 16, y, 464, false);
-      y += 6;
-      if (y > 770) {
-        doc.addPage();
-        y = pad;
-      }
-    });
+  // Nivel: diámetro del tanque con unidad
+  if (quizType === 'nivel' && f.k === 'diametro') {
+    const unit = (quizData.diametroUnidad || '').toString().trim();
+    if (unit) raw = raw ? `${raw} ${unit}` : unit;
+  }
+
+  const val = raw || '—';
+  const label = `• ${f.label}:`;
+  y = writeWrap(doc, label, pad, y, 480, true);
+  y = writeWrap(doc, val, pad + 16, y, 464, false);
+  y += 6;
+  if (y > 770) {
+    doc.addPage();
+    y = pad;
+  }
+});
 
     // Nota
     y += 8;
@@ -2995,23 +3063,16 @@ if (
                     3. Responde el Cuestionario – {QUIZ[quizType].title}
                   </h2>
 
-                  {QUIZ[quizType].fields.map((f) => {
-                    // --- Reglas de visibilidad dinámica ---
-                    if (quizType === 'flujo' && f.k === 'liquido' && quizData.material !== 'Líquido') {
-                      return null;
-                    }
-                    if (quizType === 'flujo' && f.k === 'gas' && quizData.material !== 'Gas') {
-                      return null;
-                    }
-                    if (quizType === 'flujo' && f.k === 'conexionOtra' && quizData.conexion !== 'Otra') {
-                      return null;
-                    }
-                    if (quizType === 'flujo' && f.k === 'montajeDist' && quizData.montaje !== 'Remoto') {
-                      return null;
-                    }
-                    if (quizType === 'nivel' && f.k === 'liquido' && quizData.material !== 'Líquido') {
-                      return null;
-                    }
+{QUIZ[quizType].fields.map((f) => {
+  // --- Reglas de visibilidad dinámica ---
+  if (quizType === 'flujo' && f.k === 'liquido' && quizData.material !== 'Líquido') return null;
+  if (quizType === 'flujo' && f.k === 'gas' && quizData.material !== 'Gas') return null;
+  if (quizType === 'flujo' && f.k === 'conexionOtra' && quizData.conexion !== 'Otra') return null;
+  if (quizType === 'flujo' && f.k === 'montajeDist' && quizData.montaje !== 'Remoto') return null;
+
+  if (quizType === 'nivel' && f.k === 'liquido' && quizData.material !== 'Líquido') return null;
+  if (quizType === 'nivel' && f.k === 'interfazFluidos' && quizData.material !== 'Interfaz') return null;
+  if (quizType === 'nivel' && f.k === 'interfazSonda' && quizData.material !== 'Interfaz') return null;
 
                     // --- Grupo especial: Propiedades del producto (solo flujo) ---
                     if (quizType === 'flujo' && f.k === 'densidad') {
@@ -3067,32 +3128,58 @@ if (
                     }
 
                     // 🔹 Campo especial: Diámetro nominal con selector de unidades
-                    if (quizType === 'flujo' && f.k === 'dn') {
-                      return (
-                        <div key="dn">
-                          <label className="block text-xs text-slate-600 mb-1">
-                            {f.label}
-                          </label>
-                          <div className="flex gap-3">
-                            <input
-                              className="flex-1 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                              value={quizData.dn || ''}
-                              onChange={(e) => setAns('dn', e.target.value)}
-                              placeholder="Ej. 2 o 50"
-                            />
-                            <select
-                              className="w-28 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                              value={quizData.dnUnidad || 'in'}
-                              onChange={(e) => setAns('dnUnidad', e.target.value)}
-                            >
-                              <option value="in">in</option>
-                              <option value="mm">mm</option>
-                            </select>
-                          </div>
-                        </div>
-                      );
-                    }
-
+// 🔹 Campo especial: Diámetro nominal con selector de unidades (flujo)
+if (quizType === 'flujo' && f.k === 'dn') {
+  return (
+    <div key="dn">
+      <label className="block text-xs text-slate-600 mb-1">
+        {f.label}
+      </label>
+      <div className="flex gap-3">
+        <input
+          className="flex-1 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+          value={quizData.dn || ''}
+          onChange={(e) => setAns('dn', e.target.value)}
+          placeholder="Ej. 2 o 50"
+        />
+        <select
+          className="w-28 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+          value={quizData.dnUnidad || 'pulg - in'}
+          onChange={(e) => setAns('dnUnidad', e.target.value)}
+        >
+          <option value="pulg - in">pulg - in</option>
+          <option value="mm">mm</option>
+        </select>
+      </div>
+    </div>
+  );
+}
+// 🔹 Campo especial: Diámetro del tanque con unidades (nivel)
+if (quizType === 'nivel' && f.k === 'diametro') {
+  return (
+    <div key="diametro">
+      <label className="block text-xs text-slate-600 mb-1">
+        {f.label}
+      </label>
+      <div className="flex gap-3">
+        <input
+          className="flex-1 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+          value={quizData.diametro || ''}
+          onChange={(e) => setAns('diametro', e.target.value)}
+          placeholder="Ej. 2 o 50"
+        />
+        <select
+          className="w-28 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+          value={quizData.diametroUnidad || 'pulg - in'}
+          onChange={(e) => setAns('diametroUnidad', e.target.value)}
+        >
+          <option value="pulg - in">pulg - in</option>
+          <option value="mm">mm</option>
+        </select>
+      </div>
+    </div>
+  );
+}
                     // --- Render genérico para el resto de preguntas ---
                     return (
                       <div key={f.k}>
