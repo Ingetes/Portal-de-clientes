@@ -791,11 +791,18 @@ function OutsourcingScreen() {
         </div>
 
         <div className="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {[
-            { name: 'AUTOMATIZAR LTDA', contact: 'contacto@automatizar.com', area: 'Control industrial' },
-            { name: 'TECNIRED S.A.S.', contact: 'info@tecnired.com', area: 'Redes eléctricas y tableros' },
-            { name: 'INGENIAL S.A.S.', contact: 'soporte@ingenial.co', area: 'Integración y soporte técnico' },
-          ].map((p, i) => (
+{[
+  {
+    name: 'OA S.A.S.',
+    contact: 'jmartinez@oautomatizacion.com.co',
+    area: 'Automatización, integración y servicios industriales'
+  },
+  {
+    name: 'SGS Colombia',
+    contact: 'co.clientes@sgs.com',
+    area: 'Servicios de inspección, calibración y certificación'
+  },
+].map((p, i) => (
             <div key={i} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
               <h3 className="text-lg font-bold text-slate-900">{p.name}</h3>
               <p className="text-sm text-emerald-700 mt-1">{p.area}</p>
