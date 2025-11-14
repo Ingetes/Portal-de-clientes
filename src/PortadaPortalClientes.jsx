@@ -2457,13 +2457,31 @@ function HerramientasScreen() {
 
 // ==========================================================
 // Brief de instrumentación (pantalla completa)
+// ==========================================================
+// Brief de instrumentación (pantalla completa)
 function BriefInstrumentacionScreen() {
   // Definición de los formularios por tipo de sensor
   const QUIZ = {
     flujo: {
       title: 'Sensor de flujo',
       fields: [
-        { 
+        // 1) PROPIEDADES DEL PRODUCTO (BLOQUE AL INICIO)
+        { k: 'densidad',      label: 'Densidad',                    type: 'text' },
+        { k: 'viscosidad',    label: 'Viscosidad',                  type: 'text' },
+        { k: 'conductividad', label: 'Conductividad',               type: 'text' },
+        {
+          k: 'corrosion',
+          label: 'Resistencia a la corrosión (opcional)',
+          type: 'text'
+        },
+        {
+          k: 'abrasion',
+          label: 'Resistencia a la abrasión (opcional)',
+          type: 'text'
+        },
+
+        // 2) PROPIEDADES DEL SENSOR / PROCESO
+        {
           k: 'material',
           label: 'Material que pasa por la tubería',
           type: 'select',
@@ -2475,87 +2493,103 @@ function BriefInstrumentacionScreen() {
           type: 'text',
           hint: 'Solo aplica si el material es líquido',
         },
-        { k:'temp', label:'Rango de temperatura del medio', type:'text', placeholder:'°C' },
+        { k: 'temp', label: 'Rango de temperatura del medio', type: 'text', placeholder: '°C' },
 
-        // 🔹 Este campo se mostrará con input + selector de unidades
-        { k:'dn', label:'Diámetro nominal de la tubería', type:'text' },
+        // DN con unidades
+        { k: 'dn', label: 'Diámetro nominal de la tubería', type: 'text' },
 
         {
-          k:'conexion',
-          label:'Conexión a proceso',
-          type:'select',
-          options:['Bridada','Sanitaria (Triclamp)','Otra']
+          k: 'conexion',
+          label: 'Conexión a proceso',
+          type: 'select',
+          options: ['Bridada', 'Sanitaria (Triclamp)', 'Otra']
         },
         {
-          k:'conexionOtra',
-          label:'Si selecciona "Otra", especifique cuál',
-          type:'text',
+          k: 'conexionOtra',
+          label: 'Si selecciona "Otra", especifique cuál',
+          type: 'text',
         },
 
-        // Propiedades del producto (se dibujan como un grupo aparte)
-        { k:'densidad',      label:'Densidad',                    type:'text' },
-        { k:'viscosidad',    label:'Viscosidad',                  type:'text' },
-        { k:'conductividad', label:'Conductividad',               type:'text' },
-        { k:'corrosion',     label:'Resistencia a la corrosión',  type:'text' },
-        { k:'abrasion',      label:'Resistencia a la abrasión',   type:'text' },
-
-        { k:'alimentacion', label:'Alimentación del transmisor', type:'radio', options:['110 VAC','24 VDC'] },
-        { k:'comun', label:'Comunicación', type:'select', options:['HART','Profibus DP','Profibus PA','Foundation Fieldbus','Modbus'] },
+        // 3) TRANSMISOR (AL FINAL)
+        {
+          k: 'montaje',
+          label: 'Montaje del transmisor',
+          type: 'select',
+          options: ['Compacto', 'Remoto']
+        },
+        {
+          k: 'montajeDist',
+          label: 'Si es remoto, distancia entre sensor y transmisor',
+          type: 'text',
+          placeholder: 'Ej. 5 m'
+        },
+        {
+          k: 'alimentacion',
+          label: 'Alimentación del transmisor',
+          type: 'radio',
+          options: ['110 VAC', '24 VDC']
+        },
+        {
+          k: 'comun',
+          label: 'Comunicación',
+          type: 'select',
+          options: ['HART', 'Profibus DP', 'Profibus PA', 'Foundation Fieldbus', 'Modbus']
+        },
       ],
     },
     nivel: {
       title: 'Sensor de nivel',
       fields: [
-        { k:'modo', label:'Tipo de medición', type:'radio', options:['Continua','Detección'] },
+        { k: 'modo', label: 'Tipo de medición', type: 'radio', options: ['Continua', 'Detección'] },
         {
-          k:'material',
-          label:'Material a medir',
-          type:'select',
-          options:['Líquido','Sólidos a granel','Interfaz']
+          k: 'material',
+          label: 'Material a medir',
+          type: 'select',
+          options: ['Líquido', 'Sólidos a granel', 'Interfaz']
         },
         {
           // SOLO se mostrará si material === "Líquido"
-          k:'liquido',
-          label:'Si es líquido, ¿cuál?',
-          type:'text',
+          k: 'liquido',
+          label: 'Si es líquido, ¿cuál?',
+          type: 'text',
         },
-        { k:'altura', label:'Altura del tanque', type:'text' },
-        { k:'diametro', label:'Diámetro del tanque', type:'text' },
-        { k:'conexion', label:'Conexión a proceso', type:'select', options:['Bridada','Roscada','Sanitaria (Triclamp)'] },
-        { k:'comun', label:'Comunicación', type:'select', options:['HART (4–20 mA)','Profibus DP','Modbus'] },
-        { k:'alimentacion', label:'Alimentación', type:'select', options:['110 VAC','24 VDC','Fuente interna'] },
-        { k:'temp', label:'Temperatura del material', type:'text' },
+        { k: 'altura', label: 'Altura del tanque', type: 'text' },
+        { k: 'diametro', label: 'Diámetro del tanque', type: 'text' },
+        { k: 'conexion', label: 'Conexión a proceso', type: 'select', options: ['Bridada', 'Roscada', 'Sanitaria (Triclamp)'] },
+        { k: 'comun', label: 'Comunicación', type: 'select', options: ['HART (4–20 mA)', 'Profibus DP', 'Modbus'] },
+        { k: 'alimentacion', label: 'Alimentación', type: 'select', options: ['110 VAC', '24 VDC', 'Fuente interna'] },
+        { k: 'temp', label: 'Temperatura del material', type: 'text' },
       ],
     },
     temperatura: {
       title: 'Sensor de temperatura',
       fields: [
-        { k:'elemento', label:'Elemento/Transmisor', type:'select', options:['RTD (PT100/PT1000)','Termocupla (J/K/S)'] },
-        { k:'rango', label:'Rango de temperatura de proceso', type:'text' },
-        { k:'comun', label:'Comunicación', type:'select', options:['4–20 mA','HART','0–10 V'] },
-        { k:'atex', label:'¿Requiere protección contra explosión?', type:'radio', options:['Sí','No'] },
+        { k: 'elemento', label: 'Elemento/Transmisor', type: 'select', options: ['RTD (PT100/PT1000)', 'Termocupla (J/K/S)'] },
+        { k: 'rango', label: 'Rango de temperatura de proceso', type: 'text' },
+        { k: 'comun', label: 'Comunicación', type: 'select', options: ['4–20 mA', 'HART', '0–10 V'] },
+        { k: 'atex', label: '¿Requiere protección contra explosión?', type: 'radio', options: ['Sí', 'No'] },
       ],
     },
     presion: {
       title: 'Sensor de presión',
       fields: [
-        { k:'tipo', label:'Tipo de presión (absoluta/manométrica/diferencial)', type:'text' },
-        { k:'comun', label:'Comunicación', type:'select', options:['4–20 mA','0–10 V','HART','Modbus'] },
-        { k:'rango', label:'Rango de presión', type:'text' },
-        { k:'conexion', label:'Conexión a proceso', type:'text' },
-        { k:'precision', label:'Precisión requerida', type:'text' },
-        { k:'elec', label:'¿Conexión eléctrica especial?', type:'text' },
-        { k:'atex', label:'¿Protección contra explosión?', type:'radio', options:['Sí','No'] },
+        { k: 'tipo', label: 'Tipo de presión (absoluta/manométrica/diferencial)', type: 'text' },
+        { k: 'comun', label: 'Comunicación', type: 'select', options: ['4–20 mA', '0–10 V', 'HART', 'Modbus'] },
+        { k: 'rango', label: 'Rango de presión', type: 'text' },
+        { k: 'conexion', label: 'Conexión a proceso', type: 'text' },
+        { k: 'precision', label: 'Precisión requerida', type: 'text' },
+        { k: 'elec', label: '¿Conexión eléctrica especial?', type: 'text' },
+        { k: 'atex', label: '¿Protección contra explosión?', type: 'radio', options: ['Sí', 'No'] },
       ],
     },
     peso: {
       title: 'Sensor de peso (celdas de carga)',
       fields: [
-        { k:'forma', label:'Forma del tanque', type:'text' },
-        { k:'capVacio', label:'Peso del tanque vacío', type:'text' },
-        { k:'capLleno', label:'Peso del tanque lleno', type:'text' },
-        { k:'apoyos', label:'Número de puntos de apoyo', type:'text' },
-        { k:'gradoIP', label:'Grado IP requerido', type:'text' },
+        { k: 'forma', label: 'Forma del tanque', type: 'text' },
+        { k: 'capVacio', label: 'Peso del tanque vacío', type: 'text' },
+        { k: 'capLleno', label: 'Peso del tanque lleno', type: 'text' },
+        { k: 'apoyos', label: 'Número de puntos de apoyo', type: 'text' },
+        { k: 'gradoIP', label: 'Grado IP requerido', type: 'text' },
       ],
     },
   };
@@ -2564,7 +2598,7 @@ function BriefInstrumentacionScreen() {
   const [quizType, setQuizType] = useState(null);      // flujo | nivel | temperatura | presion | peso
   const [quizData, setQuizData] = useState({});        // respuestas
 
-  // 🔹 NUEVO: Datos generales de la aplicación
+  // 🔹 Datos generales de la aplicación (TODOS obligatorios)
   const [general, setGeneral] = useState({
     appName: '',
     empresa: '',
@@ -2580,40 +2614,68 @@ function BriefInstrumentacionScreen() {
   // Devuelve solo los campos que realmente están visibles en el formulario
   function getVisibleFields(cfg, type, data) {
     return cfg.fields.filter((f) => {
-      // Reglas de visibilidad (las mismas que usas en el render)
+      // Reglas de visibilidad (las mismas que usamos en el render)
       if (type === 'flujo' && f.k === 'liquido' && data.material !== 'Líquido') return false;
       if (type === 'flujo' && f.k === 'conexionOtra' && data.conexion !== 'Otra') return false;
+      if (type === 'flujo' && f.k === 'montajeDist' && data.montaje !== 'Remoto') return false;
       if (type === 'nivel' && f.k === 'liquido' && data.material !== 'Líquido') return false;
       return true;
     });
   }
 
-  // Valida que todos los campos visibles tengan valor
+  // Valida que TODOS los campos obligatorios estén llenos
   function validateQuizBeforeDownload() {
+    // 1) Validar datos generales (todo obligatorio)
+    const generalLabels = {
+      appName: 'Nombre de la aplicación',
+      empresa: 'Empresa',
+      contacto: 'Nombre de contacto',
+      cargo: 'Cargo',
+      celular: 'Celular',
+      correo: 'Correo',
+    };
+
+    const missingGeneral = Object.entries(generalLabels)
+      .filter(([k]) => !((general[k] || '').toString().trim()))
+      .map(([, label]) => label);
+
     if (!quizType) {
       alert('Primero selecciona el tipo de sensor.');
       return false;
     }
 
+    // 2) Validar cuestionario técnico
     const cfg = QUIZ[quizType];
     const visible = getVisibleFields(cfg, quizType, quizData);
 
-    const missing = visible.filter((f) => {
+    const missingFields = visible.filter((f) => {
+      // En flujo, corrosión y abrasión son opcionales
+      if (
+        quizType === 'flujo' &&
+        (f.k === 'corrosion' || f.k === 'abrasion')
+      ) {
+        return false;
+      }
+
       const v = (quizData[f.k] ?? '').toString().trim();
       return !v; // vacío → falta
     });
 
-    if (missing.length > 0) {
-      const lista = missing
-        .slice(0, 4)
-        .map((f) => `• ${f.label}`)
+    const missingTechnical = missingFields.map((f) => f.label);
+
+    const allMissing = [...missingGeneral, ...missingTechnical];
+
+    if (allMissing.length > 0) {
+      const lista = allMissing
+        .slice(0, 6)
+        .map((label) => `• ${label}`)
         .join('\n');
 
       alert(
-        'Para descargar el PDF debes completar todos los campos visibles.\n\n' +
+        'Para descargar el PDF debes completar todos los campos obligatorios.\n\n' +
         'Campos pendientes:\n' +
         lista +
-        (missing.length > 4 ? '\n…' : '')
+        (allMissing.length > 6 ? '\n…' : '')
       );
       return false;
     }
@@ -2635,7 +2697,7 @@ function BriefInstrumentacionScreen() {
   async function downloadQuizPdf() {
     if (!quizType) return;
 
-    // ✅ Primero validamos que todo lo visible esté diligenciado
+    // ✅ Validar TODO antes de generar el PDF
     if (!validateQuizBeforeDownload()) return;
 
     const cfg = QUIZ[quizType];
@@ -2656,35 +2718,32 @@ function BriefInstrumentacionScreen() {
     doc.text(`Tipo: ${cfg.title}`, pad, y);
     y += 24;
 
-    // 🔹 Bloque de datos generales (solo si hay algo diligenciado)
-    const hasGeneral = Object.values(general).some(v => (v || '').trim());
-    if (hasGeneral) {
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(12);
-      y = writeWrap(doc, 'Datos generales de la aplicación', pad, y, 480, true);
-      y += 4;
+    // 🔹 Bloque de datos generales
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    y = writeWrap(doc, 'Datos generales de la aplicación', pad, y, 480, true);
+    y += 4;
 
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
 
-      const pairs = [
-        ['Nombre de la aplicación', general.appName],
-        ['Empresa', general.empresa],
-        ['Nombre de contacto', general.contacto],
-        ['Cargo', general.cargo],
-        ['Celular', general.celular],
-        ['Correo', general.correo],
-      ];
+    const pairs = [
+      ['Nombre de la aplicación', general.appName],
+      ['Empresa', general.empresa],
+      ['Nombre de contacto', general.contacto],
+      ['Cargo', general.cargo],
+      ['Celular', general.celular],
+      ['Correo', general.correo],
+    ];
 
-      pairs.forEach(([label, value]) => {
-        const val = (value || '').toString().trim() || '—';
-        y = writeWrap(doc, `• ${label}: ${val}`, pad, y, 480, false);
-      });
+    pairs.forEach(([label, value]) => {
+      const val = (value || '').toString().trim() || '—';
+      y = writeWrap(doc, `• ${label}: ${val}`, pad, y, 480, false);
+    });
 
-      y += 12;
-    }
+    y += 12;
 
-    // Contenido (solo campos visibles)
+    // Contenido técnico (solo campos visibles)
     const visible = getVisibleFields(cfg, quizType, quizData);
     visible.forEach((f) => {
       // Valor con manejo especial para DN (flujo) con unidad
@@ -2836,7 +2895,7 @@ function BriefInstrumentacionScreen() {
               <div className="space-y-3">
                 <div>
                   <label className="block text-xs text-slate-600 mb-1">
-                    Nombre de la aplicación
+                    Nombre de la aplicación *
                   </label>
                   <input
                     className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
@@ -2846,7 +2905,7 @@ function BriefInstrumentacionScreen() {
                 </div>
                 <div>
                   <label className="block text-xs text-slate-600 mb-1">
-                    Empresa
+                    Empresa *
                   </label>
                   <input
                     className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
@@ -2858,7 +2917,7 @@ function BriefInstrumentacionScreen() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs text-slate-600 mb-1">
-                      Nombre de contacto
+                      Nombre de contacto *
                     </label>
                     <input
                       className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
@@ -2868,7 +2927,7 @@ function BriefInstrumentacionScreen() {
                   </div>
                   <div>
                     <label className="block text-xs text-slate-600 mb-1">
-                      Cargo
+                      Cargo *
                     </label>
                     <input
                       className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
@@ -2881,7 +2940,7 @@ function BriefInstrumentacionScreen() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs text-slate-600 mb-1">
-                      Celular
+                      Celular *
                     </label>
                     <input
                       className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
@@ -2891,7 +2950,7 @@ function BriefInstrumentacionScreen() {
                   </div>
                   <div>
                     <label className="block text-xs text-slate-600 mb-1">
-                      Correo
+                      Correo *
                     </label>
                     <input
                       type="email"
@@ -2927,6 +2986,9 @@ function BriefInstrumentacionScreen() {
                     if (quizType === 'flujo' && f.k === 'conexionOtra' && quizData.conexion !== 'Otra') {
                       return null;
                     }
+                    if (quizType === 'flujo' && f.k === 'montajeDist' && quizData.montaje !== 'Remoto') {
+                      return null;
+                    }
                     if (quizType === 'nivel' && f.k === 'liquido' && quizData.material !== 'Líquido') {
                       return null;
                     }
@@ -2958,7 +3020,7 @@ function BriefInstrumentacionScreen() {
                               return (
                                 <div
                                   key={k}
-                                  className="grid grid-cols-[130px,1fr] gap-3 items-center"
+                                  className="grid grid-cols-[170px,1fr] gap-3 items-center"
                                 >
                                   <span className="text-xs text-slate-600">
                                     {field.label}:
