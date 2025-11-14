@@ -2570,7 +2570,7 @@ nivel: {
     },
     {
       k: 'liquido',
-      label: 'Especifique cual líquido es',
+      label: 'Especifique cuál líquido es',
       type: 'text',
     },
 
@@ -2585,7 +2585,7 @@ nivel: {
       k: 'interfazSonda',
       label: 'Longitud de la sonda',
       type: 'text',
-      placeholder: 'Ej. 1.5 m o 1500 mm',
+      placeholder: 'Ej. 0 m a 30 m',
     },
 
     { k: 'altura', label: 'Altura del tanque', type: 'text' },
@@ -3144,10 +3144,10 @@ if (quizType === 'flujo' && f.k === 'dn') {
         />
         <select
           className="w-28 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-          value={quizData.dnUnidad || 'pulg - in'}
+          value={quizData.dnUnidad || 'in'}
           onChange={(e) => setAns('dnUnidad', e.target.value)}
         >
-          <option value="pulg - in">pulg - in</option>
+          <option value="in">in</option>
           <option value="mm">mm</option>
         </select>
       </div>
@@ -3170,10 +3170,10 @@ if (quizType === 'nivel' && f.k === 'diametro') {
         />
         <select
           className="w-28 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-          value={quizData.diametroUnidad || 'pulg - in'}
+          value={quizData.diametroUnidad || 'in'}
           onChange={(e) => setAns('diametroUnidad', e.target.value)}
         >
-          <option value="pulg - in">pulg - in</option>
+          <option value="in">in</option>
           <option value="mm">mm</option>
         </select>
       </div>
