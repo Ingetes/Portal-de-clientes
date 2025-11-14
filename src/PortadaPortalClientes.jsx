@@ -2496,13 +2496,13 @@ const QUIZ = {
       },
       {
         k: 'liquido',
-        label: 'Si es líquido, especifique cuál es',
+        label: 'Especifique cuál líquido es',
         type: 'text',
         hint: 'Solo aplica si el material es líquido',
       },
       {
         k: 'gas',
-        label: 'Si es gas, especifique cuál es',
+        label: 'Especifique cuál gas es',
         type: 'text',
         hint: 'Solo aplica si el material es gas',
       },
@@ -2535,7 +2535,7 @@ const QUIZ = {
       },
       {
         k: 'montajeDist',
-        label: 'Si es remoto, distancia entre sensor y transmisor',
+        label: 'Distancia remota entre sensor y transmisor',
         type: 'text',
         placeholder: 'Ej. 5 m'
       },
@@ -2570,20 +2570,20 @@ nivel: {
     },
     {
       k: 'liquido',
-      label: 'Si es líquido, ¿cuál?',
+      label: 'Especifique cual líquido es',
       type: 'text',
     },
 
     // SOLO si material === "Interfaz"
     {
       k: 'interfazFluidos',
-      label: 'Si es interfaz, fluidos de proceso',
+      label: 'Fluidos de proceso',
       type: 'text',
       hint: 'Ej. Agua / Aceite, Agua / Combustible',
     },
     {
       k: 'interfazSonda',
-      label: 'Si es interfaz, longitud de la sonda',
+      label: 'Longitud de la sonda',
       type: 'text',
       placeholder: 'Ej. 1.5 m o 1500 mm',
     },
