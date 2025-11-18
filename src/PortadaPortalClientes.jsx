@@ -793,14 +793,14 @@ function OutsourcingScreen() {
         <div className="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 {[
   {
-    name: 'OA S.A.S.',
+    name: 'OA AUTOMATICACIÓN S.A.S.',
     contact: 'jmartinez@oautomatizacion.com.co',
     area: 'Automatización, integración y servicios industriales'
   },
   {
-    name: 'SGS Colombia',
-    contact: 'co.clientes@sgs.com',
-    area: 'Servicios de inspección, calibración y certificación'
+    name: 'CGS OPTIMIZE S.A.S.',
+    contact: 'comercial@cgsoptimize.com',
+    area: 'Soluciones para la industria, orientados al diseño, control y automatización de procesos industriales.'
   },
 ].map((p, i) => (
             <div key={i} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
