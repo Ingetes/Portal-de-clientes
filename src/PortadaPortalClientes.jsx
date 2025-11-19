@@ -2510,9 +2510,32 @@ function BriefInstrumentacionScreen() {
           type: 'text',
           hint: 'Solo aplica si el material es gas',
         },
-        { k: 'temp', label: 'Rango de temperatura del medio', type: 'text', placeholder: '°C' },
 
-        { k: 'presionRango', label: 'Rango de la presión del medio', type: 'text' },
+        // Temperatura: valor + unidad
+        {
+          k: 'temp',
+          label: 'Temperatura del medio',
+          type: 'text',
+          placeholder: 'Ej. 80',
+        },
+        {
+          k: 'tempUnidadFlujo',
+          label: 'Unidad de temperatura',
+          type: 'select',
+          options: ['°C', '°F'],
+        },
+
+        // Presión: min + max + unidad
+        {
+          k: 'presionMin',
+          label: 'Presión mínima del medio',
+          type: 'text',
+        },
+        {
+          k: 'presionMax',
+          label: 'Presión máxima del medio',
+          type: 'text',
+        },
         {
           k: 'presionUnidad',
           label: 'Unidad de presión del medio',
@@ -2652,17 +2675,32 @@ function BriefInstrumentacionScreen() {
           options: ['Brida', 'Roscada', 'Sanitaria (Clamp)']
         },
 
+        // Temperatura: valor + unidad
         {
           k: 'temp',
           label: 'Temperatura de almacenamiento',
           type: 'text',
-          placeholder: '°C',
+          placeholder: 'Ej. 40',
         },
+        {
+          k: 'tempUnidadNivel',
+          label: 'Unidad de temperatura',
+          type: 'select',
+          options: ['°C', '°F'],
+        },
+
+        // Presión: valor + unidad
         {
           k: 'presionAlmacenamiento',
           label: 'Presión de almacenamiento',
           type: 'text',
-          placeholder: 'bar, psi, etc.',
+          placeholder: 'Ej. 2',
+        },
+        {
+          k: 'presionAlmUnidad',
+          label: 'Unidad de presión de almacenamiento',
+          type: 'select',
+          options: ['bar', 'psi', 'mbar'],
         },
 
         {
@@ -2707,12 +2745,22 @@ function BriefInstrumentacionScreen() {
           type: 'select',
           options: ['J', 'K', 'T', 'E', 'N', 'B', 'R', 'S', 'C'],
         },
+
+        // Longitud bulbo: valor + unidad
         {
           k: 'longBulbo',
           label: 'Longitud del bulbo',
           type: 'text',
-          placeholder: 'mm o pulgadas',
+          placeholder: 'Ej. 150',
         },
+        {
+          k: 'longBulboUnidad',
+          label: 'Unidad longitud bulbo',
+          type: 'select',
+          options: ['mm', 'in'],
+        },
+
+        // Diámetro bulbo (ya lo tenías con unidades aparte)
         {
           k: 'diamBulbo',
           label: 'Diámetro del bulbo',
@@ -2725,6 +2773,7 @@ function BriefInstrumentacionScreen() {
           type: 'select',
           options: ['mm', 'in'],
         },
+
         {
           k: 'hilos',
           label: 'Cantidad de hilos',
@@ -2749,6 +2798,8 @@ function BriefInstrumentacionScreen() {
           type: 'select',
           options: ['Rosca', 'Brida', 'Tipo sanitaria'],
         },
+
+        // Diámetro conexión a proceso: valor + unidad
         {
           k: 'diamConexion',
           label: 'Diámetro conexión a proceso',
@@ -2762,19 +2813,26 @@ function BriefInstrumentacionScreen() {
           options: ['in', 'mm'],
         },
 
-        // TRANSMISOR
+        // TRANSMISOR – temperatura min & max + unidad
         {
           k: 'tempMin',
           label: 'Temperatura mínima de proceso',
           type: 'text',
-          placeholder: '°C',
+          placeholder: 'Ej. -20',
         },
         {
           k: 'tempMax',
           label: 'Temperatura máxima de proceso',
           type: 'text',
-          placeholder: '°C',
+          placeholder: 'Ej. 200',
         },
+        {
+          k: 'tempUnidad',
+          label: 'Unidad de temperatura',
+          type: 'select',
+          options: ['°C', '°F'],
+        },
+
         {
           k: 'displayTemp',
           label: '¿Con display local?',
@@ -3491,7 +3549,7 @@ visible.forEach((f) => {
     return null;
   }
 
-  // 🔹 Campo especial: DN (flujo) valor + unidades
+  // 🔹 DN (flujo) valor + unidades
   if (quizType === 'flujo' && f.k === 'dn') {
     return (
       <div key="dn">
@@ -3518,7 +3576,70 @@ visible.forEach((f) => {
     );
   }
 
-  // 🔹 Campo especial: Diámetro tanque (nivel) valor + unidades
+  // 🔹 Temperatura (flujo) valor + unidades
+  if (quizType === 'flujo' && f.k === 'temp') {
+    return (
+      <div key="temp-flujo">
+        <label className="block text-xs text-slate-600 mb-1">
+          Temperatura del medio
+        </label>
+        <div className="flex gap-3">
+          <input
+            className="flex-1 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            value={quizData.temp || ''}
+            onChange={(e) => setAns('temp', e.target.value)}
+            placeholder="Ej. 80"
+          />
+          <select
+            className="w-28 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            value={quizData.tempUnidadFlujo || '°C'}
+            onChange={(e) => setAns('tempUnidadFlujo', e.target.value)}
+          >
+            <option value="°C">°C</option>
+            <option value="°F">°F</option>
+          </select>
+        </div>
+      </div>
+    );
+  }
+
+  // 🔹 Rango de presión (flujo) min + max + unidades
+  if (quizType === 'flujo' && f.k === 'presionMin') {
+    return (
+      <div key="presion-flujo">
+        <label className="block text-xs text-slate-600 mb-1">
+          Rango de presión del medio
+        </label>
+        <div className="flex gap-3">
+          <input
+            className="flex-1 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            value={quizData.presionMin || ''}
+            onChange={(e) => setAns('presionMin', e.target.value)}
+            placeholder="Mínimo"
+          />
+          <input
+            className="flex-1 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            value={quizData.presionMax || ''}
+            onChange={(e) => setAns('presionMax', e.target.value)}
+            placeholder="Máximo"
+          />
+          <select
+            className="w-32 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            value={quizData.presionUnidad || ''}
+            onChange={(e) => setAns('presionUnidad', e.target.value)}
+          >
+            <option value="">Unidad</option>
+            <option value="bar">bar</option>
+            <option value="psi">psi</option>
+            <option value="kPa">kPa</option>
+            <option value="otra">otra</option>
+          </select>
+        </div>
+      </div>
+    );
+  }
+
+  // 🔹 Diámetro tanque (nivel) valor + unidades
   if (quizType === 'nivel' && f.k === 'diametro') {
     return (
       <div key="diametro">
@@ -3545,7 +3666,63 @@ visible.forEach((f) => {
     );
   }
 
-  // 🔹 Campo especial: diámetro bulbo (temperatura) valor + unidades
+  // 🔹 Temperatura (nivel) valor + unidades
+  if (quizType === 'nivel' && f.k === 'temp') {
+    return (
+      <div key="temp-nivel">
+        <label className="block text-xs text-slate-600 mb-1">
+          Temperatura de almacenamiento
+        </label>
+        <div className="flex gap-3">
+          <input
+            className="flex-1 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            value={quizData.temp || ''}
+            onChange={(e) => setAns('temp', e.target.value)}
+            placeholder="Ej. 40"
+          />
+          <select
+            className="w-28 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            value={quizData.tempUnidadNivel || '°C'}
+            onChange={(e) => setAns('tempUnidadNivel', e.target.value)}
+          >
+            <option value="°C">°C</option>
+            <option value="°F">°F</option>
+          </select>
+        </div>
+      </div>
+    );
+  }
+
+  // 🔹 Presión almacenamiento (nivel) valor + unidades
+  if (quizType === 'nivel' && f.k === 'presionAlmacenamiento') {
+    return (
+      <div key="presion-nivel">
+        <label className="block text-xs text-slate-600 mb-1">
+          Presión de almacenamiento
+        </label>
+        <div className="flex gap-3">
+          <input
+            className="flex-1 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            value={quizData.presionAlmacenamiento || ''}
+            onChange={(e) => setAns('presionAlmacenamiento', e.target.value)}
+            placeholder="Ej. 2"
+          />
+          <select
+            className="w-32 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            value={quizData.presionAlmUnidad || ''}
+            onChange={(e) => setAns('presionAlmUnidad', e.target.value)}
+          >
+            <option value="">Unidad</option>
+            <option value="bar">bar</option>
+            <option value="psi">psi</option>
+            <option value="mbar">mbar</option>
+          </select>
+        </div>
+      </div>
+    );
+  }
+
+  // 🔹 Diámetro bulbo (temperatura) valor + unidades
   if (quizType === 'temperatura' && f.k === 'diamBulbo') {
     return (
       <div key="diamBulbo">
@@ -3572,7 +3749,34 @@ visible.forEach((f) => {
     );
   }
 
-  // 🔹 Campo especial: diámetro conexión (temperatura) valor + unidades
+  // 🔹 Longitud bulbo (temperatura) valor + unidades
+  if (quizType === 'temperatura' && f.k === 'longBulbo') {
+    return (
+      <div key="longBulbo">
+        <label className="block text-xs text-slate-600 mb-1">
+          {f.label}
+        </label>
+        <div className="flex gap-3">
+          <input
+            className="flex-1 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            value={quizData.longBulbo || ''}
+            onChange={(e) => setAns('longBulbo', e.target.value)}
+            placeholder={f.placeholder || ''}
+          />
+          <select
+            className="w-28 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            value={quizData.longBulboUnidad || 'mm'}
+            onChange={(e) => setAns('longBulboUnidad', e.target.value)}
+          >
+            <option value="mm">mm</option>
+            <option value="in">in</option>
+          </select>
+        </div>
+      </div>
+    );
+  }
+
+  // 🔹 Diámetro conexión (temperatura) valor + unidades
   if (quizType === 'temperatura' && f.k === 'diamConexion') {
     return (
       <div key="diamConexion">
@@ -3599,7 +3803,7 @@ visible.forEach((f) => {
     );
   }
 
-  // 🔹 Campo especial: rango presión (presión) min + max + unidad
+  // 🔹 Rango presión (presión) min + max + unidad (ya lo tenías)
   if (quizType === 'presion' && f.k === 'rangoMin') {
     return (
       <div key="rangoPresion">
@@ -3637,7 +3841,7 @@ visible.forEach((f) => {
     return null;
   }
 
-  // 🔹 Campo especial: resolución (peso) valor + unidades
+  // 🔹 Resolución (peso) valor + unidades
   if (quizType === 'peso' && f.k === 'resolucionValor') {
     return (
       <div key="resolucion">
@@ -3665,12 +3869,48 @@ visible.forEach((f) => {
   }
   if (quizType === 'peso' && f.k === 'resolucionUnidad') return null;
 
-  // También saltamos campos de unidad que ya usamos en filas combinadas
-  if (quizType === 'temperatura' && ['diamBulboUnidad', 'diamConexionUnidad'].includes(f.k)) {
+  // 🔹 Temperatura min/max (temperatura) + unidad
+  if (quizType === 'temperatura' && f.k === 'tempMin') {
+    return (
+      <div key="temp-rango-temp">
+        <label className="block text-xs text-slate-600 mb-1">
+          Temperatura mínima y máxima de proceso
+        </label>
+        <div className="flex gap-3">
+          <input
+            className="flex-1 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            value={quizData.tempMin || ''}
+            onChange={(e) => setAns('tempMin', e.target.value)}
+            placeholder="Mínimo"
+          />
+          <input
+            className="flex-1 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            value={quizData.tempMax || ''}
+            onChange={(e) => setAns('tempMax', e.target.value)}
+            placeholder="Máximo"
+          />
+          <select
+            className="w-28 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            value={quizData.tempUnidad || '°C'}
+            onChange={(e) => setAns('tempUnidad', e.target.value)}
+          >
+            <option value="°C">°C</option>
+            <option value="°F">°F</option>
+          </select>
+        </div>
+      </div>
+    );
+  }
+  if (quizType === 'temperatura' && ['tempMax', 'tempUnidad'].includes(f.k)) {
     return null;
   }
-  if (quizType === 'nivel' && f.k === 'diametroUnidad') return null;
-  if (quizType === 'flujo' && f.k === 'dnUnidad') return null;
+
+  // También saltamos campos de unidad que ya usamos en filas combinadas
+  if (quizType === 'temperatura' && ['diamBulboUnidad', 'diamConexionUnidad', 'longBulboUnidad'].includes(f.k)) {
+    return null;
+  }
+  if (quizType === 'nivel' && ['diametroUnidad', 'tempUnidadNivel', 'presionAlmUnidad'].includes(f.k)) return null;
+  if (quizType === 'flujo' && ['dnUnidad', 'tempUnidadFlujo', 'presionMax', 'presionUnidad'].includes(f.k)) return null;
 
   // --- Render genérico para el resto de preguntas ---
   return (
@@ -3737,8 +3977,6 @@ visible.forEach((f) => {
     </div>
   );
 })}
-
-
                   <div className="pt-2 flex flex-wrap gap-3">
                     <button
                       onClick={downloadQuizPdf}
