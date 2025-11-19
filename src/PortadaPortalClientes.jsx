@@ -793,7 +793,7 @@ function OutsourcingScreen() {
         <div className="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 {[
   {
-    name: 'OA AUTOMATICACIÓN S.A.S.',
+    name: 'OA AUTOMATIZACIÓN S.A.S.',
     contact: 'jmartinez@oautomatizacion.com.co',
     area: 'Automatización, integración y servicios industriales'
   },
@@ -2465,491 +2465,499 @@ function HerramientasScreen() {
 // ==========================================================
 // Brief de instrumentación (pantalla completa)
 // ==========================================================
-// Brief de instrumentación (pantalla completa)
+
 function BriefInstrumentacionScreen() {
   // Definición de los formularios por tipo de sensor
-const QUIZ = {
-  flujo: {
-    title: 'Sensor de flujo',
-    fields: [
-      // 1) PROPIEDADES DEL PRODUCTO
-      { k: 'densidad',      label: 'Densidad',                    type: 'text' },
-      { k: 'viscosidad',    label: 'Viscosidad',                  type: 'text' },
-      { k: 'conductividad', label: 'Conductividad',               type: 'text' }, // opcional en validación
-      {
-        k: 'corrosion',
-        label: 'Resistencia a la corrosión (opcional)',
-        type: 'text'
-      },
-      {
-        k: 'abrasion',
-        label: 'Resistencia a la abrasión (opcional)',
-        type: 'text'
-      },
-      {
-        k: 'producto',
-        label: 'Producto a medir',
-        type: 'text'
-      },
+  const QUIZ = {
+    flujo: {
+      title: 'Sensor de flujo',
+      fields: [
+        // 🔹 Siempre al inicio
+        { k: 'aplicacion', label: 'Aplicación', type: 'text' },
+        { k: 'producto',   label: 'Nombre del producto / fluido a medir', type: 'text' },
 
-      // 2) PROPIEDADES DEL SENSOR / PROCESO
-      {
-        k: 'material',
-        label: 'Material que pasa por la tubería',
-        type: 'select',
-        options: ['Líquido', 'Gas', 'Vapor']
-      },
-      {
-        k: 'liquido',
-        label: 'Especifique cuál líquido es',
-        type: 'text',
-        hint: 'Solo aplica si el material es líquido',
-      },
-      {
-        k: 'gas',
-        label: 'Especifique cuál gas es',
-        type: 'text',
-        hint: 'Solo aplica si el material es gas',
-      },
-      { k: 'temp', label: 'Rango de temperatura del medio', type: 'text', placeholder: '°C' },
+        // 1) PROPIEDADES DEL PRODUCTO (se renderizan como tabla)
+        { k: 'densidad',      label: 'Densidad',                    type: 'text' },
+        { k: 'viscosidad',    label: 'Viscosidad',                  type: 'text' },
+        { k: 'conductividad', label: 'Conductividad',               type: 'text' }, // opcional
+        {
+          k: 'corrosion',
+          label: 'Resistencia a la corrosión (opcional)',
+          type: 'text'
+        },
+        {
+          k: 'abrasion',
+          label: 'Resistencia a la abrasión (opcional)',
+          type: 'text'
+        },
 
-      { k: 'presionRango', label: 'Rango de la presión del medio', type: 'text' },
-      {
-        k: 'presionUnidad',
-        label: 'Unidad de presión del medio',
-        type: 'select',
-        options: ['bar', 'psi', 'kPa', 'otra'],
-      },
+        // 2) PROPIEDADES DEL SENSOR / PROCESO
+        {
+          k: 'material',
+          label: 'Material que pasa por la tubería',
+          type: 'select',
+          options: ['Líquido', 'Gas', 'Vapor']
+        },
+        {
+          k: 'liquido',
+          label: 'Especifique cuál líquido es',
+          type: 'text',
+          hint: 'Solo aplica si el material es líquido',
+        },
+        {
+          k: 'gas',
+          label: 'Especifique cuál gas es',
+          type: 'text',
+          hint: 'Solo aplica si el material es gas',
+        },
+        { k: 'temp', label: 'Rango de temperatura del medio', type: 'text', placeholder: '°C' },
 
-      // DN con unidades
-      { k: 'dn', label: 'Diámetro nominal de la tubería', type: 'text' },
+        { k: 'presionRango', label: 'Rango de la presión del medio', type: 'text' },
+        {
+          k: 'presionUnidad',
+          label: 'Unidad de presión del medio',
+          type: 'select',
+          options: ['bar', 'psi', 'kPa', 'otra'],
+        },
 
-      {
-        k: 'conexion',
-        label: 'Conexión a proceso',
-        type: 'select',
-        options: ['Brida (flange)', 'Clamp', 'Otra'] // Triclamp → Clamp
-      },
-      {
-        k: 'conexionOtra',
-        label: 'Si selecciona "Otra", especifique cuál',
-        type: 'text',
-      },
+        // DN con unidades
+        { k: 'dn', label: 'Diámetro nominal de la tubería', type: 'text' },
 
-      {
-        k: 'tecnologia',
-        label: 'Tecnología de preferencia',
-        type: 'select',
-        options: ['Electromagnético', 'Coriolis', 'Recomendación'],
-      },
+        {
+          k: 'conexion',
+          label: 'Conexión a proceso',
+          type: 'select',
+          options: ['Brida (flange)', 'Clamp', 'Otra']
+        },
+        {
+          k: 'conexionOtra',
+          label: 'Si selecciona "Otra", especifique cuál',
+          type: 'text',
+        },
 
-      {
-        k: 'tipoVapor',
-        label: 'Si el producto es vapor, indique el tipo',
-        type: 'radio',
-        options: ['Sobrecalentado', 'Sobresaturado'],
-      },
+        {
+          k: 'tecnologia',
+          label: 'Tecnología de preferencia',
+          type: 'select',
+          options: ['Electromagnético', 'Coriolis', 'Según recomendación'],
+        },
 
-      // 3) TRANSMISOR
-      {
-        k: 'montaje',
-        label: 'Montaje del transmisor',
-        type: 'select',
-        options: ['Compacto', 'Remoto']
-      },
-      {
-        k: 'montajeDist',
-        label: 'Si es remoto, distancia entre sensor y transmisor',
-        type: 'text',
-        placeholder: 'Ej. 5 m'
-      },
-      {
-        k: 'alimentacion',
-        label: 'Alimentación del transmisor',
-        type: 'radio',
-        options: ['110 VAC', '24 VDC']
-      },
-      {
-        k: 'comCon',
-        label: '¿Requiere comunicación?',
-        type: 'radio',
-        options: ['Con comunicación', 'Sin comunicación'],
-      },
-      {
-        k: 'comun',
-        label: 'Protocolo de comunicación',
-        type: 'select',
-        options: [
-          'HART',
-          'Profinet',
-          'Profibus DP',
-          'Profibus PA',
-          'Modbus TCP/IP',
-          'Modbus RTU (RS-485)',
-        ],
-      },
-      {
-        k: 'medirPresion',
-        label: '¿El transmisor debe medir presión?',
-        type: 'radio',
-        options: ['Sí', 'No'],
-      },
-    ],
-  },
+        {
+          k: 'tipoVapor',
+          label: 'Si el producto es vapor, indique el tipo',
+          type: 'radio',
+          options: ['Sobrecalentado', 'Sobresaturado'],
+        },
 
-  nivel: {
-    title: 'Sensor de nivel',
-    fields: [
-      {
-        k: 'modo',
-        label: 'Tipo de medición',
-        type: 'radio',
-        options: ['Continua', 'Detección']
-      },
-      {
-        k: 'material',
-        label: 'Material a medir',
-        type: 'select',
-        options: ['Líquido', 'Sólidos a granel', 'Interfaz']
-      },
-      {
-        k: 'liquido',
-        label: 'Especifique cuál líquido es',
-        type: 'text',
-      },
-      // SOLO si material === "Interfaz"
-      {
-        k: 'interfazFluidos',
-        label: 'Fluidos de proceso',
-        type: 'text',
-        hint: 'Ej. Agua / Aceite, Agua / Combustible',
-      },
-      {
-        k: 'interfazSonda',
-        label: 'Longitud de la sonda',
-        type: 'text',
-        placeholder: 'Ej. 0 m a 30 m',
-      },
+        // 3) TRANSMISOR
+        {
+          k: 'montaje',
+          label: 'Montaje del transmisor',
+          type: 'select',
+          options: ['Compacto', 'Remoto']
+        },
+        {
+          k: 'montajeDist',
+          label: 'Si es remoto, distancia entre sensor y transmisor',
+          type: 'text',
+          placeholder: 'Ej. 5 m'
+        },
+        {
+          k: 'displayRemoto',
+          label: 'Si es remoto, tipo de montaje del transmisor',
+          type: 'select',
+          options: ['Tapa ciega', 'Con vidrio'],
+        },
+        {
+          k: 'alimentacion',
+          label: 'Alimentación del transmisor',
+          type: 'radio',
+          options: ['110 VAC', '24 VDC']
+        },
+        {
+          k: 'comCon',
+          label: '¿Requiere comunicación?',
+          type: 'radio',
+          options: ['Con comunicación', 'Sin comunicación'],
+        },
+        {
+          k: 'comun',
+          label: 'Protocolo de comunicación',
+          type: 'select',
+          options: [
+            'HART',
+            'Profinet',
+            'Profibus DP',
+            'Profibus PA',
+            'Modbus TCP/IP',
+            'Modbus RTU (RS-485)',
+          ],
+        },
+        {
+          k: 'medirPresion',
+          label: '¿El transmisor debe medir presión?',
+          type: 'radio',
+          options: ['Sí', 'No'],
+        },
+      ],
+    },
 
-      { k: 'altura', label: 'Altura del tanque', type: 'text' },
+    nivel: {
+      title: 'Sensor de nivel',
+      fields: [
+        // Siempre al inicio
+        { k: 'aplicacion', label: 'Aplicación', type: 'text' },
+        { k: 'producto',   label: 'Nombre del producto', type: 'text' },
 
-      // Diámetro con unidades (igual estilo que flujo)
-      { k: 'diametro', label: 'Diámetro del tanque', type: 'text' },
+        {
+          k: 'modo',
+          label: 'Tipo de medición',
+          type: 'radio',
+          options: ['Continua', 'Detección']
+        },
+        {
+          k: 'material',
+          label: 'Material a medir',
+          type: 'select',
+          options: ['Líquido', 'Sólidos a granel', 'Interfaz']
+        },
+        {
+          k: 'liquido',
+          label: 'Especifique cuál líquido es',
+          type: 'text',
+        },
+        // SOLO si material === "Interfaz"
+        {
+          k: 'interfazFluidos',
+          label: 'Fluidos de proceso',
+          type: 'text',
+          hint: 'Ej. Agua / Aceite, Agua / Combustible',
+        },
+        {
+          k: 'interfazSonda',
+          label: 'Longitud de la sonda',
+          type: 'text',
+          placeholder: 'Ej. 0 m a 30 m',
+        },
 
-      {
-        k: 'conexion',
-        label: 'Conexión a proceso',
-        type: 'select',
-        options: ['Brida', 'Roscada', 'Sanitaria (Clamp)'] // Triclamp → Clamp
-      },
+        { k: 'altura', label: 'Altura del tanque', type: 'text' },
 
-      {
-        k: 'temp',
-        label: 'Temperatura de almacenamiento',
-        type: 'text',
-        placeholder: '°C',
-      },
-      {
-        k: 'presionAlmacenamiento',
-        label: 'Presión de almacenamiento',
-        type: 'text',
-        placeholder: 'bar, psi, etc.',
-      },
+        // Diámetro con unidades
+        { k: 'diametro', label: 'Diámetro del tanque', type: 'text' },
 
-      {
-        k: 'display',
-        label: '¿Con display local?',
-        type: 'radio',
-        options: ['Con display', 'Sin display'],
-      },
+        {
+          k: 'conexion',
+          label: 'Conexión a proceso',
+          type: 'select',
+          options: ['Brida', 'Roscada', 'Sanitaria (Clamp)']
+        },
 
-      {
-        k: 'comun',
-        label: 'Comunicación',
-        type: 'select',
-        options: ['HART (4–20 mA)', 'Profibus DP', 'Modbus']
-      },
-      {
-        k: 'alimentacion',
-        label: 'Alimentación',
-        type: 'select',
-        options: ['110 VAC', '24 VDC', 'Fuente interna']
-      },
-    ],
-  },
+        {
+          k: 'temp',
+          label: 'Temperatura de almacenamiento',
+          type: 'text',
+          placeholder: '°C',
+        },
+        {
+          k: 'presionAlmacenamiento',
+          label: 'Presión de almacenamiento',
+          type: 'text',
+          placeholder: 'bar, psi, etc.',
+        },
 
-  temperatura: {
-    title: 'Sensor de temperatura',
-    fields: [
-      // SENSOR
-      {
-        k: 'tipoSensor',
-        label: 'Tipo de sensor de temperatura',
-        type: 'select',
-        options: ['RTD (PT100/PT1000)', 'Termocupla'],
-      },
-      {
-        k: 'longBulbo',
-        label: 'Longitud del bulbo',
-        type: 'text',
-        placeholder: 'mm o pulgadas',
-      },
-      {
-        k: 'diamBulbo',
-        label: 'Diámetro del bulbo',
-        type: 'text',
-        placeholder: 'Ej. 6, 8, 10',
-      },
-      {
-        k: 'diamBulboUnidad',
-        label: 'Unidad diámetro bulbo',
-        type: 'select',
-        options: ['mm', 'in'],
-      },
-      {
-        k: 'hilos',
-        label: 'Cantidad de hilos',
-        type: 'select',
-        options: ['2', '3', '4'],
-      },
-      {
-        k: 'montajeCabezal',
-        label: 'Montaje',
-        type: 'radio',
-        options: ['Con cabezal', 'Sin cabezal'],
-      },
-      {
-        k: 'termopozo',
-        label: '¿Requiere termopozo?',
-        type: 'radio',
-        options: ['Sí', 'No'],
-      },
-      {
-        k: 'conexionProc',
-        label: 'Conexión a proceso',
-        type: 'select',
-        options: ['Rosca', 'Brida', 'Tipo sanitaria'],
-      },
-      {
-        k: 'diamConexion',
-        label: 'Diámetro conexión a proceso',
-        type: 'text',
-        placeholder: 'Ej. 1/2, 3/4',
-      },
-      {
-        k: 'diamConexionUnidad',
-        label: 'Unidad diámetro conexión',
-        type: 'select',
-        options: ['in', 'mm'],
-      },
+        {
+          k: 'display',
+          label: '¿Con display local?',
+          type: 'radio',
+          options: ['Con display', 'Sin display'],
+        },
 
-      // TRANSMISOR
-      {
-        k: 'tipoTermocupla',
-        label: 'Tipo de termocupla',
-        type: 'select',
-        options: ['J', 'K', 'T', 'E', 'N', 'B', 'R', 'S', 'C'],
-      },
-      {
-        k: 'tempMin',
-        label: 'Temperatura mínima de proceso',
-        type: 'text',
-        placeholder: '°C',
-      },
-      {
-        k: 'tempMax',
-        label: 'Temperatura máxima de proceso',
-        type: 'text',
-        placeholder: '°C',
-      },
-      {
-        k: 'displayTemp',
-        label: '¿Con display local?',
-        type: 'radio',
-        options: ['Con display', 'Sin display'],
-      },
-      {
-        k: 'comun',
-        label: 'Comunicación del transmisor',
-        type: 'select',
-        options: ['4–20 mA', 'HART', '0–10 V'],
-      },
-      {
-        k: 'atex',
-        label: '¿Requiere protección contra explosión?',
-        type: 'radio',
-        options: ['Sí', 'No'],
-      },
-    ],
-  },
+        {
+          k: 'comun',
+          label: 'Comunicación',
+          type: 'select',
+          options: ['HART (4–20 mA)', 'Profibus DP', 'Modbus']
+        },
+        {
+          k: 'alimentacion',
+          label: 'Alimentación',
+          type: 'select',
+          options: ['110 VAC', '24 VDC', 'Fuente interna']
+        },
+      ],
+    },
 
-  presion: {
-    title: 'Sensor de presión',
-    fields: [
-      {
-        k: 'aplicacion',
-        label: 'Aplicación',
-        type: 'select',
-        options: ['General', 'Higiénica', 'Hidrocarburos'],
-      },
-      {
-        k: 'producto',
-        label: 'Nombre del producto',
-        type: 'text',
-      },
-      {
-        k: 'tipoPresion',
-        label: 'Tipo de presión',
-        type: 'select',
-        options: ['Manométrica', 'Absoluta', 'Diferencial'],
-      },
-      {
-        k: 'rangoMin',
-        label: 'Rango de presión - mínimo',
-        type: 'text',
-      },
-      {
-        k: 'rangoMax',
-        label: 'Rango de presión - máximo',
-        type: 'text',
-      },
-      {
-        k: 'unidadPresion',
-        label: 'Unidad de medida de la presión',
-        type: 'select',
-        options: ['psi', 'bar', 'mbar'],
-      },
-      {
-        k: 'display',
-        label: '¿Requiere display local?',
-        type: 'radio',
-        options: ['Sí', 'No'],
-      },
-      {
-        k: 'proteccionExplosion',
-        label: '¿Requiere protección contra explosión?',
-        type: 'radio',
-        options: ['No', 'Sí'],
-      },
-      {
-        k: 'tipoProteccion',
-        label: 'Si requiere protección contra explosión, ¿cuál?',
-        type: 'text',
-      },
-      {
-        k: 'conexion',
-        label: 'Conexión a proceso',
-        type: 'select',
-        options: ['Rosca', 'Brida', 'Sanitaria'],
-      },
-      {
-        k: 'precision',
-        label: 'Precisión requerida',
-        type: 'text',
-      },
-      {
-        k: 'comun',
-        label: 'Comunicación del transmisor',
-        type: 'select',
-        options: ['4–20 mA', '0–10 V', 'HART', 'Modbus'],
-      },
-    ],
-  },
+    temperatura: {
+      title: 'Sensor de temperatura',
+      fields: [
+        // Al inicio
+        { k: 'aplicacion', label: 'Aplicación', type: 'text' },
+        { k: 'producto',   label: 'Nombre del producto', type: 'text' },
 
-  peso: {
-    title: 'Sensor de peso / sistema de pesaje',
-    fields: [
-      {
-        k: 'tipoPeso',
-        label: '¿Qué se va a suministrar?',
-        type: 'radio',
-        options: ['Celdas de carga', 'Transmisor de peso', 'Combinado (celdas + transmisor)'],
-      },
+        // SENSOR
+        {
+          k: 'tipoSensor',
+          label: 'Tipo de sensor de temperatura',
+          type: 'select',
+          options: ['RTD (PT100/PT1000)', 'Termocupla'],
+        },
+        {
+          k: 'tipoTermocupla',
+          label: 'Tipo de termocupla',
+          type: 'select',
+          options: ['J', 'K', 'T', 'E', 'N', 'B', 'R', 'S', 'C'],
+        },
+        {
+          k: 'longBulbo',
+          label: 'Longitud del bulbo',
+          type: 'text',
+          placeholder: 'mm o pulgadas',
+        },
+        {
+          k: 'diamBulbo',
+          label: 'Diámetro del bulbo',
+          type: 'text',
+          placeholder: 'Ej. 6, 8, 10',
+        },
+        {
+          k: 'diamBulboUnidad',
+          label: 'Unidad diámetro bulbo',
+          type: 'select',
+          options: ['mm', 'in'],
+        },
+        {
+          k: 'hilos',
+          label: 'Cantidad de hilos',
+          type: 'select',
+          options: ['2', '3', '4'],
+        },
+        {
+          k: 'montajeCabezal',
+          label: 'Montaje',
+          type: 'radio',
+          options: ['Con cabezal', 'Sin cabezal'],
+        },
+        {
+          k: 'termopozo',
+          label: '¿Requiere termopozo?',
+          type: 'radio',
+          options: ['Sí', 'No'],
+        },
+        {
+          k: 'conexionProc',
+          label: 'Conexión a proceso',
+          type: 'select',
+          options: ['Rosca', 'Brida', 'Tipo sanitaria'],
+        },
+        {
+          k: 'diamConexion',
+          label: 'Diámetro conexión a proceso',
+          type: 'text',
+          placeholder: 'Ej. 1/2, 3/4',
+        },
+        {
+          k: 'diamConexionUnidad',
+          label: 'Unidad diámetro conexión',
+          type: 'select',
+          options: ['in', 'mm'],
+        },
 
-      // CELDAS DE CARGA
-      {
-        k: 'productoExpo',
-        label: 'Productos a los que estará expuesta la celda de carga',
-        type: 'text',
-      },
-      {
-        k: 'resolucionValor',
-        label: 'Resolución requerida (valor)',
-        type: 'text',
-        placeholder: 'Ej. 5, 10, 20',
-      },
-      {
-        k: 'resolucionUnidad',
-        label: 'Unidad de resolución',
-        type: 'select',
-        options: ['g', 'kg'],
-      },
+        // TRANSMISOR
+        {
+          k: 'tempMin',
+          label: 'Temperatura mínima de proceso',
+          type: 'text',
+          placeholder: '°C',
+        },
+        {
+          k: 'tempMax',
+          label: 'Temperatura máxima de proceso',
+          type: 'text',
+          placeholder: '°C',
+        },
+        {
+          k: 'displayTemp',
+          label: '¿Con display local?',
+          type: 'radio',
+          options: ['Con display', 'Sin display'],
+        },
+        {
+          k: 'comun',
+          label: 'Comunicación del transmisor',
+          type: 'select',
+          options: ['4–20 mA', 'HART', '0–10 V'],
+        },
+        {
+          k: 'atex',
+          label: '¿Requiere protección contra explosión?',
+          type: 'radio',
+          options: ['Sí', 'No'],
+        },
+      ],
+    },
 
-      // TRANSMISOR
-      {
-        k: 'cantBasculas',
-        label: 'Cantidad de básculas',
-        type: 'text',
-      },
-      {
-        k: 'gradoIP',
-        label: 'Grado de protección IP',
-        type: 'text',
-      },
-      {
-        k: 'montajePeso',
-        label: 'Montaje del transmisor',
-        type: 'select',
-        options: ['Universal', 'Tablero', 'Panel', 'Riel DIN (omega)'],
-      },
-      {
-        k: 'comunPeso',
-        label: 'Comunicación del transmisor',
-        type: 'select',
-        options: [
-          'Profinet',
-          'Sin comunicación',
-          'Salida análoga (4–20 mA, 0–10 VDC)',
-          'Profibus',
-          'EtherCAT',
-          'Ethernet IP',
-          'DeviceNet',
-          'Modbus TCP-IP',
-          'Modbus RTU RS-485',
-        ],
-      },
-      {
-        k: 'impresora',
-        label: '¿Requiere impresora?',
-        type: 'radio',
-        options: ['Sí', 'No'],
-      },
-      {
-        k: 'aplicativo',
-        label: 'Aplicativo',
-        type: 'select',
-        options: [
-          'Totalización',
-          'Cuenta piezas',
-          'Pesaje de vehículos',
-          'Control estadístico',
-          'Etiquetado',
-          'Pesaje de ejes',
-          'Sistemas de dosificación monoproducto',
-          'Sistemas de dosificación multiproducto',
-          'Chequeador dinámico',
-          'Pesaje dinámico en banda (a granel)',
-          'Otro',
-        ],
-      },
-      {
-        k: 'aplicativoOtro',
-        label: 'Si selecciona "Otro", describa el aplicativo',
-        type: 'text',
-      },
-    ],
-  },
-};
+    presion: {
+      title: 'Sensor de presión',
+      fields: [
+        { k: 'aplicacion', label: 'Aplicación', type: 'text' },
+        { k: 'producto',   label: 'Nombre del producto', type: 'text' },
+
+        {
+          k: 'rangoMin',
+          label: 'Rango de presión del proceso (mín y máx + unidad)',
+          type: 'text',
+        },
+        {
+          k: 'rangoMax',
+          label: 'Rango máximo (interno)',
+          type: 'text',
+        },
+        {
+          k: 'unidadPresion',
+          label: 'Unidad de medida de la presión',
+          type: 'select',
+          options: ['psi', 'bar', 'mbar'],
+        },
+        {
+          k: 'display',
+          label: '¿Requiere display local?',
+          type: 'radio',
+          options: ['Con display', 'Sin display'],
+        },
+        {
+          k: 'tipoDisplay',
+          label: 'Si requiere display, tipo de tapa',
+          type: 'select',
+          options: ['Tapa ciega', 'Con vidrio'],
+        },
+        {
+          k: 'proteccionExplosion',
+          label: '¿Requiere protección contra explosión?',
+          type: 'radio',
+          options: ['No', 'Sí'],
+        },
+        {
+          k: 'tipoProteccion',
+          label: 'Si requiere protección contra explosión, ¿cuál?',
+          type: 'text',
+        },
+        {
+          k: 'conexion',
+          label: 'Conexión a proceso',
+          type: 'select',
+          options: ['Rosca', 'Brida', 'Sanitaria'],
+        },
+        {
+          k: 'precision',
+          label: 'Precisión requerida',
+          type: 'text',
+        },
+        {
+          k: 'comun',
+          label: 'Comunicación del transmisor',
+          type: 'select',
+          options: ['4–20 mA', '0–10 V', 'HART', 'Modbus'],
+        },
+      ],
+    },
+
+    peso: {
+      title: 'Sensor de peso / sistema de pesaje',
+      fields: [
+        { k: 'aplicacion', label: 'Aplicación', type: 'text' },
+        { k: 'producto',   label: 'Nombre del producto', type: 'text' },
+
+        {
+          k: 'tipoPeso',
+          label: '¿Qué se va a suministrar?',
+          type: 'radio',
+          options: ['Celdas de carga', 'Transmisor de peso', 'Combinado (celdas + transmisor)'],
+        },
+
+        // CELDAS DE CARGA
+        {
+          k: 'productoExpo',
+          label: 'Productos a los que estará expuesta la celda de carga',
+          type: 'text',
+        },
+        {
+          k: 'resolucionValor',
+          label: 'Resolución requerida',
+          type: 'text',
+          placeholder: 'Ej. 5, 10, 20',
+        },
+        {
+          k: 'resolucionUnidad',
+          label: 'Unidad de resolución',
+          type: 'select',
+          options: ['g', 'kg'],
+        },
+
+        // TRANSMISOR
+        {
+          k: 'cantBasculas',
+          label: 'Cantidad de básculas',
+          type: 'text',
+        },
+        {
+          k: 'gradoIP',
+          label: 'Grado de protección IP',
+          type: 'text',
+        },
+        {
+          k: 'montajePeso',
+          label: 'Montaje del transmisor',
+          type: 'select',
+          options: ['Universal', 'Tablero', 'Panel', 'Riel DIN (omega)'],
+        },
+        {
+          k: 'comunPeso',
+          label: 'Comunicación del transmisor',
+          type: 'select',
+          options: [
+            'Profinet',
+            'Sin comunicación',
+            'Salida análoga (4–20 mA, 0–10 VDC)',
+            'Profibus',
+            'EtherCAT',
+            'Ethernet IP',
+            'DeviceNet',
+            'Modbus TCP-IP',
+            'Modbus RTU RS-485',
+          ],
+        },
+        {
+          k: 'impresora',
+          label: '¿Requiere impresora?',
+          type: 'radio',
+          options: ['Sí', 'No'],
+        },
+        {
+          k: 'aplicativo',
+          label: 'Aplicativo',
+          type: 'select',
+          options: [
+            'Totalización',
+            'Cuenta piezas',
+            'Pesaje de vehículos',
+            'Control estadístico',
+            'Etiquetado',
+            'Pesaje de ejes',
+            'Sistemas de dosificación monoproducto',
+            'Sistemas de dosificación multiproducto',
+            'Chequeador dinámico',
+            'Pesaje dinámico en banda (a granel)',
+            'Otro',
+          ],
+        },
+        {
+          k: 'aplicativoOtro',
+          label: 'Si selecciona "Otro", describa el aplicativo',
+          type: 'text',
+        },
+      ],
+    },
+  };
 
 
   // 🔹 Estado del cuestionario
@@ -2969,63 +2977,64 @@ const QUIZ = {
   const setAns = (k, v) => setQuizData((d) => ({ ...d, [k]: v }));
   const setGen = (k, v) => setGeneral((g) => ({ ...g, [k]: v }));
 
-  // Devuelve solo los campos que realmente están visibles en el formulario
-function getVisibleFields(cfg, type, data) {
-  return cfg.fields.filter((f) => {
-    // 🔹 Flujo
-    if (type === 'flujo') {
-      if (f.k === 'liquido' && data.material !== 'Líquido') return false;
-      if (f.k === 'gas' && data.material !== 'Gas') return false;
-      if (f.k === 'tipoVapor' && data.material !== 'Vapor') return false;
-      if (f.k === 'conexionOtra' && data.conexion !== 'Otra') return false;
-      if (f.k === 'montajeDist' && data.montaje !== 'Remoto') return false;
-      if (f.k === 'comun' && data.comCon === 'Sin comunicación') return false;
-    }
+  function getVisibleFields(cfg, type, data) {
+    return cfg.fields.filter((f) => {
+      // 🔹 Flujo
+      if (type === 'flujo') {
+        if (f.k === 'liquido' && data.material !== 'Líquido') return false;
+        if (f.k === 'gas' && data.material !== 'Gas') return false;
+        if (f.k === 'tipoVapor' && data.material !== 'Vapor') return false;
+        if (f.k === 'conexionOtra' && data.conexion !== 'Otra') return false;
+        if (f.k === 'montajeDist' && data.montaje !== 'Remoto') return false;
+        if (f.k === 'displayRemoto' && data.montaje !== 'Remoto') return false;
+        if (f.k === 'comun' && data.comCon === 'Sin comunicación') return false;
+        if (f.k === 'medirPresion' && data.material !== 'Vapor') return false;
+      }
 
-    // 🔹 Nivel
-    if (type === 'nivel') {
-      if (f.k === 'liquido' && data.material !== 'Líquido') return false;
-      if (f.k === 'interfazFluidos' && data.material !== 'Interfaz') return false;
-      if (f.k === 'interfazSonda' && data.material !== 'Interfaz') return false;
-    }
+      // 🔹 Nivel
+      if (type === 'nivel') {
+        if (f.k === 'liquido' && data.material !== 'Líquido') return false;
+        if (f.k === 'interfazFluidos' && data.material !== 'Interfaz') return false;
+        if (f.k === 'interfazSonda' && data.material !== 'Interfaz') return false;
+      }
 
-    // 🔹 Temperatura
-    if (type === 'temperatura') {
-      if (f.k === 'tipoTermocupla' && data.tipoSensor !== 'Termocupla') return false;
-    }
+      // 🔹 Temperatura
+      if (type === 'temperatura') {
+        if (f.k === 'tipoTermocupla' && data.tipoSensor !== 'Termocupla') return false;
+      }
 
-    // 🔹 Presión
-    if (type === 'presion') {
-      if (f.k === 'tipoProteccion' && data.proteccionExplosion !== 'Sí') return false;
-    }
+      // 🔹 Presión
+      if (type === 'presion') {
+        if (f.k === 'tipoProteccion' && data.proteccionExplosion !== 'Sí') return false;
+        if (f.k === 'tipoDisplay' && data.display !== 'Con display') return false;
+      }
 
-    // 🔹 Peso
-    if (type === 'peso') {
-      const tipo = data.tipoPeso;
-      const esCeldas     = tipo === 'Celdas de carga';
-      const esTx         = tipo === 'Transmisor de peso';
-      const esCombinado  = tipo === 'Combinado (celdas + transmisor)';
+      // 🔹 Peso
+      if (type === 'peso') {
+        const tipo = data.tipoPeso;
+        const esCeldas    = tipo === 'Celdas de carga';
+        const esTx        = tipo === 'Transmisor de peso';
+        const esCombinado = tipo === 'Combinado (celdas + transmisor)';
 
-      const soloCeldas = ['productoExpo', 'resolucionValor', 'resolucionUnidad'];
-      const soloTx = [
-        'cantBasculas',
-        'gradoIP',
-        'montajePeso',
-        'comunPeso',
-        'impresora',
-        'aplicativo',
-        'aplicativoOtro',
-      ];
+        const soloCeldas = ['productoExpo', 'resolucionValor', 'resolucionUnidad'];
+        const soloTx = [
+          'cantBasculas',
+          'gradoIP',
+          'montajePeso',
+          'comunPeso',
+          'impresora',
+          'aplicativo',
+          'aplicativoOtro',
+        ];
 
-      if (soloCeldas.includes(f.k) && !(esCeldas || esCombinado)) return false;
-      if (soloTx.includes(f.k) && !(esTx || esCombinado)) return false;
+        if (soloCeldas.includes(f.k) && !(esCeldas || esCombinado)) return false;
+        if (soloTx.includes(f.k) && !(esTx || esCombinado)) return false;
+        if (f.k === 'aplicativoOtro' && data.aplicativo !== 'Otro') return false;
+      }
 
-      if (f.k === 'aplicativoOtro' && data.aplicativo !== 'Otro') return false;
-    }
-
-    return true;
-  });
-}
+      return true;
+    });
+  }
 
   // Valida que TODOS los campos obligatorios estén llenos
   function validateQuizBeforeDownload() {
@@ -3387,13 +3396,15 @@ visible.forEach((f) => {
                   </h2>
 
 {QUIZ[quizType].fields.map((f) => {
-  // --- Reglas de visibilidad dinámica ---
+  // --- Reglas de visibilidad dinámica (UI) ---
   if (quizType === 'flujo' && f.k === 'liquido' && quizData.material !== 'Líquido') return null;
   if (quizType === 'flujo' && f.k === 'gas' && quizData.material !== 'Gas') return null;
   if (quizType === 'flujo' && f.k === 'tipoVapor' && quizData.material !== 'Vapor') return null;
   if (quizType === 'flujo' && f.k === 'conexionOtra' && quizData.conexion !== 'Otra') return null;
   if (quizType === 'flujo' && f.k === 'montajeDist' && quizData.montaje !== 'Remoto') return null;
+  if (quizType === 'flujo' && f.k === 'displayRemoto' && quizData.montaje !== 'Remoto') return null;
   if (quizType === 'flujo' && f.k === 'comun' && quizData.comCon === 'Sin comunicación') return null;
+  if (quizType === 'flujo' && f.k === 'medirPresion' && quizData.material !== 'Vapor') return null;
 
   if (quizType === 'nivel' && f.k === 'liquido' && quizData.material !== 'Líquido') return null;
   if (quizType === 'nivel' && f.k === 'interfazFluidos' && quizData.material !== 'Interfaz') return null;
@@ -3402,12 +3413,13 @@ visible.forEach((f) => {
   if (quizType === 'temperatura' && f.k === 'tipoTermocupla' && quizData.tipoSensor !== 'Termocupla') return null;
 
   if (quizType === 'presion' && f.k === 'tipoProteccion' && quizData.proteccionExplosion !== 'Sí') return null;
+  if (quizType === 'presion' && f.k === 'tipoDisplay' && quizData.display !== 'Con display') return null;
 
   if (quizType === 'peso') {
     const tipo = quizData.tipoPeso;
-    const esCeldas     = tipo === 'Celdas de carga';
-    const esTx         = tipo === 'Transmisor de peso';
-    const esCombinado  = tipo === 'Combinado (celdas + transmisor)';
+    const esCeldas    = tipo === 'Celdas de carga';
+    const esTx        = tipo === 'Transmisor de peso';
+    const esCombinado = tipo === 'Combinado (celdas + transmisor)';
 
     const soloCeldas = ['productoExpo', 'resolucionValor', 'resolucionUnidad'];
     const soloTx = [
@@ -3425,178 +3437,307 @@ visible.forEach((f) => {
     if (f.k === 'aplicativoOtro' && quizData.aplicativo !== 'Otro') return null;
   }
 
-                    // --- Grupo especial: Propiedades del producto (solo flujo) ---
-                    if (quizType === 'flujo' && f.k === 'densidad') {
-                      const propKeys = [
-                        'densidad',
-                        'viscosidad',
-                        'conductividad',
-                        'corrosion',
-                        'abrasion',
-                        'producto',
-                      ];
+  // --- Grupo especial: Propiedades del producto (solo flujo) ---
+  if (quizType === 'flujo' && f.k === 'densidad') {
+    const propKeys = [
+      'producto',   // primero el producto
+      'densidad',
+      'viscosidad',
+      'conductividad',
+      'corrosion',
+      'abrasion',
+    ];
 
-                      return (
-                        <div
-                          key="grupo-propiedades"
-                          className="border border-slate-200 rounded-2xl p-4 bg-slate-50/60"
-                        >
-                          <p className="text-xs font-semibold text-slate-700 mb-3">
-                            Propiedades del producto
-                          </p>
+    return (
+      <div
+        key="grupo-propiedades"
+        className="border border-slate-200 rounded-2xl p-4 bg-slate-50/60"
+      >
+        <p className="text-xs font-semibold text-slate-700 mb-3">
+          Propiedades del producto
+        </p>
 
-                          <div className="space-y-3 pl-2">
-                            {propKeys.map((k) => {
-                              const field = QUIZ.flujo.fields.find((ff) => ff.k === k);
-                              if (!field) return null;
+        <div className="space-y-3 pl-2">
+          {propKeys.map((k) => {
+            const field = QUIZ.flujo.fields.find((ff) => ff.k === k);
+            if (!field) return null;
 
-                              return (
-                                <div
-                                  key={k}
-                                  className="grid grid-cols-[170px,1fr] gap-3 items-center"
-                                >
-                                  <span className="text-xs text-slate-600">
-                                    {field.label}:
-                                  </span>
-                                  <input
-                                    className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                                    value={quizData[k] || ''}
-                                    onChange={(e) => setAns(k, e.target.value)}
-                                  />
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      );
-                    }
+            return (
+              <div
+                key={k}
+                className="grid grid-cols-[170px,1fr] gap-3 items-center"
+              >
+                <span className="text-xs text-slate-600">
+                  {field.label}:
+                </span>
+                <input
+                  className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                  value={quizData[k] || ''}
+                  onChange={(e) => setAns(k, e.target.value)}
+                />
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
 
-                    // Saltar los otros campos de propiedades porque ya se renderizan en el grupo
-                    if (
-                      quizType === 'flujo' &&
-                      ['viscosidad', 'conductividad', 'corrosion', 'abrasion'].includes(f.k)
-                    ) {
-                      return null;
-                    }
+  // Saltar otros campos de propiedades porque ya se renderizan en el grupo
+  if (
+    quizType === 'flujo' &&
+    ['viscosidad', 'conductividad', 'corrosion', 'abrasion', 'producto'].includes(f.k)
+  ) {
+    return null;
+  }
 
-                    // 🔹 Campo especial: Diámetro nominal con selector de unidades
-// 🔹 Campo especial: Diámetro nominal con selector de unidades (flujo)
-if (quizType === 'flujo' && f.k === 'dn') {
+  // 🔹 Campo especial: DN (flujo) valor + unidades
+  if (quizType === 'flujo' && f.k === 'dn') {
+    return (
+      <div key="dn">
+        <label className="block text-xs text-slate-600 mb-1">
+          {f.label}
+        </label>
+        <div className="flex gap-3">
+          <input
+            className="flex-1 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            value={quizData.dn || ''}
+            onChange={(e) => setAns('dn', e.target.value)}
+            placeholder="Ej. 2 o 50"
+          />
+          <select
+            className="w-28 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            value={quizData.dnUnidad || 'in'}
+            onChange={(e) => setAns('dnUnidad', e.target.value)}
+          >
+            <option value="in">in</option>
+            <option value="mm">mm</option>
+          </select>
+        </div>
+      </div>
+    );
+  }
+
+  // 🔹 Campo especial: Diámetro tanque (nivel) valor + unidades
+  if (quizType === 'nivel' && f.k === 'diametro') {
+    return (
+      <div key="diametro">
+        <label className="block text-xs text-slate-600 mb-1">
+          {f.label}
+        </label>
+        <div className="flex gap-3">
+          <input
+            className="flex-1 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            value={quizData.diametro || ''}
+            onChange={(e) => setAns('diametro', e.target.value)}
+            placeholder="Ej. 2 o 50"
+          />
+          <select
+            className="w-28 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            value={quizData.diametroUnidad || 'in'}
+            onChange={(e) => setAns('diametroUnidad', e.target.value)}
+          >
+            <option value="in">in</option>
+            <option value="mm">mm</option>
+          </select>
+        </div>
+      </div>
+    );
+  }
+
+  // 🔹 Campo especial: diámetro bulbo (temperatura) valor + unidades
+  if (quizType === 'temperatura' && f.k === 'diamBulbo') {
+    return (
+      <div key="diamBulbo">
+        <label className="block text-xs text-slate-600 mb-1">
+          {f.label}
+        </label>
+        <div className="flex gap-3">
+          <input
+            className="flex-1 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            value={quizData.diamBulbo || ''}
+            onChange={(e) => setAns('diamBulbo', e.target.value)}
+            placeholder={f.placeholder || ''}
+          />
+          <select
+            className="w-28 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            value={quizData.diamBulboUnidad || 'mm'}
+            onChange={(e) => setAns('diamBulboUnidad', e.target.value)}
+          >
+            <option value="mm">mm</option>
+            <option value="in">in</option>
+          </select>
+        </div>
+      </div>
+    );
+  }
+
+  // 🔹 Campo especial: diámetro conexión (temperatura) valor + unidades
+  if (quizType === 'temperatura' && f.k === 'diamConexion') {
+    return (
+      <div key="diamConexion">
+        <label className="block text-xs text-slate-600 mb-1">
+          {f.label}
+        </label>
+        <div className="flex gap-3">
+          <input
+            className="flex-1 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            value={quizData.diamConexion || ''}
+            onChange={(e) => setAns('diamConexion', e.target.value)}
+            placeholder={f.placeholder || ''}
+          />
+          <select
+            className="w-28 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            value={quizData.diamConexionUnidad || 'in'}
+            onChange={(e) => setAns('diamConexionUnidad', e.target.value)}
+          >
+            <option value="in">in</option>
+            <option value="mm">mm</option>
+          </select>
+        </div>
+      </div>
+    );
+  }
+
+  // 🔹 Campo especial: rango presión (presión) min + max + unidad
+  if (quizType === 'presion' && f.k === 'rangoMin') {
+    return (
+      <div key="rangoPresion">
+        <label className="block text-xs text-slate-600 mb-1">
+          {f.label}
+        </label>
+        <div className="flex gap-3">
+          <input
+            className="flex-1 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            value={quizData.rangoMin || ''}
+            onChange={(e) => setAns('rangoMin', e.target.value)}
+            placeholder="Mínimo"
+          />
+          <input
+            className="flex-1 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            value={quizData.rangoMax || ''}
+            onChange={(e) => setAns('rangoMax', e.target.value)}
+            placeholder="Máximo"
+          />
+          <select
+            className="w-32 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            value={quizData.unidadPresion || ''}
+            onChange={(e) => setAns('unidadPresion', e.target.value)}
+          >
+            <option value="">Unidad</option>
+            <option value="psi">psi</option>
+            <option value="bar">bar</option>
+            <option value="mbar">mbar</option>
+          </select>
+        </div>
+      </div>
+    );
+  }
+  if (quizType === 'presion' && ['rangoMax', 'unidadPresion'].includes(f.k)) {
+    return null;
+  }
+
+  // 🔹 Campo especial: resolución (peso) valor + unidades
+  if (quizType === 'peso' && f.k === 'resolucionValor') {
+    return (
+      <div key="resolucion">
+        <label className="block text-xs text-slate-600 mb-1">
+          {f.label}
+        </label>
+        <div className="flex gap-3">
+          <input
+            className="flex-1 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            value={quizData.resolucionValor || ''}
+            onChange={(e) => setAns('resolucionValor', e.target.value)}
+            placeholder={f.placeholder || ''}
+          />
+          <select
+            className="w-28 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            value={quizData.resolucionUnidad || 'kg'}
+            onChange={(e) => setAns('resolucionUnidad', e.target.value)}
+          >
+            <option value="g">g</option>
+            <option value="kg">kg</option>
+          </select>
+        </div>
+      </div>
+    );
+  }
+  if (quizType === 'peso' && f.k === 'resolucionUnidad') return null;
+
+  // También saltamos campos de unidad que ya usamos en filas combinadas
+  if (quizType === 'temperatura' && ['diamBulboUnidad', 'diamConexionUnidad'].includes(f.k)) {
+    return null;
+  }
+  if (quizType === 'nivel' && f.k === 'diametroUnidad') return null;
+  if (quizType === 'flujo' && f.k === 'dnUnidad') return null;
+
+  // --- Render genérico para el resto de preguntas ---
   return (
-    <div key="dn">
+    <div key={f.k}>
       <label className="block text-xs text-slate-600 mb-1">
         {f.label}
       </label>
-      <div className="flex gap-3">
+
+      {f.type === 'text' && (
         <input
-          className="flex-1 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-          value={quizData.dn || ''}
-          onChange={(e) => setAns('dn', e.target.value)}
-          placeholder="Ej. 2 o 50"
+          className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+          value={quizData[f.k] || ''}
+          onChange={(e) => setAns(f.k, e.target.value)}
+          placeholder={f.placeholder || ''}
         />
+      )}
+
+      {f.type === 'textarea' && (
+        <textarea
+          rows={3}
+          className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+          value={quizData[f.k] || ''}
+          onChange={(e) => setAns(f.k, e.target.value)}
+        />
+      )}
+
+      {f.type === 'select' && (
         <select
-          className="w-28 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-          value={quizData.dnUnidad || 'in'}
-          onChange={(e) => setAns('dnUnidad', e.target.value)}
+          className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+          value={quizData[f.k] || ''}
+          onChange={(e) => setAns(f.k, e.target.value)}
         >
-          <option value="in">in</option>
-          <option value="mm">mm</option>
+          <option value="">— Selecciona —</option>
+          {f.options.map((op) => (
+            <option key={op} value={op}>
+              {op}
+            </option>
+          ))}
         </select>
-      </div>
+      )}
+
+      {f.type === 'radio' && (
+        <div className="flex flex-wrap gap-3">
+          {f.options.map((op) => (
+            <label
+              key={op}
+              className="inline-flex items-center gap-2 text-sm"
+            >
+              <input
+                type="radio"
+                name={`rad-${quizType}-${f.k}`}
+                checked={(quizData[f.k] || '') === op}
+                onChange={() => setAns(f.k, op)}
+              />
+              <span>{op}</span>
+            </label>
+          ))}
+        </div>
+      )}
+
+      {f.hint && (
+        <p className="mt-1 text-xs text-slate-500">{f.hint}</p>
+      )}
     </div>
   );
-}
-// 🔹 Campo especial: Diámetro del tanque con unidades (nivel)
-if (quizType === 'nivel' && f.k === 'diametro') {
-  return (
-    <div key="diametro">
-      <label className="block text-xs text-slate-600 mb-1">
-        {f.label}
-      </label>
-      <div className="flex gap-3">
-        <input
-          className="flex-1 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-          value={quizData.diametro || ''}
-          onChange={(e) => setAns('diametro', e.target.value)}
-          placeholder="Ej. 2 o 50"
-        />
-        <select
-          className="w-28 rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-          value={quizData.diametroUnidad || 'in'}
-          onChange={(e) => setAns('diametroUnidad', e.target.value)}
-        >
-          <option value="in">in</option>
-          <option value="mm">mm</option>
-        </select>
-      </div>
-    </div>
-  );
-}
-                    // --- Render genérico para el resto de preguntas ---
-                    return (
-                      <div key={f.k}>
-                        <label className="block text-xs text-slate-600 mb-1">
-                          {f.label}
-                        </label>
+})}
 
-                        {f.type === 'text' && (
-                          <input
-                            className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                            value={quizData[f.k] || ''}
-                            onChange={(e) => setAns(f.k, e.target.value)}
-                            placeholder={f.placeholder || ''}
-                          />
-                        )}
-
-                        {f.type === 'textarea' && (
-                          <textarea
-                            rows={3}
-                            className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                            value={quizData[f.k] || ''}
-                            onChange={(e) => setAns(f.k, e.target.value)}
-                          />
-                        )}
-
-                        {f.type === 'select' && (
-                          <select
-                            className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                            value={quizData[f.k] || ''}
-                            onChange={(e) => setAns(f.k, e.target.value)}
-                          >
-                            <option value="">— Selecciona —</option>
-                            {f.options.map((op) => (
-                              <option key={op} value={op}>
-                                {op}
-                              </option>
-                            ))}
-                          </select>
-                        )}
-
-                        {f.type === 'radio' && (
-                          <div className="flex flex-wrap gap-3">
-                            {f.options.map((op) => (
-                              <label
-                                key={op}
-                                className="inline-flex items-center gap-2 text-sm"
-                              >
-                                <input
-                                  type="radio"
-                                  name={`rad-${quizType}-${f.k}`}
-                                  checked={(quizData[f.k] || '') === op}
-                                  onChange={() => setAns(f.k, op)}
-                                />
-                                <span>{op}</span>
-                              </label>
-                            ))}
-                          </div>
-                        )}
-
-                        {f.hint && (
-                          <p className="mt-1 text-xs text-slate-500">{f.hint}</p>
-                        )}
-                      </div>
-                    );
-                  })}
 
                   <div className="pt-2 flex flex-wrap gap-3">
                     <button
