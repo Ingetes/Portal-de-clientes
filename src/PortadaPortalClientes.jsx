@@ -2208,6 +2208,17 @@ function HerramientasScreen() {
       ],
     },
     {
+      title: 'COMPATIBILITY TOOL',
+      desc: 'Utilice la herramienta de compatibilidad para hacer una selección de productos y comprobar su compatibilidad.',
+      badge: 'Siemens',
+      actions: [
+        {
+          label: 'Abrir',
+          href: 'https://support.industry.siemens.com/compatool/#/main/start',
+        },
+      ],
+    },
+    {
       title: 'Cuestionario para selección de intrumentación',
       desc: 'Cuestionario por tipo de sensor (flujo, nivel, temperatura, presión y peso) y descarga de un PDF con las respuestas.',
       badge: 'Formulario',
