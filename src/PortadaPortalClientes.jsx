@@ -1660,7 +1660,7 @@ function CotizadorRapidoScreen() {
   const [desc, setDesc] = useState("");
   const [priceMode, setPriceMode] = useState("COP"); // COP | USD
   const [price, setPrice] = useState("");            // num
-  const [trm, setTrm] = useState("4250");            // num (si USD)
+  const [trm, setTrm] = useState("4000");            // num (si USD)
   const [discount, setDiscount] = useState("0");     // %
   const [util, setUtil] = useState("1.00");          // factor
   const [shipping, setShipping] = useState("0");     // COP
@@ -1833,7 +1833,7 @@ Disponibilidad: ${availability}${notesPart}`;
 
   const resetAll = () => {
     setRef(""); setDesc(""); setPriceMode("COP"); setPrice("");
-    setTrm("4250"); setDiscount("0"); setUtil("1.00"); setShipping("0");
+    setTrm("4000"); setDiscount("0"); setUtil("1.00"); setShipping("0");
     setQty("1"); setLead(""); setNotes(""); setCopyMsg("");
     setPreview(""); setLockPreview(false);
   };
