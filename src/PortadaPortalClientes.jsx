@@ -50,35 +50,16 @@ function pathFromUrl(u) {
   }
 }
 
-// Único helper para construir el src del visor (PDF.js o nativo)
-function buildViewerSrc(href, q = '', usePdf = true) {
-  const fileUrl = (() => {
-    try {
-      return href.startsWith('http')
-        ? href
-        : new URL(href, window.location.origin).href;
-    } catch {
-      return href;
-    }
-  })();
+function buildViewerSrc(pdfUrl, search = '', usePdfJs = true) {
+  const encodedPdf = encodeURIComponent(pdfUrl);
 
-  if (usePdf) {
-    const viewer = 'https://mozilla.github.io/pdf.js/web/viewer.html';
-    const fileParam = `?file=${encodeURIComponent(fileUrl)}`;
-
-    const params = new URLSearchParams();
-    if (q) params.set('search', q);
-
-    // 👇 CLAVE: links externos SIEMENS en pestaña nueva
-    params.set('externalLinkTarget', '2'); // 2 = BLANK
-    params.set('externalLinkRel', 'noopener noreferrer');
-
-    return `${viewer}${fileParam}#${params.toString()}`;
+  // Usamos visor PDF.js propio
+  if (usePdfJs) {
+    return `${import.meta.env.BASE_URL}pdfjs/web/viewer.html?file=${encodedPdf}`;
   }
 
-  const base = fileUrl.split('#')[0];
-  const hash = q ? `#search=${encodeURIComponent(q)}` : '#toolbar=1';
-  return `${base}${hash}`;
+  // Fallback: visor nativo del navegador
+  return pdfUrl;
 }
 
 // Formatos útiles
