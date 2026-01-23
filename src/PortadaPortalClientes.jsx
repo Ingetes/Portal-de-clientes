@@ -581,7 +581,7 @@ function Header({ onOpenSettings, overlayActive }) {
   <button
     onClick={() => {
       localStorage.clear(); // limpia sesión local
-      window.location.href = 'https://ingetes.github.io/Portal-de-clientes/#ingresar';
+      window.location.href = 'https://ingetes.github.io/affirmatum/#ingresar';
     }}
     className="text-slate-600 hover:text-red-700 px-3 py-1.5 font-semibold"
   >
