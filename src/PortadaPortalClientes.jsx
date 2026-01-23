@@ -793,22 +793,92 @@ function OutsourcingScreen() {
         <div className="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 {[
   {
-    name: 'OA AUTOMATIZACIÓN S.A.S.',
+    name: '🤖OA AUTOMATIZACIÓN S.A.S.',
+    contactName: 'Jeidy	Martinez',
     contact: 'jmartinez@oautomatizacion.com.co',
+    phone: '3107907340',
     area: 'Automatización, integración y servicios industriales'
   },
   {
-    name: 'CGS OPTIMIZE S.A.S.',
-    contact: 'comercial@cgsoptimize.com',
+    name: '🧠CGS OPTIMIZE S.A.S.',
+    contactName: 'Sebastián Ramírez',
+    contact: 'sebastian.ramirez@cgsoptimize.com',
+    phone: '3106738634',
     area: 'Soluciones para la industria, orientados al diseño, control y automatización de procesos industriales.'
   },
+  {
+    name: '🛠️TOVAS INGENIERÍA',
+    contactName: 'Leonardo Torres',
+    contact: 'jl.tr.def@gmail.com',
+    phone: '3209509113',
+    area: 'Servicios de ingeniería y automatización industrial'
+  },
+  {
+    name: '🔧ATELCRO',
+    contactName: 'Cristian Rodríguez',
+    contact: 'cristian.rodriguez@atelcro.com',
+    phone: '3103048239',
+    area: 'Soluciones en automatización y control industrial'
+  },
+  {
+    name: '⚙️EMOTRÓNICA',
+    contactName: 'Ernesto Rodríguez',
+    contact: 'emotronicasas@hotmail.com',
+    phone: '3186505598',
+    area: 'Automatización, electrónica industrial y servicios técnicos'
+  },
+  {
+    name: '🤖MECATRONID',
+    contactName: 'John Derik',
+    contact: 'johnderick@mecatronid.com',
+    phone: '3115002238',
+    area: 'Integración de sistemas y soluciones mecatrónicas'
+  },
+  {
+    name: '⚡SYSELEC',
+    contactName: 'Omar Silva',
+    contact: 'omaro.sg@hotmail.com',
+    phone: '3203399577',
+    area: 'Diseño e implementación de sistemas eléctricos, automatización y control industrial.'
+  },
+  {
+    name: '🔬QUONTROL',
+    contactName: 'Bibiana	Leal',
+    contact: 'comercial@quontrolsas.com',
+    phone: '3004778812',
+    area: 'Instrumentación, control de procesos y soluciones de medición industrial.'
+  },
+  {
+    name: '🔋PEEC',
+    contactName: 'Maira	Diaz',
+    contact: 'cpeec.ltda1@gmail.com',
+    phone: '3016399242',
+    area: 'Energía, potencia y eficiencia industrial.'
+  },
 ].map((p, i) => (
-            <div key={i} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
-              <h3 className="text-lg font-bold text-slate-900">{p.name}</h3>
-              <p className="text-sm text-emerald-700 mt-1">{p.area}</p>
-              <p className="text-sm text-slate-600 mt-2">✉️ <a href={`mailto:${p.contact}`} className="underline">{p.contact}</a></p>
-            </div>
-          ))}
+  <div
+    key={i}
+    className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow"
+  >
+    <h3 className="text-lg font-bold text-slate-900">{p.name}</h3>
+    <p className="text-sm text-emerald-700 mt-1">{p.area}</p>
+
+    <div className="mt-3 text-sm text-slate-600 space-y-1">
+      <p><strong>Contacto:</strong> {p.contactName}</p>
+      <p>
+        ✉️{' '}
+        {p.contact !== '—' ? (
+          <a href={`mailto:${p.contact}`} className="underline">
+            {p.contact}
+          </a>
+        ) : (
+          '—'
+        )}
+      </p>
+      <p>📞 {p.phone}</p>
+    </div>
+  </div>
+))}
         </div>
       </div>
     </section>
