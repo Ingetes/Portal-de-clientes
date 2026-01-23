@@ -52,7 +52,6 @@ function pathFromUrl(u) {
 
 // Único helper para construir el src del visor (PDF.js o nativo)
 function buildViewerSrc(href, q = '', usePdf = true) {
-  // Asegurar URL ABSOLUTA del PDF (importante cuando el visor está en otro dominio)
   const fileUrl = (() => {
     try {
       return href.startsWith('http')
@@ -63,20 +62,20 @@ function buildViewerSrc(href, q = '', usePdf = true) {
     }
   })();
 
-if (usePdf) {
-  // Visor PDF.js hospedado por Mozilla
-// dentro de buildViewerSrc(...)
-const viewer = 'https://mozilla.github.io/pdf.js/web/viewer.html';
-const fileParam = `?file=${encodeURIComponent(fileUrl)}`;
-const params = new URLSearchParams();
-if (q) params.set('search', q);
-params.set('externalLinkTarget', '2'); // 2 = BLANK
-params.set('externalLinkRel', 'noopener noreferrer');
+  if (usePdf) {
+    const viewer = 'https://mozilla.github.io/pdf.js/web/viewer.html';
+    const fileParam = `?file=${encodeURIComponent(fileUrl)}`;
 
-return `${viewer}${fileParam}#${params.toString()}`;
-}
+    const params = new URLSearchParams();
+    if (q) params.set('search', q);
 
-  // Visor nativo del navegador
+    // 👇 CLAVE: links externos SIEMENS en pestaña nueva
+    params.set('externalLinkTarget', '2'); // 2 = BLANK
+    params.set('externalLinkRel', 'noopener noreferrer');
+
+    return `${viewer}${fileParam}#${params.toString()}`;
+  }
+
   const base = fileUrl.split('#')[0];
   const hash = q ? `#search=${encodeURIComponent(q)}` : '#toolbar=1';
   return `${base}${hash}`;
@@ -2527,13 +2526,13 @@ function HerramientasScreen() {
               </div>
             </div>
             <div className="h-[75vh]">
-              <iframe
-                title="Visor PDF"
-                src={preview.src}
-                className="w-full h-[calc(100vh-120px)]"
-                allow="fullscreen"
-                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
-              />
+<iframe
+  title="Visor PDF"
+  src={preview.src}
+  className="w-full h-[calc(100vh-120px)]"
+  allow="fullscreen"
+  sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+/>
             </div>
           </div>
         </div>
