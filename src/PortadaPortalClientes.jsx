@@ -50,16 +50,36 @@ function pathFromUrl(u) {
   }
 }
 
-function buildViewerSrc(pdfUrl, search = '', usePdfJs = true) {
-  const encodedPdf = encodeURIComponent(pdfUrl);
+// Único helper para construir el src del visor (PDF.js o nativo)
+function buildViewerSrc(href, q = '', usePdf = true) {
+  // Asegurar URL ABSOLUTA del PDF (importante cuando el visor está en otro dominio)
+  const fileUrl = (() => {
+    try {
+      return href.startsWith('http')
+        ? href
+        : new URL(href, window.location.origin).href;
+    } catch {
+      return href;
+    }
+  })();
 
-  // Usamos visor PDF.js propio
-  if (usePdfJs) {
-    return `${import.meta.env.BASE_URL}pdfjs/web/viewer.html?file=${encodedPdf}`;
-  }
+if (usePdf) {
+  // Visor PDF.js hospedado por Mozilla
+// dentro de buildViewerSrc(...)
+const viewer = 'https://mozilla.github.io/pdf.js/web/viewer.html';
+const fileParam = `?file=${encodeURIComponent(fileUrl)}`;
+const params = new URLSearchParams();
+if (q) params.set('search', q);
+// ¡este es el que fuerza _blank!
+params.set('linktarget', 'blank');
 
-  // Fallback: visor nativo del navegador
-  return pdfUrl;
+return `${viewer}${fileParam}#${params.toString()}`;
+}
+
+  // Visor nativo del navegador
+  const base = fileUrl.split('#')[0];
+  const hash = q ? `#search=${encodeURIComponent(q)}` : '#toolbar=1';
+  return `${base}${hash}`;
 }
 
 // Formatos útiles
@@ -1504,13 +1524,13 @@ React.useEffect(() => {
             </div>
             <div className="h-[75vh]">
 <div className="h-[75vh]">
-<iframe
-  title="Visor PDF"
-  src={preview.src}
-  className="w-full h-[calc(100vh-120px)]"
-  allow="fullscreen"
-  sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
-/>
+  <iframe
+    title="Visor PDF"
+    src={preview.src} // <- ya viene generado por buildViewerSrc con linktarget=blank
+    className="w-full h-[calc(100vh-120px)]"
+    allow="fullscreen"
+    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
+  />
 </div>
             </div>
           </div>
@@ -2363,7 +2383,7 @@ function HerramientasScreen() {
               Herramientas comerciales para los canales
             </h1>
             <p className="mt-2 text-slate-700 max-w-2xl">
-              Accedeee a utilidades tecnicas y de seleccion que agilizan tu
+              Accede a utilidades tecnicas y de seleccion que agilizan tu
               preingenieria y cotizacion.
             </p>
           </div>
@@ -2507,13 +2527,13 @@ function HerramientasScreen() {
               </div>
             </div>
             <div className="h-[75vh]">
-<iframe
-  title="Visor PDF"
-  src={preview.src}
-  className="w-full h-[calc(100vh-120px)]"
-  allow="fullscreen"
-  sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
-/>
+              <iframe
+                title="Visor PDF"
+                src={preview.src}
+                className="w-full h-[calc(100vh-120px)]"
+                allow="fullscreen"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
+              />
             </div>
           </div>
         </div>
