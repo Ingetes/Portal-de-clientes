@@ -70,10 +70,6 @@ const viewer = 'https://mozilla.github.io/pdf.js/web/viewer.html';
 const fileParam = `?file=${encodeURIComponent(fileUrl)}`;
 const params = new URLSearchParams();
 if (q) params.set('search', q);
-
-// ✅ fallback adicional para que PDF.js fuerce nueva pestaña
-params.set('openExternalLinksInNewWindow', 'true');
-
 params.set('externalLinkTarget', '2'); // 2 = BLANK
 params.set('externalLinkRel', 'noopener noreferrer');
 
@@ -1533,7 +1529,7 @@ React.useEffect(() => {
   src={preview.src}
   className="w-full h-[calc(100vh-120px)]"
   allow="fullscreen"
-  sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
+  sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
 />
 </div>
             </div>
@@ -2536,7 +2532,7 @@ function HerramientasScreen() {
                 src={preview.src}
                 className="w-full h-[calc(100vh-120px)]"
                 allow="fullscreen"
-                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
               />
             </div>
           </div>
