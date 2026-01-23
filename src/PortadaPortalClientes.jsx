@@ -1529,7 +1529,11 @@ React.useEffect(() => {
     src={preview.src} // <- ya viene generado por buildViewerSrc con linktarget=blank
     className="w-full h-[calc(100vh-120px)]"
     allow="fullscreen"
-    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+    sandbox="
+  allow-scripts
+  allow-same-origin
+  allow-forms
+  allow-popups"
   />
 </div>
             </div>
@@ -2532,7 +2536,11 @@ function HerramientasScreen() {
                 src={preview.src}
                 className="w-full h-[calc(100vh-120px)]"
                 allow="fullscreen"
-                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+                sandbox="
+  allow-scripts
+  allow-same-origin
+  allow-forms
+  allow-popups"
               />
             </div>
           </div>
