@@ -2385,7 +2385,7 @@ function HerramientasScreen() {
               Herramientas comerciales para los canales
             </h1>
             <p className="mt-2 text-slate-700 max-w-2xl">
-              Accede a utilidades tecnicas y de seleccion que agilizan tu
+              Accedeee a utilidades tecnicas y de seleccion que agilizan tu
               preingenieria y cotizacion.
             </p>
           </div>
