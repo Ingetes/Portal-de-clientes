@@ -71,7 +71,9 @@ const fileParam = `?file=${encodeURIComponent(fileUrl)}`;
 const params = new URLSearchParams();
 if (q) params.set('search', q);
 // ¡este es el que fuerza _blank!
-params.set('linktarget', 'blank');
+// Forzar links externos a abrir en nueva pestaña (PDF.js)
+params.set('externalLinkTarget', '2'); // 2 = BLANK
+params.set('externalLinkRel', 'noopener noreferrer');
 
 return `${viewer}${fileParam}#${params.toString()}`;
 }
@@ -1524,17 +1526,13 @@ React.useEffect(() => {
             </div>
             <div className="h-[75vh]">
 <div className="h-[75vh]">
-  <iframe
-    title="Visor PDF"
-    src={preview.src} // <- ya viene generado por buildViewerSrc con linktarget=blank
-    className="w-full h-[calc(100vh-120px)]"
-    allow="fullscreen"
-    sandbox="
-  allow-scripts
-  allow-same-origin
-  allow-forms
-  allow-popups"
-  />
+<iframe
+  title="Visor PDF"
+  src={preview.src}
+  className="w-full h-[calc(100vh-120px)]"
+  allow="fullscreen"
+  sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+/>
 </div>
             </div>
           </div>
@@ -2536,11 +2534,7 @@ function HerramientasScreen() {
                 src={preview.src}
                 className="w-full h-[calc(100vh-120px)]"
                 allow="fullscreen"
-                sandbox="
-  allow-scripts
-  allow-same-origin
-  allow-forms
-  allow-popups"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
               />
             </div>
           </div>
